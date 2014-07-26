@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="21.0.0-rc1" >
+        <source path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0-rc1\assets" />
+    </dataSet>
+    <dataSet config="unspecified" >
+        <source path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\assets" />
+    </dataSet>
+    <dataSet config="main" >
+        <source path="D:\CS\GameMaking\AndJoy\assets" >
+            <file
+                name="2mi.json"
+                path="D:\CS\GameMaking\AndJoy\assets\2mi.json" />
+            <file
+                name="city.json"
+                path="D:\CS\GameMaking\AndJoy\assets\city.json" />
+            <file
+                name="fenkuai.json"
+                path="D:\CS\GameMaking\AndJoy\assets\fenkuai.json" />
+            <file
+                name="mo.fsh"
+                path="D:\CS\GameMaking\AndJoy\assets\mo.fsh" />
+            <file
+                name="mo.vsh"
+                path="D:\CS\GameMaking\AndJoy\assets\mo.vsh" />
+            <file
+                name="small_world.json"
+                path="D:\CS\GameMaking\AndJoy\assets\small_world.json" />
+            <file
+                name="smashTest.json"
+                path="D:\CS\GameMaking\AndJoy\assets\smashTest.json" />
+            <file
+                name="test.json"
+                path="D:\CS\GameMaking\AndJoy\assets\test.json" />
+            <file
+                name="xuanzhuan_fsh"
+                path="D:\CS\GameMaking\AndJoy\assets\xuanzhuan_fsh" />
+            <file
+                name="xuanzhuan_vsh"
+                path="D:\CS\GameMaking\AndJoy\assets\xuanzhuan_vsh" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="D:\CS\GameMaking\AndJoy\build-types\debug\assets" />
+    </dataSet>
+
+</merger>

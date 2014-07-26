@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="21.0.0-rc1" >
+        <source path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0-rc1\res" />
+    </dataSet>
+    <dataSet config="unspecified" >
+        <source path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res" >
+            <file
+                name="frame_vsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\frame_vsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="sandbox_vsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\sandbox_vsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="simple_fsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\simple_fsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="simple_vsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\simple_vsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="test_tilemap_fsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\test_tilemap_fsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="texture_fsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\texture_fsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="texture_vsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\texture_vsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="texture_wave_fsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\texture_wave_fsh"
+                qualifiers=""
+                type="raw" />
+            <file
+                name="tilemap_fsh"
+                path="D:\CS\GameMaking\AndJoy\build\intermediates\exploded-aar\AndJoy\yGameFrame\unspecified\res\raw\tilemap_fsh"
+                qualifiers=""
+                type="raw" />
+        </source>
+    </dataSet>
+    <dataSet config="main" >
+        <source path="D:\CS\GameMaking\AndJoy\res" >
+            <file
+                name="city"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\city.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="fenkuai_left"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\fenkuai_left.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="fenkuai_right"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\fenkuai_right.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="fyy"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\fyy.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="hero"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\hero.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="hero_big"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\hero_big.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\ic_launcher.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map0"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map0.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map1"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map1.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map10"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map10.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map11"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map11.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map12"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map12.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map13"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map13.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map14"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map14.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map15"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map15.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map2"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map2.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map3"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map3.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map4"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map4.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map5"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map5.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map6"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map6.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map7"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map7.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map8"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map8.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="map9"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\map9.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="shan"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\shan.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="test_tile"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\test_tile.jpg"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="vertical_index_pic"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\vertical_index_pic.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="yewai"
+                path="D:\CS\GameMaking\AndJoy\res\drawable\yewai.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="D:\CS\GameMaking\AndJoy\res\drawable-mdpi\ic_launcher.png"
+                qualifiers="mdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="D:\CS\GameMaking\AndJoy\res\drawable-xhdpi\ic_launcher.png"
+                qualifiers="xhdpi-v4"
+                type="drawable" />
+            <file
+                name="ic_launcher"
+                path="D:\CS\GameMaking\AndJoy\res\drawable-xxhdpi\ic_launcher.png"
+                qualifiers="xxhdpi-v4"
+                type="drawable" />
+            <file
+                name="activity_main"
+                path="D:\CS\GameMaking\AndJoy\res\layout\activity_main.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="main"
+                path="D:\CS\GameMaking\AndJoy\res\menu\main.xml"
+                qualifiers=""
+                type="menu" />
+            <file
+                name="mi2_huge"
+                path="D:\CS\GameMaking\AndJoy\res\raw\mi2_huge.png"
+                qualifiers=""
+                type="raw" />
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values\dimens.xml"
+                qualifiers="" >
+                <dimen name="activity_horizontal_margin" >16dp
+                </dimen>
+                <dimen name="activity_vertical_margin" >16dp
+                </dimen>
+            </file>
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values\strings.xml"
+                qualifiers="" >
+                <string name="left" >&lt;-
+                </string>
+                <string name="action_settings" >Settings
+                </string>
+                <string name="xuanfeng" >旋风
+                </string>
+                <string name="right" >->
+                </string>
+                <string name="app_name" >AndJoyGame
+                </string>
+                <string name="deal_scene" >场景相关
+                </string>
+                <string name="jump" >跳
+                </string>
+                <string name="hello_world" >Hello world!
+                </string>
+            </file>
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values\styles.xml"
+                qualifiers="" >
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Light" >
+
+                    <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+                    -->
+                </style>
+
+                <style
+                    name="AppTheme"
+                    parent="AppBaseTheme" >
+
+                    <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+                </style>
+            </file>
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values-sw720dp-land\dimens.xml"
+                qualifiers="sw720dp-land-v13" >
+                <dimen name="activity_horizontal_margin" >128dp
+                </dimen>
+            </file>
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values-v11\styles.xml"
+                qualifiers="v11" >
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Holo.Light" >
+
+                    <!-- API 11 theme customizations can go here. -->
+                </style>
+            </file>
+            <file
+                path="D:\CS\GameMaking\AndJoy\res\values-v14\styles.xml"
+                qualifiers="v14" >
+
+                <style
+                    name="AppBaseTheme"
+                    parent="android:Theme.Holo.Light.DarkActionBar" >
+
+                    <!-- API 14 theme customizations can go here. -->
+                </style>
+            </file>
+        </source>
+        <source path="D:\CS\GameMaking\AndJoy\build\generated\res\rs\debug" />
+        <source path="D:\CS\GameMaking\AndJoy\build\generated\res\generated\debug" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="D:\CS\GameMaking\AndJoy\build-types\debug\res" />
+    </dataSet>
+
+</merger>

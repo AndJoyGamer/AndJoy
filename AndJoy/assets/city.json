@@ -1,0 +1,40 @@
+{ "height":2,
+ "layers":[
+        {
+         "data":[245, 246, 265, 266],
+         "height":2,
+         "name":"base_bkg",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":2,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "tileheight":64,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"mapCity.png",
+         "imageheight":896,
+         "imagewidth":1280,
+         "margin":0,
+         "name":"mapCity",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":64,
+         "tilewidth":64,
+         "transparentcolor":"#ff00ff"
+        }],
+ "tilewidth":64,
+ "version":1,
+ "width":2
+}
