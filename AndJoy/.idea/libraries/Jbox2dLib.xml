@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Jbox2dLib">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/yGameFrame/libs/Jbox2dLib.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
