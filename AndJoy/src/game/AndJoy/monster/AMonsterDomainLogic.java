@@ -25,7 +25,7 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 import ygame.transformable.YMover;
 
-public abstract class YASpriteDomainLogic<D extends YDomain> extends
+public abstract class AMonsterDomainLogic<D extends YDomain> extends
 		YADomainLogic {
 	private static final float RAD2DEG = 180 / MathUtils.PI;
 
@@ -40,7 +40,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	final protected float fSkeletonSideLen;
 	final protected YMover mover = new YMover();
 
-	protected StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine;
+	protected StateMachine<YIStateClocker, YRequest, AMonsterDomainLogic<?>> stateMachine;
 	protected Body body;
 	protected D domainContext;
 
@@ -49,7 +49,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 
 	private World world;
 
-	protected YASpriteDomainLogic(YTileSheet tileSheet, float fSkeletonSideLen,
+	protected AMonsterDomainLogic(YTileSheet tileSheet, float fSkeletonSideLen,
 			World world) {
 		this.fSkeletonSideLen = fSkeletonSideLen;
 		this.tileSheet = tileSheet;
@@ -67,7 +67,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 		this.domainContext = (D) domainContext;
 		super.onAttach(system, domainContext);
 		// 设计状态机
-		YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder = YStateMachineBuilder
+		YStateMachineBuilder<YIStateClocker, YRequest, AMonsterDomainLogic<?>> builder = YStateMachineBuilder
 				.create(YIStateClocker.class, YRequest.class);
 		YIStateClocker stateInit = designStateMachine(builder);
 		this.stateMachine = builder.buildTransitionTemplate().newStateMachine(
@@ -101,7 +101,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	 * @return 状态机初始状态
 	 */
 	protected abstract YIStateClocker designStateMachine(
-			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder);
+			YStateMachineBuilder<YIStateClocker, YRequest, AMonsterDomainLogic<?>> builder);
 
 	/**
 	 * 确认当前朝向，根据输入，确认朝向是左还是右，即修改{@link #bRight}；

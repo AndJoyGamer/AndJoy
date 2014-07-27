@@ -5,6 +5,6 @@ import ygame.framework.core.YSystem;
 
 public interface YIStateClocker
 {
-	void onClock(float fElapseTime_s, YASpriteDomainLogic<?> domainLogicContext,
+	void onClock(float fElapseTime_s, AMonsterDomainLogic<?> domainLogicContext,
 			YSystem system, YScene sceneCurrent);
 }

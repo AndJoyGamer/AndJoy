@@ -6,7 +6,6 @@ import game.AndJoy.common.YSceneDomain;
 import game.AndJoy.monster.concrete.MonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -50,7 +49,6 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
-
 
 public class MainActivity extends Activity {
 	private YSystem system;
@@ -120,7 +118,7 @@ public class MainActivity extends Activity {
 
 		// 新建精灵实体
 		domainSprite = new YSpriteDomain("sprite", world, this);
-//		domainMonster = new MonsterDomain("monster", world, this);
+		// domainMonster = new MonsterDomain("monster", world, this);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -129,7 +127,7 @@ public class MainActivity extends Activity {
 		// mainScene.addDomains(feiKuaiMapDomains);
 		mainScene.addDomains(getFeiKuaiMapDomains(world));
 		mainScene.addDomains(domainSprite, getBkgDomain());
-//		mainScene.addDomains(domainMonster, getBkgDomain());
+		// mainScene.addDomains(domainMonster, getBkgDomain());
 		// mainScene.addDomains(getTest2SandBoxDomain());//球
 		// // 特别地，场景处理实体
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
