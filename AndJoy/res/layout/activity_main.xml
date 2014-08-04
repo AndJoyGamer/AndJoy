@@ -21,6 +21,7 @@
 
     <Button
         android:id="@+id/BtnLeft"
+        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -29,6 +30,7 @@
 
     <Button
         android:id="@+id/BtnRight"
+        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/BtnLeft"
@@ -38,6 +40,7 @@
 
     <Button
         android:id="@+id/BtnJump"
+        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -45,6 +48,7 @@
         android:text="@string/jump" />
 
     <Button
+        android:textSize="20sp"
         android:id="@+id/BtnXuanfeng"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
