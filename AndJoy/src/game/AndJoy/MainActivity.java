@@ -3,7 +3,7 @@ package game.AndJoy;
 import game.AndJoy.Y2SandboxProgram.Y2SandboxAdapter;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
-import game.AndJoy.monster.concrete.MonsterDomain;
+import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import java.text.DecimalFormat;
@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 
 	private YSpriteDomain domainSprite;
 	private YClusterDomain domainMap = null;
-	private MonsterDomain domainMonster;
+	private YMonsterDomain domainMonster;
 
 	private YScene mainScene;
 
@@ -118,7 +118,8 @@ public class MainActivity extends Activity {
 
 		// 新建精灵实体
 		domainSprite = new YSpriteDomain("sprite", world, this);
-		// domainMonster = new MonsterDomain("monster", world, this);
+		// 新建怪物实体
+		domainMonster = new YMonsterDomain("monster1", world, this);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -126,7 +127,7 @@ public class MainActivity extends Activity {
 		//
 		// mainScene.addDomains(feiKuaiMapDomains);
 		mainScene.addDomains(getFeiKuaiMapDomains(world));
-		mainScene.addDomains(domainSprite, getBkgDomain());
+		mainScene.addDomains(domainSprite, domainMonster,getBkgDomain());
 		// mainScene.addDomains(domainMonster, getBkgDomain());
 		// mainScene.addDomains(getTest2SandBoxDomain());//球
 		// // 特别地，场景处理实体

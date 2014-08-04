@@ -1,30 +1,32 @@
 package game.AndJoy.monster.concrete;
 
+import game.AndJoy.monster.YAMonsterDomainLogic;
+import game.AndJoy.monster.YIMonsterStateClocker;
 import game.AndJoy.sprite.YASpriteDomainLogic;
 import game.AndJoy.sprite.YIStateClocker;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 
-enum MonsterState implements YIStateClocker
+enum YMonsterState implements YIMonsterStateClocker
 {
-	WAIT("待机"), WALK("行走"), JUMP("跳跃"), ATTACK1("攻击1");
+	WAIT("待机"), WALK("行走"), ATTACK1("攻击1");
 
-	private YIStateClocker clocker;
+	private YIMonsterStateClocker clocker;
 	private String strName;
 
-	private MonsterState(String strName)
+	private YMonsterState(String strName)
 	{
 		this.strName = strName;
 	}
 
-	void setStateClocker(YIStateClocker clocker)
+	void setStateClocker(YIMonsterStateClocker clocker)
 	{
 		this.clocker = clocker;
 	}
 
 	@Override
 	public void onClock(float fElapseTime_s,
-			YASpriteDomainLogic<?> domainLogicContext,
+			YAMonsterDomainLogic<?> domainLogicContext,
 			YSystem system, YScene sceneCurrent)
 	{
 		clocker.onClock(fElapseTime_s, domainLogicContext, system,
