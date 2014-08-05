@@ -2,6 +2,7 @@ package game.AndJoy.monster.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import org.jbox2d.dynamics.World;
 
@@ -26,9 +27,9 @@ public class YMonsterDomain extends YDomain
 	public final YRequest TO_WALK;
 	public final YRequest TO_WAIT;
 
-	public YMonsterDomain(String KEY, World world, MainActivity activity)
+	public YMonsterDomain(String KEY, World world, MainActivity activity, YSpriteDomain domainSprite)
 	{
-		super(KEY, new YMonsterLogic(world, activity), new YDomainView(
+		super(KEY, new YMonsterLogic(world, activity , domainSprite), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);

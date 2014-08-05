@@ -6,6 +6,7 @@ import game.AndJoy.monster.YAMonsterDomainLogic;
 import game.AndJoy.monster.YIMonsterStateClocker;
 import game.AndJoy.sprite.YASpriteDomainLogic;
 import game.AndJoy.sprite.YIStateClocker;
+import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -31,8 +32,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private float fFrames;
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
+	private YSpriteDomain domainSprite;
 
-	protected YMonsterLogic(World world, MainActivity activity) {
+	protected YMonsterLogic(World world, MainActivity activity, YSpriteDomain domainSprite) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
 				22), 13, world);
 		// fInitX_M = 200;
@@ -42,6 +44,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		fInitY_M = 20;
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
+		this.domainSprite = domainSprite;
 	}
 
 	/**
@@ -332,7 +335,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				else
 					bRight = true;
 				domainContext.sendRequest(domainContext.TO_ATTACK1);
-
+				domainSprite.sendRequest(domainSprite.TO_DAMAGE);
 			}
 
 		}

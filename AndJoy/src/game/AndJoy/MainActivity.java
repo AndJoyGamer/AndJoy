@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 		// 新建精灵实体
 		domainSprite = new YSpriteDomain("sprite", world, this);
 		// 新建怪物实体
-		domainMonster = new YMonsterDomain("monster1", world, this);
+		domainMonster = new YMonsterDomain("monster1", world, this , domainSprite);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());

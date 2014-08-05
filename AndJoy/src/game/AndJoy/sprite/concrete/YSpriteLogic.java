@@ -27,6 +27,8 @@ import ygame.texture.YTileSheet;
 class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 {
 	private float fFrames;
+	//受伤状态维持的周期计数
+	private int iDamageCounts;
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
 
@@ -114,6 +116,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		YSpriteState.WALK.setStateClocker(new WalkClocker());
 		YSpriteState.JUMP.setStateClocker(new JumpClocker());
 		YSpriteState.ATTACK1.setStateClocker(new Attack1Cloker());
+		YSpriteState.DAMAGE.setStateClocker(new DamageCloker());
 
 		// 待机到行走
 		builder.newTransition().from(YSpriteState.WAIT)
@@ -146,6 +149,12 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				.on(domainContext.TO_ATTACK1);
 		builder.onEntry(YSpriteState.ATTACK1).perform(
 				new AttackEnterAction());
+		
+		//待机到受伤
+		//行走到受伤
+		builder.newTransition().from(YSpriteState.WAIT).to(YSpriteState.DAMAGE).on(domainContext.TO_DAMAGE);
+		builder.newTransition().from(YSpriteState.WALK).to(YSpriteState.DAMAGE).on(domainContext.TO_DAMAGE);
+		builder.onEntry(YSpriteState.DAMAGE).perform(new DamageEnterAction());
 		return YSpriteState.JUMP;
 	}
 
@@ -364,6 +373,42 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 					body.getPosition());
 		}
 	}
+	
+	/*************************** 关于受伤状态 **********************************/
+	private class DamageCloker extends BaseClocker
+	{
+		DamageCloker()
+		{
+			super(0, 1, 10, 0);
+		}
+		
+		@Override
+		public void onClock(float fElapseTime_s,
+				YASpriteDomainLogic<?> domainLogicContext,
+				YSystem system, YScene sceneCurrent)
+		{
+			super.onClock(fElapseTime_s, domainLogicContext, system, sceneCurrent);
+			if(iDamageCounts ++ > 30)
+				resetState();
+		}
+	}
+	
+	private class DamageEnterAction implements YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+	{
+
+		@Override
+		public void onTransition(
+				YIStateClocker from,
+				YIStateClocker to,
+				YRequest causedBy,
+				YASpriteDomainLogic<?> context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
+		{
+			iDamageCounts = 0;
+		}
+	}
+	
+	/**************************************************************************/
 
 	private class FootContactLsn implements YIOnContactListener
 	{

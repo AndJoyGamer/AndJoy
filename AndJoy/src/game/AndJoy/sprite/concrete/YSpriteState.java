@@ -7,7 +7,7 @@ import ygame.framework.core.YSystem;
 
 enum YSpriteState implements YIStateClocker
 {
-	WAIT("待机"), WALK("行走"), JUMP("跳跃"), ATTACK1("攻击1");
+	WAIT("待机"), WALK("行走"), JUMP("跳跃"), ATTACK1("攻击1"),DAMAGE("受伤");
 
 	private YIStateClocker clocker;
 	private String strName;
