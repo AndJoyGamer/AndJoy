@@ -4,10 +4,7 @@ import game.AndJoy.MainActivity;
 import game.AndJoy.R;
 import game.AndJoy.monster.YAMonsterDomainLogic;
 import game.AndJoy.monster.YIMonsterStateClocker;
-import game.AndJoy.sprite.YASpriteDomainLogic;
-import game.AndJoy.sprite.YIStateClocker;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
-
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -30,6 +27,7 @@ import ygame.texture.YTileSheet;
 class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 {
 	private float fFrames;
+	private boolean ifOnLand = false;
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
 	private YSpriteDomain domainSprite;
@@ -79,7 +77,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.friction = 0.5f;
 		def.density = 10;
 		def.isSensor = true;
-		body.createFixture(def);
+		body.createFixture(def).setOnContactListener(new FootContactLsn());
 
 		// 感应行走雷达
 
@@ -105,7 +103,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		fixtureRadar2.setOnContactListener(new Radar2ContactLsn());
 		
 		
-		vecAntiGrav.mulLocal(body.getMass() * 5);
+		vecAntiGrav.mulLocal(-body.getMass());
 	}
 
 	@Override
@@ -226,7 +224,12 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			bLockOrientation = false;
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
-			body.setLinearVelocity(vec2);
+			if(!ifOnLand){
+				body.applyLinearImpulse(new Vec2(0,-body.getMass()), body.getPosition());
+				System.out.println(body.getLinearVelocity().y);
+			}else{
+				body.setLinearVelocity(vec2);
+			}
 		}
 	}
 
@@ -293,8 +296,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			System.out.println("进入雷达范围");
 			if (fixtureOther.m_userData == "foot") {
+				System.out.println(domainOther.KEY+"进入雷达范围");
 				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
 						.getPosition().x)
 					bRight = false;
@@ -309,8 +312,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			System.out.println("离开雷达范围");
 			if (fixtureOther.m_userData == "foot") {
+				System.out.println("离开雷达范围");
 				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
 						.getPosition().x)
 					bRight = false;
@@ -327,8 +330,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			System.out.println("进入攻击范围");
 			if (fixtureOther.m_userData == "foot") {
+				System.out.println("进入攻击范围");
 				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
 						.getPosition().x)
 					bRight = false;
@@ -343,8 +346,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			System.out.println("离开攻击范围");
 			if (fixtureOther.m_userData == "foot") {
+				System.out.println("离开攻击范围");
 				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
 						.getPosition().x)
 					bRight = false;
@@ -352,6 +355,28 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					bRight = true;
 				domainContext.sendRequest(domainContext.TO_WALK);
 
+			}
+		}
+	}
+	
+	private class FootContactLsn implements YIOnContactListener{
+
+		private int iFootContact;
+		@Override
+		public void beginContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther) {
+			// TODO Auto-generated method stub
+			iFootContact++;
+			System.out.println("怪物脚步碰撞");
+			ifOnLand = true;
+		}
+
+		@Override
+		public void endContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther) {
+			iFootContact--;
+			if(iFootContact==0){
+				ifOnLand=false;
 			}
 		}
 	}
