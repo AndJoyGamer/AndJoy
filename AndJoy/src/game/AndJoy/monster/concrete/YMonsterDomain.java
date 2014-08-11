@@ -27,9 +27,9 @@ public class YMonsterDomain extends YDomain
 	public final YRequest TO_WALK;
 	public final YRequest TO_WAIT;
 
-	public YMonsterDomain(String KEY, World world, MainActivity activity, YSpriteDomain domainSprite)
+	public YMonsterDomain(String KEY, World world, MainActivity activity)
 	{
-		super(KEY, new YMonsterLogic(world, activity , domainSprite), new YDomainView(
+		super(KEY, new YMonsterLogic(world, activity), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);
