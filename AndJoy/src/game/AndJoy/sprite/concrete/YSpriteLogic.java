@@ -2,8 +2,12 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.common.Constants;
+import game.AndJoy.common.Constants.Orientation;
+import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.YASpriteDomainLogic;
 import game.AndJoy.sprite.YIStateClocker;
+import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -65,7 +69,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		CircleShape shapeBody = new CircleShape();
 		shapeBody.setRadius(fBodySideLen / 2);
 		def.shape = shapeBody;
-		body.createFixture(def);
+		body.createFixture(def).setOnContactListener(new MainContactLsn());
 
 		// XXX
 		// 足部感应器（foot）
@@ -395,6 +399,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 	
 	private class DamageEnterAction implements YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
 	{
+		private Vec2 vec2Right = new Vec2(30, -50);
+		private Vec2 vec2Left = new Vec2(-30, -50);
 
 		@Override
 		public void onTransition(
@@ -405,6 +411,16 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
 		{
 			iDamageCounts = 0;
+//			body.applyForce(vecAntiGrav, body.getPosition());
+			SpriteReq req = (SpriteReq) causedBy;
+			boolean bAttackFromRight = Orientation.RIGHT == req.orientation;
+			Vec2 v1 = body.getLinearVelocity();
+			Vec2 v2 = new Vec2(bAttackFromRight ? vec2Right
+					: vec2Left);
+			body.applyLinearImpulse(
+					v2.subLocal(v1)
+							.mulLocal(body.getMass()),
+					body.getPosition());
 		}
 	}
 	
@@ -422,6 +438,12 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			++iFootContact;
 			if (YSpriteState.JUMP == stateMachine.getCurrentState())
 				resetState();
+			if (domainOther.KEY.contains("monster")
+					&& stateMachine.getCurrentState() == YSpriteState.ATTACK1)
+			{
+				YMonsterDomain monster = (YMonsterDomain)domainOther;
+				monster.sendRequest(monster.TO_DAMAGE);
+			}
 		}
 
 		@Override
@@ -435,5 +457,28 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 						.getCurrentState())
 					stateMachine.forceSetState(YSpriteState.JUMP);
 		}
+	}
+	
+	public class MainContactLsn implements YIOnContactListener{
+
+		@Override
+		public void beginContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther) {
+			// TODO Auto-generated method stub
+			if (domainOther.KEY.contains("monster")
+					&& stateMachine.getCurrentState() == YSpriteState.ATTACK1)
+			{
+				YMonsterDomain monster = (YMonsterDomain)domainOther;
+				monster.sendRequest(monster.TO_DAMAGE);
+			}
+		}
+
+		@Override
+		public void endContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
