@@ -3,6 +3,7 @@ package game.AndJoy.sprite.concrete;
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
 import game.AndJoy.common.Constants.Orientation;
+import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.YASpriteDomainLogic;
 import game.AndJoy.sprite.YIStateClocker;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
