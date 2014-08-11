@@ -334,6 +334,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YSystem system, YScene sceneCurrent)
 		{
 			super.onClock(fElapseTime_s, domainLogicContext, system, sceneCurrent);
+			hp--;
 			if(iDamageCounts ++ > 30)
 				domainContext.sendRequest(domainContext.TO_WALK);
 		}

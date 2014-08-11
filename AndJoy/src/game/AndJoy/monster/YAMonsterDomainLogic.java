@@ -46,7 +46,9 @@ public abstract class YAMonsterDomainLogic<D extends YDomain> extends
 
 	protected float fInitX_M;
 	protected float fInitY_M;
-
+	
+	protected int hp = 100;
+	
 	private World world;
 
 	protected YAMonsterDomainLogic(YTileSheet tileSheet, float fSkeletonSideLen,
@@ -132,7 +134,11 @@ public abstract class YAMonsterDomainLogic<D extends YDomain> extends
 		adapter.paramFramePosition(iRowIndex, iColumnIndex)
 				.paramFrameSheet(tileSheet).paramMatrixPV(matrix4pv)
 				.paramMover(mover).paramSkeleton(skeletonCurrent);
-
+		// 5.hp为0时移除实体
+		if(hp==0){			
+			system.getCurrentScene().removeDomains(domainContext.KEY);
+			world.destroyBody(body);
+		}
 	}
 
 	// 将请求交付状态机模型处理
