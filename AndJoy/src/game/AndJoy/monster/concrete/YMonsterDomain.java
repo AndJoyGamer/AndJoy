@@ -1,25 +1,13 @@
 package game.AndJoy.monster.concrete;
 
 import game.AndJoy.MainActivity;
-import game.AndJoy.R;
-import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import org.jbox2d.dynamics.World;
 
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
-import ygame.extension.primitives.YRectangle;
-import ygame.extension.program.YTextureProgram;
 import ygame.extension.program.YTileProgram;
-import ygame.framework.core.YGL_Configuration;
 import ygame.framework.core.YRequest;
-import ygame.framework.core.YScene;
-import ygame.framework.core.YSystem;
-import ygame.math.YMatrix;
-import ygame.skeleton.YSkeleton;
-import ygame.texture.YTexture;
 
 public class YMonsterDomain extends YDomain
 {
