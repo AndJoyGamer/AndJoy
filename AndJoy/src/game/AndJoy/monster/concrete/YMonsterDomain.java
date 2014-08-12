@@ -15,6 +15,7 @@ public class YMonsterDomain extends YDomain
 	public final YRequest TO_WALK;
 	public final YRequest TO_WAIT;
 	public final YRequest TO_DAMAGE;
+	final YRequest TO_DEAD;
 
 	public YMonsterDomain(String KEY, World world, MainActivity activity)
 	{
@@ -25,6 +26,7 @@ public class YMonsterDomain extends YDomain
 		this.TO_WALK = new YRequest(1);
 		this.TO_ATTACK1 = new YRequest(2);
 		this.TO_DAMAGE = new YRequest(3);
+		this.TO_DEAD = new YRequest(4);
 	}
 
 }

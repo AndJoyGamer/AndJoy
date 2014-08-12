@@ -16,12 +16,15 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import ygame.domain.YDomain;
 import ygame.extension.with_third_party.YIOnContactListener;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YBaseDomain;
+import ygame.framework.domain.YWriteBundle;
+import ygame.math.YMatrix;
 import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
@@ -40,6 +43,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private boolean ifInRadar1;
 	//是否在雷达2范围内
 	private boolean ifInRadar2;
+	
+	private int hp = 100;
 
 	protected YMonsterLogic(World world, MainActivity activity) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
@@ -136,6 +141,19 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		}
 		return super.onDealRequest(request, system, sceneCurrent);
 	}
+	
+	@Override
+	protected void onCycle(double dbElapseTime_s, YDomain domainContext,
+			YWriteBundle bundle, YSystem system,
+			YScene sceneCurrent, YMatrix matrix4pv,
+			YMatrix matrix4Projection, YMatrix matrix4View)
+	{
+		super.onCycle(dbElapseTime_s, domainContext, bundle, system, sceneCurrent,
+				matrix4pv, matrix4Projection, matrix4View);
+		// 5.hp为0时移除实体
+		if (hp == 0)
+			stateMachine.forceSetState(YMonsterState.DEAD);
+	}
 
 	/**
 	 * 
@@ -154,6 +172,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		YMonsterState.WALK.setStateClocker(new WalkClocker());
 		YMonsterState.ATTACK1.setStateClocker(new Attack1Cloker());
 		YMonsterState.DAMAGE.setStateClocker(new DamageClocker());
+		YMonsterState.DEAD.setStateClocker(new DeadClocker());
 		
 		// 待机到行走
 		builder.newTransition().from(YMonsterState.WAIT)
@@ -185,6 +204,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		builder.newTransition().from(YMonsterState.DAMAGE).to(YMonsterState.WALK).on(domainContext.TO_WALK);
 		builder.onEntry(YMonsterState.DAMAGE).perform(new DamageEnterAction());
 		
+		//各种状态到死亡
+		builder.newTransition().fromAll().to(YMonsterState.DEAD).on(domainContext.TO_DEAD);
+		builder.onEntry(YMonsterState.DEAD).perform(new DeadEnterAction());
 		return YMonsterState.WAIT;
 	}
 
@@ -207,10 +229,10 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	/******************************** 基础 *****************************************/
 	private class BaseClocker implements YIMonsterStateClocker
 	{
-		final private int iFPS;
-		final private int iFrameNum;
-		final private int iColStartIndex;
-		final private int iRowStartIndex;
+		final int iFPS;
+		final int iFrameNum;
+		final int iColStartIndex;
+		final int iRowStartIndex;
 
 		BaseClocker(int iFPS, int iFrameNum, int iColStartIndex,
 				int iRowStartIndex)
@@ -361,6 +383,55 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			iDamageCounts = 0;
 		}
 	}
+	
+	/*************************** 关于死亡状态 **********************************/
+	private class DeadClocker extends BaseClocker
+	{
+		DeadClocker()
+		{
+			super(2, 4, 10, 0);
+		}
+		
+		@Override
+		public void onClock(float fElapseTime_s,
+				YAMonsterDomainLogic<?> domainLogicContext,
+				YSystem system, YScene sceneCurrent)
+		{
+			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
+			iRowIndex = iRowStartIndex;
+			iColumnIndex = iColStartIndex + iFrame;
+			if (13 == iColumnIndex)
+			{
+				system.getCurrentScene().removeDomains(
+						domainContext.KEY);
+				world.destroyBody(body);
+			}
+//			world = null;
+		}
+	}
+	
+	private class DeadEnterAction implements YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
+	{
+		private Vec2 vec2Right = new Vec2(500, 0);
+		private Vec2 vec2Left = new Vec2(-500, 0);
+		@Override
+		public void onTransition(
+				YIMonsterStateClocker from,
+				YIMonsterStateClocker to,
+				YRequest causedBy,
+				YAMonsterDomainLogic<?> context,
+				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
+			fFrames = 0;
+//			Vec2 v1 = body.getLinearVelocity();
+//			Vec2 v2 = new Vec2(!bRight ? vec2Right
+//					: vec2Left);
+//			body.applyLinearImpulse(
+//					v2.subLocal(v1)
+//							.mulLocal(body.getMass()),
+//					body.getPosition());
+		}
+	}
+	
 	
 	private class Radar1ContactLsn implements YIOnContactListener {
 

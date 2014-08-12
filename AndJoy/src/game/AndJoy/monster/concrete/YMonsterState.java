@@ -2,14 +2,12 @@ package game.AndJoy.monster.concrete;
 
 import game.AndJoy.monster.YAMonsterDomainLogic;
 import game.AndJoy.monster.YIMonsterStateClocker;
-import game.AndJoy.sprite.YASpriteDomainLogic;
-import game.AndJoy.sprite.YIStateClocker;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 
 enum YMonsterState implements YIMonsterStateClocker
 {
-	WAIT("待机"), WALK("行走"), ATTACK1("攻击1"),DAMAGE("受伤");
+	WAIT("待机"), WALK("行走"), ATTACK1("攻击1"),DAMAGE("受伤"),DEAD("死亡");
 
 	private YIMonsterStateClocker clocker;
 	private String strName;
