@@ -36,6 +36,10 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
 	private YSystem system;
+	//是否在雷达1范围内
+	private boolean ifInRadar1;
+	//是否在雷达2范围内
+	private boolean ifInRadar2;
 
 	protected YMonsterLogic(World world, MainActivity activity) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
@@ -191,7 +195,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 	private void resetState()
 	{
-		if (activity.bLeftPressing || activity.bRightPressing)
+		if (ifInRadar2)
+			stateMachine.forceSetState(YMonsterState.ATTACK1);
+		else if(ifInRadar1)
 			stateMachine.forceSetState(YMonsterState.WALK);
 		else
 			stateMachine.forceSetState(YMonsterState.WAIT);
@@ -336,7 +342,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			super.onClock(fElapseTime_s, domainLogicContext, system, sceneCurrent);
 			hp--;
 			if(iDamageCounts ++ > 30)
-				domainContext.sendRequest(domainContext.TO_WALK);
+				resetState();
 		}
 	}
 	
@@ -369,7 +375,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				else
 					bRight = true;
 				domainContext.sendRequest(domainContext.TO_WALK);
-
+				ifInRadar1 = true;
 			}
 
 		}
@@ -385,7 +391,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				else
 					bRight = true;
 				domainContext.sendRequest(domainContext.TO_WAIT);
-
+				ifInRadar1 = false;
 			}
 		}
 	}
@@ -409,6 +415,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					else
 						bRight = true;
 					domainContext.sendRequest(domainContext.TO_ATTACK1);
+					ifInRadar2 = true;
 					// domainSprite.sendRequest(domainSprite.TO_DAMAGE);
 //					sprite.damage(bRight ? Orientation.RIGHT : Orientation.LEFT);
 				}
@@ -427,6 +434,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				else
 					bRight = true;
 				domainContext.sendRequest(domainContext.TO_WALK);
+				ifInRadar2 = false;
 			}
 		}
 	}

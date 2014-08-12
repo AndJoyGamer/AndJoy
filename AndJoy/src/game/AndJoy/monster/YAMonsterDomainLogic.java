@@ -80,7 +80,7 @@ public abstract class YAMonsterDomainLogic<D extends YDomain> extends
 		bd.type = BodyType.DYNAMIC;
 		bd.position.set(fInitX_M, fInitY_M);
 		this.body = world.createBody(bd);
-		world = null;// 释放之
+		//world = null;// 释放之
 		body.setDomain(domainContext);
 		body.setFixedRotation(true);
 		designBody(body);
@@ -138,6 +138,7 @@ public abstract class YAMonsterDomainLogic<D extends YDomain> extends
 		if(hp==0){			
 			system.getCurrentScene().removeDomains(domainContext.KEY);
 			world.destroyBody(body);
+			world=null;
 		}
 	}
 

@@ -2,6 +2,7 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.common.Constants;
 import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.YASpriteDomainLogic;
@@ -34,6 +35,11 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 	private int iDamageCounts;
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
+	private boolean ifInRadar;
+	//怪物是否在右边
+	private boolean ifRightSide;
+	//怪物实体的KEY
+	private String monsterKey;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
@@ -68,7 +74,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		CircleShape shapeBody = new CircleShape();
 		shapeBody.setRadius(fBodySideLen / 2);
 		def.shape = shapeBody;
-		body.createFixture(def).setOnContactListener(new MainContactLsn());
+		body.createFixture(def);
 
 		// XXX
 		// 足部感应器（foot）
@@ -82,6 +88,17 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		def.isSensor = true;
 		Fixture fixtureFoot = body.createFixture(def);
 		fixtureFoot.setOnContactListener(new FootContactLsn());
+		
+		// 感应攻击雷达
+		CircleShape shapeRadar = new CircleShape();
+		shapeRadar.setRadius(fBodySideLen/2);
+
+		def.isSensor = true;
+		def.friction = 0f;
+		def.density = 0f;
+		def.shape = shapeRadar;
+		Fixture fixtureRadar2 = body.createFixture(def);
+		fixtureRadar2.setOnContactListener(new RadarContactLsn());
 
 		vecAntiGrav.mulLocal(-body.getMass());
 	}
@@ -347,6 +364,15 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			iRowIndex = (i_arrFrameIndex[iFrame] - 1) / 22;
 			iColumnIndex = (i_arrFrameIndex[iFrame] - 1) % 22;
 			body.applyForce(vecAntiGrav, body.getPosition());
+			
+			if (ifRightSide == bRight && ifInRadar)
+				//确定精灵方向与怪物所在方向相同
+				{
+				YMonsterDomain monster= (YMonsterDomain) system
+						.queryDomainByKey(monsterKey);
+				if (null != monster)
+					monster.sendRequest(monster.TO_DAMAGE);
+				}				
 		}
 	}
 
@@ -437,12 +463,6 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			++iFootContact;
 			if (YSpriteState.JUMP == stateMachine.getCurrentState())
 				resetState();
-			if (domainOther.KEY.contains("monster")
-					&& stateMachine.getCurrentState() == YSpriteState.ATTACK1)
-			{
-				YMonsterDomain monster = (YMonsterDomain)domainOther;
-				monster.sendRequest(monster.TO_DAMAGE);
-			}
 		}
 
 		@Override
@@ -458,26 +478,28 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		}
 	}
 	
-	public class MainContactLsn implements YIOnContactListener{
+	private class RadarContactLsn implements YIOnContactListener {
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			// TODO Auto-generated method stub
-			if (domainOther.KEY.contains("monster")
-					&& stateMachine.getCurrentState() == YSpriteState.ATTACK1)
-			{
-				YMonsterDomain monster = (YMonsterDomain)domainOther;
-				monster.sendRequest(monster.TO_DAMAGE);
+			if (null != domainOther && domainOther.KEY.contains("monster"))
+				{//与之碰撞的实体确实为怪物
+					ifRightSide = fixtureOther.getBody()
+							.getPosition().x > fixture
+							.getBody()
+							.getPosition().x ? true : false;
+					ifInRadar = true;
+					monsterKey = domainOther.KEY;
+				}
 			}
-		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
 			// TODO Auto-generated method stub
-			
+			ifInRadar = false;
+			monsterKey = null;
 		}
-		
 	}
 }
