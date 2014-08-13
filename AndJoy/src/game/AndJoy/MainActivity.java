@@ -59,7 +59,8 @@ public class MainActivity extends Activity {
 
 	private YSpriteDomain domainSprite;
 	private YClusterDomain domainMap = null;
-	private YMonsterDomain domainMonster;
+	private YMonsterDomain domainMonster2;
+	private YMonsterDomain domainMonster1;
 
 	private YScene mainScene;
 
@@ -120,7 +121,8 @@ public class MainActivity extends Activity {
 		// 新建精灵实体
 		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// 新建怪物实体
-		domainMonster = new YMonsterDomain(Constants.MONSTER1, world, this);
+		domainMonster1 = new YMonsterDomain(Constants.MONSTER1, world, this, -340, 20);
+		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, world, this, -300, 20);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -128,7 +130,7 @@ public class MainActivity extends Activity {
 		//
 		// mainScene.addDomains(feiKuaiMapDomains);
 		mainScene.addDomains(getFeiKuaiMapDomains(world));
-		mainScene.addDomains(domainSprite, domainMonster,getBkgDomain());
+		mainScene.addDomains(domainSprite, domainMonster1,domainMonster2,getBkgDomain());
 		// mainScene.addDomains(domainMonster, getBkgDomain());
 		// mainScene.addDomains(getTest2SandBoxDomain());//球
 		// // 特别地，场景处理实体

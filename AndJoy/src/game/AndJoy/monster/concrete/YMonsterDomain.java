@@ -17,9 +17,9 @@ public class YMonsterDomain extends YDomain
 	public final YRequest TO_DAMAGE;
 	final YRequest TO_DEAD;
 
-	public YMonsterDomain(String KEY, World world, MainActivity activity)
+	public YMonsterDomain(String KEY, World world, MainActivity activity, float fInitX_M, float fInitY_M)
 	{
-		super(KEY, new YMonsterLogic(world, activity), new YDomainView(
+		super(KEY, new YMonsterLogic(world, activity, fInitX_M, fInitY_M), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);

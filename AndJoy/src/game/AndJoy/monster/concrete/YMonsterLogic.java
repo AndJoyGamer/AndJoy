@@ -46,14 +46,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	
 	private int hp = 100;
 
-	protected YMonsterLogic(World world, MainActivity activity) {
+	protected YMonsterLogic(World world, MainActivity activity, float fInitX_M, float fInitY_M) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
 				22), 13, world);
-		// fInitX_M = 200;
-		fInitX_M = (44 - 128) * 5 + 80;
-		// for FeiKuai
-		// fInitX_M = -60;
-		fInitY_M = 20;
+		this.fInitX_M = fInitX_M;
+		this.fInitY_M = fInitY_M;
+		//fInitX_M = (44 - 128) * 5 + 80;
+		//fInitY_M = 20;
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
 	}
@@ -275,7 +274,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					system, sceneCurrent);
 			if(!ifOnLand){
 				body.applyLinearImpulse(new Vec2(0,-body.getMass()), body.getPosition());
-				System.out.println(body.getLinearVelocity().y);
+				//System.out.println(body.getLinearVelocity().y);
 			}else{
 				body.setLinearVelocity(vec2);
 			}
@@ -518,7 +517,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YABaseDomain domainOther) {
 			// TODO Auto-generated method stub
 			iFootContact++;
-			System.out.println("怪物脚步碰撞");
+			System.out.println(domainContext.KEY + "脚步碰撞");
 			ifOnLand = true;
 		}
 
