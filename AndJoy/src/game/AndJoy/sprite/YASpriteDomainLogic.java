@@ -138,7 +138,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	// 将请求交付状态机模型处理
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent) {
+			YScene sceneCurrent , YBaseDomain domainContext) {
 		return stateMachine.inputRequest(request);
 	}
 

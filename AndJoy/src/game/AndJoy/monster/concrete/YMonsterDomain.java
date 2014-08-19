@@ -23,10 +23,15 @@ public class YMonsterDomain extends YDomain
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);
+		TO_WAIT.setName("待机");
 		this.TO_WALK = new YRequest(1);
+		TO_WALK.setName("行走");
 		this.TO_ATTACK1 = new YRequest(2);
+		TO_ATTACK1.setName("攻1");
 		this.TO_DAMAGE = new YRequest(3);
+		TO_DAMAGE.setName("受伤");
 		this.TO_DEAD = new YRequest(4);
+		TO_DEAD.setName("死亡");
 	}
 
 }

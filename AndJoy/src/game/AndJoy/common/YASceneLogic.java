@@ -93,7 +93,7 @@ public abstract class YASceneLogic extends YADomainLogic
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent)
+			YScene sceneCurrent , YBaseDomain domainContext)
 	{
 		return false;
 	}

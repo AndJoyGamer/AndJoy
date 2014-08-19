@@ -22,6 +22,7 @@ import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
+import ygame.framework.domain.YBaseDomain;
 import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
@@ -105,7 +106,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent)
+			YScene sceneCurrent , YBaseDomain domain)
 	{
 		if (request.iKEY == domainContext.TO_WALK.iKEY)
 		{
@@ -116,7 +117,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 							.mulLocal(body.getMass()),
 					body.getPosition());
 		}
-		return super.onDealRequest(request, system, sceneCurrent);
+		return super.onDealRequest(request, system, sceneCurrent , domain);
 	}
 
 	/**

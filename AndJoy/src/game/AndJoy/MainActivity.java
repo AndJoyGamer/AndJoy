@@ -34,6 +34,7 @@ import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.core.YSystem.YIOnFPSUpdatedListener;
 import ygame.framework.core.YView;
+import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
@@ -122,7 +123,7 @@ public class MainActivity extends Activity {
 		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// 新建怪物实体
 		domainMonster1 = new YMonsterDomain(Constants.MONSTER1, world, this, -340, 20);
-		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, world, this, -300, 20);
+		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, world, this, -200, 20);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -186,7 +187,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent  ,YBaseDomain domainContext) {
 				// TODO Auto-generated method stub
 				return false;
 			}
@@ -291,7 +292,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent  ,YBaseDomain domainContext) {
 				return false;
 			}
 
@@ -330,7 +331,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent , YBaseDomain domainContext) {
 				return false;
 			}
 

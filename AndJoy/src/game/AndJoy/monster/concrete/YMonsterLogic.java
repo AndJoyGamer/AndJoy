@@ -45,6 +45,12 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private boolean ifInRadar2;
 	
 	private int hp = 100;
+	
+	final YIMonsterStateClocker wait = new WaitClocker();
+	final WalkClocker walk = new WalkClocker();
+	final Attack1Cloker attack1 = new Attack1Cloker();
+	final DamageClocker damage = new DamageClocker();
+	final DeadClocker dead = new DeadClocker();
 
 	protected YMonsterLogic(World world, MainActivity activity, float fInitX_M, float fInitY_M) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
@@ -127,7 +133,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent)
+			YScene sceneCurrent , YBaseDomain domain)
 	{
 		if (request.iKEY == domainContext.TO_WALK.iKEY)
 		{
@@ -138,7 +144,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 							.mulLocal(body.getMass()),
 					body.getPosition());
 		}
-		return super.onDealRequest(request, system, sceneCurrent);
+		return super.onDealRequest(request, system, sceneCurrent , domain);
 	}
 	
 	@Override
@@ -151,7 +157,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				matrix4pv, matrix4Projection, matrix4View);
 		// 5.hp为0时移除实体
 		if (hp == 0)
-			stateMachine.forceSetState(YMonsterState.DEAD);
+			stateMachine.forceSetState(dead);
 	}
 
 	/**
@@ -167,46 +173,40 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	protected YIMonsterStateClocker designStateMachine(
 			YStateMachineBuilder<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> builder)
 	{
-		YMonsterState.WAIT.setStateClocker(new WaitClocker());
-		YMonsterState.WALK.setStateClocker(new WalkClocker());
-		YMonsterState.ATTACK1.setStateClocker(new Attack1Cloker());
-		YMonsterState.DAMAGE.setStateClocker(new DamageClocker());
-		YMonsterState.DEAD.setStateClocker(new DeadClocker());
-		
 		// 待机到行走
-		builder.newTransition().from(YMonsterState.WAIT)
-				.to(YMonsterState.WALK)
+		builder.newTransition().from(wait)
+				.to(walk)
 				.on(domainContext.TO_WALK);
 		// 行走到待机
-		builder.newTransition().from(YMonsterState.WALK)
-				.to(YMonsterState.WAIT)
+		builder.newTransition().from(walk)
+				.to(wait)
 				.on(domainContext.TO_WAIT);
 
 		// 待机到攻1
 		// 行走到攻1
-		builder.newTransition().from(YMonsterState.WAIT)
-				.to(YMonsterState.ATTACK1)
+		builder.newTransition().from(wait)
+				.to(attack1)
 				.on(domainContext.TO_ATTACK1);
-		builder.newTransition().from(YMonsterState.WALK)
-				.to(YMonsterState.ATTACK1)
+		builder.newTransition().from(walk)
+				.to(attack1)
 				.on(domainContext.TO_ATTACK1);
-		builder.onEntry(YMonsterState.ATTACK1).perform(
+		builder.onEntry(attack1).perform(
 				new AttackEnterAction());
 		//攻1到行走
-		builder.newTransition().from(YMonsterState.ATTACK1).to(YMonsterState.WALK).on(domainContext.TO_WALK);
+		builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
 		
 		//行走到受伤
-		builder.newTransition().from(YMonsterState.WALK).to(YMonsterState.DAMAGE).on(domainContext.TO_DAMAGE);
+		builder.newTransition().from(walk).to(damage).on(domainContext.TO_DAMAGE);
 		//攻1到受伤
-		builder.newTransition().from(YMonsterState.ATTACK1).to(YMonsterState.DAMAGE).on(domainContext.TO_DAMAGE);
+		builder.newTransition().from(attack1).to(damage).on(domainContext.TO_DAMAGE);
 		//受伤到行走
-		builder.newTransition().from(YMonsterState.DAMAGE).to(YMonsterState.WALK).on(domainContext.TO_WALK);
-		builder.onEntry(YMonsterState.DAMAGE).perform(new DamageEnterAction());
+		builder.newTransition().from(damage).to(walk).on(domainContext.TO_WALK);
+		builder.onEntry(damage).perform(new DamageEnterAction());
 		
 		//各种状态到死亡
-		builder.newTransition().fromAll().to(YMonsterState.DEAD).on(domainContext.TO_DEAD);
-		builder.onEntry(YMonsterState.DEAD).perform(new DeadEnterAction());
-		return YMonsterState.WAIT;
+		builder.newTransition().fromAll().to(dead).on(domainContext.TO_DEAD);
+		builder.onEntry(dead).perform(new DeadEnterAction());
+		return wait;
 	}
 
 	@Override
@@ -217,11 +217,17 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private void resetState()
 	{
 		if (ifInRadar2)
-			stateMachine.forceSetState(YMonsterState.ATTACK1);
+			stateMachine.forceSetState(attack1);
 		else if(ifInRadar1)
-			stateMachine.forceSetState(YMonsterState.WALK);
+			stateMachine.forceSetState(walk);
 		else
-			stateMachine.forceSetState(YMonsterState.WAIT);
+			stateMachine.forceSetState(wait);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return domainContext.KEY;
 	}
 
 	/******************************** 各状态之详细描述 *****************************************/
@@ -307,11 +313,11 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 	/*************************** 关于攻击1状态 **********************************/
 	private class Attack1Cloker implements YIMonsterStateClocker {
-		// private int[] i_arrFrameIndex =
-		// { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
+		 private int[] i_arrFrameIndex =
+		 { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
 		// private int[] i_arrFrameIndex =
 		// { 17, 18, };
-		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
+//		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
 
 		@Override
 		public void onClock(float fElapseTime_s,
@@ -437,15 +443,24 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			if (fixtureOther.m_userData == "foot") {
-				System.out.println(domainOther.KEY+"进入雷达范围");
-				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
-						.getPosition().x)
-					bRight = false;
-				else
-					bRight = true;
-				domainContext.sendRequest(domainContext.TO_WALK);
-				ifInRadar1 = true;
+			if (null != domainOther
+					&& domainOther.KEY
+							.equals(Constants.SPRITE))
+			{// 与之碰撞的实体确实为精灵
+//				if (fixtureOther.m_userData == "foot")
+				{
+					System.out.println(domainOther.KEY
+							+ "进入雷达范围");
+					if (fixtureOther.getBody()
+							.getPosition().x < fixture
+							.getBody()
+							.getPosition().x)
+						bRight = false;
+					else
+						bRight = true;
+					domainContext.sendRequest(domainContext.TO_WALK);
+					ifInRadar1 = true;
+				}
 			}
 
 		}
@@ -453,15 +468,23 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			if (fixtureOther.m_userData == "foot") {
-				System.out.println("离开雷达范围");
-				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
-						.getPosition().x)
-					bRight = false;
-				else
-					bRight = true;
-				domainContext.sendRequest(domainContext.TO_WAIT);
-				ifInRadar1 = false;
+			if (null != domainOther
+					&& domainOther.KEY
+							.equals(Constants.SPRITE))
+			{// 与之碰撞的实体确实为精灵
+//				if (fixtureOther.m_userData == "foot")
+				{
+					System.out.println("离开雷达范围");
+					if (fixtureOther.getBody()
+							.getPosition().x < fixture
+							.getBody()
+							.getPosition().x)
+						bRight = false;
+					else
+						bRight = true;
+					domainContext.sendRequest(domainContext.TO_WAIT);
+					ifInRadar1 = false;
+				}
 			}
 		}
 	}
@@ -474,7 +497,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE))
 			{//与之碰撞的实体确实为精灵
 //				YSpriteDomain sprite = (YSpriteDomain) domainOther;
-				if (fixtureOther.m_userData == "foot")
+//				if (fixtureOther.m_userData == "foot")
 				{
 					System.out.println("进入攻击范围");
 					if (fixtureOther.getBody()
@@ -496,15 +519,23 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			if (fixtureOther.m_userData == "foot") {
-				System.out.println("离开攻击范围");
-				if (fixtureOther.getBody().getPosition().x < fixture.getBody()
-						.getPosition().x)
-					bRight = false;
-				else
-					bRight = true;
-				domainContext.sendRequest(domainContext.TO_WALK);
-				ifInRadar2 = false;
+			if (null != domainOther
+					&& domainOther.KEY
+							.equals(Constants.SPRITE))
+			{// 与之碰撞的实体确实为精灵
+//				if (fixtureOther.m_userData == "foot")
+				{
+					System.out.println("离开攻击范围");
+					if (fixtureOther.getBody()
+							.getPosition().x < fixture
+							.getBody()
+							.getPosition().x)
+						bRight = false;
+					else
+						bRight = true;
+					domainContext.sendRequest(domainContext.TO_WALK);
+					ifInRadar2 = false;
+				}
 			}
 		}
 	}

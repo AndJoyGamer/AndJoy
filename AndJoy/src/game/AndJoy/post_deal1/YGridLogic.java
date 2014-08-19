@@ -45,7 +45,7 @@ public class YGridLogic extends YADomainLogic
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent)
+			YScene sceneCurrent , YBaseDomain domainContext)
 	{
 		// TODO Auto-generated method stub
 		return false;
