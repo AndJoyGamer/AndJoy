@@ -256,7 +256,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
 			iRowIndex = iRowStartIndex;
 			iColumnIndex = iColStartIndex + iFrame;
-			body.applyForce(vecAntiGrav, body.getPosition());
+			if (!ifOnLand)
+				body.applyForce(vecAntiGrav, body.getPosition());
 		}
 	}
 
@@ -313,11 +314,11 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 	/*************************** 关于攻击1状态 **********************************/
 	private class Attack1Cloker implements YIMonsterStateClocker {
-		 private int[] i_arrFrameIndex =
-		 { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
+//		 private int[] i_arrFrameIndex =
+//		 { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
 		// private int[] i_arrFrameIndex =
 		// { 17, 18, };
-//		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
+		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
 
 		@Override
 		public void onClock(float fElapseTime_s,
@@ -427,6 +428,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YAMonsterDomainLogic<?> context,
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
 			fFrames = 0;
+			bLockOrientation = true;
 //			Vec2 v1 = body.getLinearVelocity();
 //			Vec2 v2 = new Vec2(!bRight ? vec2Right
 //					: vec2Left);
@@ -546,18 +548,29 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			// TODO Auto-generated method stub
-			iFootContact++;
-			System.out.println(domainContext.KEY + "脚步碰撞");
-			ifOnLand = true;
+			//XXX temp code
+			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）；
+			//之后可能有改动，会把地图实体的引用传过来
+			if(null == domainOther)
+			{
+				iFootContact++;
+				System.out.println(domainContext.KEY + "脚步碰撞");
+				ifOnLand = true;
+			}
 		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther) {
-			iFootContact--;
-			if(iFootContact==0){
-				ifOnLand=false;
+			//XXX temp code
+			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			//之后可能有改动，会把地图实体的引用传过来
+			if(null == domainOther)
+			{
+				iFootContact--;
+				if(iFootContact==0){
+					ifOnLand=false;
+				}
 			}
 		}
 	}

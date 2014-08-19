@@ -2,7 +2,6 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
-import game.AndJoy.common.Constants;
 import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.YASpriteDomainLogic;
@@ -41,6 +40,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 	private boolean ifRightSide;
 	//怪物实体的KEY
 	private String monsterKey;
+	
+	private boolean bOnLand;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
@@ -222,7 +223,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
 			iRowIndex = iRowStartIndex;
 			iColumnIndex = iColStartIndex + iFrame;
-			body.applyForce(vecAntiGrav, body.getPosition());
+			if (bOnLand)
+				body.applyForce(vecAntiGrav, body.getPosition());
 		}
 	}
 
@@ -367,13 +369,13 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			body.applyForce(vecAntiGrav, body.getPosition());
 			
 			if (ifRightSide == bRight && ifInRadar)
-				//确定精灵方向与怪物所在方向相同
-				{
-				YMonsterDomain monster= (YMonsterDomain) system
+			// 确定精灵方向与怪物所在方向相同
+			{
+				YMonsterDomain monster = (YMonsterDomain) system
 						.queryDomainByKey(monsterKey);
 				if (null != monster)
 					monster.sendRequest(monster.TO_DAMAGE);
-				}				
+			}			
 		}
 	}
 
@@ -461,9 +463,16 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YABaseDomain domainOther)
 		{
 			System.out.println("脚步碰撞");
-			++iFootContact;
-			if (YSpriteState.JUMP == stateMachine.getCurrentState())
-				resetState();
+			//XXX temp code
+			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			//之后可能有改动，会把地图实体的引用传过来
+			if(null == domainOther)
+			{
+				++iFootContact;
+				bOnLand = true;
+				if (YSpriteState.JUMP == stateMachine.getCurrentState())
+					resetState();
+			}
 		}
 
 		@Override
@@ -471,11 +480,20 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YABaseDomain domainOther)
 		{
 			System.out.println("脚步离开");
-			--iFootContact;
-			if (iFootContact == 0)
-				if (YSpriteState.JUMP != stateMachine
-						.getCurrentState())
-					stateMachine.forceSetState(YSpriteState.JUMP);
+			//XXX temp code
+			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			//之后可能有改动，会把地图实体的引用传过来
+			if(null == domainOther)
+			{
+				--iFootContact;
+				if (iFootContact == 0)
+				{
+					bOnLand = false;
+					if (YSpriteState.JUMP != stateMachine
+							.getCurrentState())
+						stateMachine.forceSetState(YSpriteState.JUMP);
+				}
+			}
 		}
 	}
 	
