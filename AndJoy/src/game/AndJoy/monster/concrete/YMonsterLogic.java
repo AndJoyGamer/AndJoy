@@ -17,6 +17,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import ygame.domain.YDomain;
+import ygame.extension.domain.YProgressBarDomain;
 import ygame.extension.with_third_party.YIOnContactListener;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
@@ -51,8 +52,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	final Attack1Cloker attack1 = new Attack1Cloker();
 	final DamageClocker damage = new DamageClocker();
 	final DeadClocker dead = new DeadClocker();
+	final private String keyHP;
 
-	protected YMonsterLogic(World world, MainActivity activity, float fInitX_M, float fInitY_M) {
+	protected YMonsterLogic(World world, String keyHP, MainActivity activity, float fInitX_M, float fInitY_M) {
 		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
 				22), 13, world);
 		this.fInitX_M = fInitX_M;
@@ -61,6 +63,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		//fInitY_M = 20;
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
+		this.keyHP = keyHP;
 	}
 	
 	@Override
@@ -155,9 +158,19 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	{
 		super.onCycle(dbElapseTime_s, domainContext, bundle, system, sceneCurrent,
 				matrix4pv, matrix4Projection, matrix4View);
+		YProgressBarDomain domainHP = (YProgressBarDomain) system.queryDomainByKey(keyHP);
+		if(null != domainHP)
+		{
+			Vec2 pos = body.getPosition();
+			domainHP.setPosition(pos.x, pos.y + 3, 1);
+			domainHP.setProgress(1 - hp / 100.0f);
+		}
 		// 5.hp为0时移除实体
 		if (hp == 0)
+		{
 			stateMachine.forceSetState(dead);
+			system.getCurrentScene().removeDomains(keyHP);
+		}
 	}
 
 	/**
@@ -511,6 +524,12 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 						bRight = true;
 					domainContext.sendRequest(domainContext.TO_ATTACK1);
 					ifInRadar2 = true;
+					
+					YSpriteDomain sprite = (YSpriteDomain) system
+							.queryDomainByKey(Constants.SPRITE);
+					if (null != sprite)
+						sprite.damage(bRight ? Orientation.RIGHT
+								: Orientation.LEFT);
 					// domainSprite.sendRequest(domainSprite.TO_DAMAGE);
 //					sprite.damage(bRight ? Orientation.RIGHT : Orientation.LEFT);
 				}

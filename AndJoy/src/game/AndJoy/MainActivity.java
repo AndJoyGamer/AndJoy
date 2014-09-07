@@ -18,6 +18,7 @@ import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.YTiledJsonParser;
+import ygame.extension.domain.YProgressBarDomain;
 import ygame.extension.domain.tilemap.YTileMapDomain;
 import ygame.extension.primitives.YRectangle;
 import ygame.extension.primitives.YSphere;
@@ -27,6 +28,7 @@ import ygame.extension.with_third_party.YTiledJson_Box2dParser;
 import ygame.extension.with_third_party.YWorld;
 import ygame.framebuffer.YFBOScene;
 import ygame.framework.YIResultCallback;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
 import ygame.framework.core.YClusterDomain;
 import ygame.framework.core.YRequest;
@@ -122,8 +124,10 @@ public class MainActivity extends Activity {
 		// 新建精灵实体
 		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// 新建怪物实体
-		domainMonster1 = new YMonsterDomain(Constants.MONSTER1, world, this, -340, 20);
-		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, world, this, -200, 20);
+		domainMonster1 = new YMonsterDomain(Constants.MONSTER1, Constants.MONSTER1_HP,  world, this, -340, 20);
+		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, Constants.MONSTER2_HP,world, this, -200, 20);
+		YProgressBarDomain monster1Hp = new YProgressBarDomain(Constants.MONSTER1_HP, getResources(), 5, 0.5f);
+		YProgressBarDomain monster2Hp = new YProgressBarDomain(Constants.MONSTER2_HP, getResources(), 5, 0.5f);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -132,6 +136,17 @@ public class MainActivity extends Activity {
 		// mainScene.addDomains(feiKuaiMapDomains);
 		mainScene.addDomains(getFeiKuaiMapDomains(world));
 		mainScene.addDomains(domainSprite, domainMonster1,domainMonster2,getBkgDomain());
+		mainScene.addDomains(monster1Hp , monster2Hp);
+		
+//		mainScene.addDomains(new YMonsterDomain("m3", world, this, -100, 20));
+//		mainScene.addDomains(new YMonsterDomain("m4", world, this, -130, 20));
+//		mainScene.addDomains(new YMonsterDomain("m5", world, this, -160, 20));
+//		mainScene.addDomains(new YMonsterDomain("m6", world, this, -190, 20));
+//		mainScene.addDomains(new YMonsterDomain("m7", world, this, -220, 20));
+//		for (int i = 0; i < 10; i++)
+//			mainScene.addDomains(new YMonsterDomain("mm" + i,
+//					world, this, -250 - 30 * i, 20));
+		
 		// mainScene.addDomains(domainMonster, getBkgDomain());
 		// mainScene.addDomains(getTest2SandBoxDomain());//球
 		// // 特别地，场景处理实体

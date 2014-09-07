@@ -25,29 +25,28 @@ public final class R {
         public static final int fenkuai_left=0x7f020001;
         public static final int fenkuai_right=0x7f020002;
         public static final int fyy=0x7f020003;
-        public static final int hero=0x7f020004;
-        public static final int hero_big=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int map0=0x7f020007;
-        public static final int map1=0x7f020008;
-        public static final int map10=0x7f020009;
-        public static final int map11=0x7f02000a;
-        public static final int map12=0x7f02000b;
-        public static final int map13=0x7f02000c;
-        public static final int map14=0x7f02000d;
-        public static final int map15=0x7f02000e;
-        public static final int map2=0x7f02000f;
-        public static final int map3=0x7f020010;
-        public static final int map4=0x7f020011;
-        public static final int map5=0x7f020012;
-        public static final int map6=0x7f020013;
-        public static final int map7=0x7f020014;
-        public static final int map8=0x7f020015;
-        public static final int map9=0x7f020016;
-        public static final int shan=0x7f020017;
-        public static final int test_tile=0x7f020018;
-        public static final int vertical_index_pic=0x7f020019;
-        public static final int yewai=0x7f02001a;
+        public static final int hero_big=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int map0=0x7f020006;
+        public static final int map1=0x7f020007;
+        public static final int map10=0x7f020008;
+        public static final int map11=0x7f020009;
+        public static final int map12=0x7f02000a;
+        public static final int map13=0x7f02000b;
+        public static final int map14=0x7f02000c;
+        public static final int map15=0x7f02000d;
+        public static final int map2=0x7f02000e;
+        public static final int map3=0x7f02000f;
+        public static final int map4=0x7f020010;
+        public static final int map5=0x7f020011;
+        public static final int map6=0x7f020012;
+        public static final int map7=0x7f020013;
+        public static final int map8=0x7f020014;
+        public static final int map9=0x7f020015;
+        public static final int shan=0x7f020016;
+        public static final int test_tile=0x7f020017;
+        public static final int vertical_index_pic=0x7f020018;
+        public static final int yewai=0x7f020019;
     }
     public static final class id {
         public static final int BtnJump=0x7f090004;
@@ -68,14 +67,15 @@ public final class R {
     public static final class raw {
         public static final int frame_vsh=0x7f040000;
         public static final int mi2_huge=0x7f040001;
-        public static final int sandbox_vsh=0x7f040002;
-        public static final int simple_fsh=0x7f040003;
-        public static final int simple_vsh=0x7f040004;
-        public static final int test_tilemap_fsh=0x7f040005;
-        public static final int texture_fsh=0x7f040006;
-        public static final int texture_vsh=0x7f040007;
-        public static final int texture_wave_fsh=0x7f040008;
-        public static final int tilemap_fsh=0x7f040009;
+        public static final int progress_bar=0x7f040002;
+        public static final int sandbox_vsh=0x7f040003;
+        public static final int simple_fsh=0x7f040004;
+        public static final int simple_vsh=0x7f040005;
+        public static final int test_tilemap_fsh=0x7f040006;
+        public static final int texture_fsh=0x7f040007;
+        public static final int texture_vsh=0x7f040008;
+        public static final int texture_wave_fsh=0x7f040009;
+        public static final int tilemap_fsh=0x7f04000a;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
