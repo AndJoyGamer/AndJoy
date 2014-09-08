@@ -28,7 +28,7 @@ import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 
-class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
+class YSpriteLogic extends YASpriteDomainLogic
 {
 	private float fFrames;
 	// 受伤状态维持的周期计数
@@ -111,7 +111,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 	protected boolean onDealRequest(YRequest request, YSystem system,
 			YScene sceneCurrent, YBaseDomain domain)
 	{
-		if (request.iKEY == domainContext.TO_WALK.iKEY)
+		if (request.iKEY == YSpriteDomain.TO_WALK)
 		{
 			Vec2 vec2 = new Vec2(body.getLinearVelocity());
 			vec2.x = bRight ? 10 : -10;
@@ -135,7 +135,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 	 */
 	@Override
 	protected YIStateClocker designStateMachine(
-			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder)
+			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic> builder)
 	{
 		YSpriteState.WAIT.setStateClocker(new WaitClocker());
 		YSpriteState.WALK.setStateClocker(new WalkClocker());
@@ -146,21 +146,21 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		// 待机到行走
 		builder.newTransition().from(YSpriteState.WAIT)
 				.to(YSpriteState.WALK)
-				.on(domainContext.TO_WALK);
+				.on(new SpriteReq(YSpriteDomain.TO_WALK));
 		// 行走到待机
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.WAIT)
-				.on(domainContext.TO_WAIT);
+				.on(new SpriteReq(YSpriteDomain.TO_WAIT));
 
 		// 待机到跳
 		// 行走到跳
 		JumpUpAction action = new JumpUpAction();
 		builder.newTransition().from(YSpriteState.WAIT)
 				.to(YSpriteState.JUMP)
-				.on(domainContext.TO_JUMP).perform(action);
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.JUMP)
-				.on(domainContext.TO_JUMP).perform(action);
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
 		builder.onEntry(YSpriteState.JUMP).perform(
 				new JumpEnterAction());
 
@@ -168,10 +168,10 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		// 行走到攻1
 		builder.newTransition().from(YSpriteState.WAIT)
 				.to(YSpriteState.ATTACK1)
-				.on(domainContext.TO_ATTACK1);
+				.on(new SpriteReq(YSpriteDomain.TO_ATTACK1));
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.ATTACK1)
-				.on(domainContext.TO_ATTACK1);
+				.on(new SpriteReq(YSpriteDomain.TO_ATTACK1));
 		builder.onEntry(YSpriteState.ATTACK1).perform(
 				new AttackEnterAction());
 
@@ -179,10 +179,10 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		// 行走到受伤
 		builder.newTransition().from(YSpriteState.WAIT)
 				.to(YSpriteState.DAMAGE)
-				.on(domainContext.TO_DAMAGE);
+				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.DAMAGE)
-				.on(domainContext.TO_DAMAGE);
+				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		builder.onEntry(YSpriteState.DAMAGE).perform(
 				new DamageEnterAction());
 		return YSpriteState.JUMP;
@@ -200,7 +200,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			bRight = false;
 			return YConstants.Orientation.LEFT;
 		}
-		return null;
+		return super.updateCurrentOrientation();
 	}
 
 	private void resetState()
@@ -231,7 +231,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
@@ -254,7 +254,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			bLockOrientation = false;
@@ -277,7 +277,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			bLockOrientation = false;
@@ -294,7 +294,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			iRowIndex = 1;
@@ -308,7 +308,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	private class JumpUpAction
 			implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 
 		@Override
@@ -316,8 +316,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YIStateClocker from,
 				YIStateClocker to,
 				YRequest causedBy,
-				YASpriteDomainLogic<?> context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
+				YASpriteDomainLogic context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			bLockOrientation = true;
 			Vec2 v1 = body.getLinearVelocity();
@@ -332,7 +332,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	private class JumpEnterAction
 			implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 
 		@Override
@@ -340,8 +340,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YIStateClocker from,
 				YIStateClocker to,
 				YRequest causedBy,
-				YASpriteDomainLogic<?> context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
+				YASpriteDomainLogic context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			Vec2 v1 = body.getLinearVelocity();
 			if (Math.abs(v1.x) <= 40)
@@ -368,7 +368,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			int iFrame = (int) ((fFrames += fElapseTime_s * 10) % i_arrFrameIndex.length);
@@ -395,7 +395,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	private class AttackEnterAction
 			implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 		private Vec2 vec2Right = new Vec2(120, -100);
 		private Vec2 vec2Left = new Vec2(-120, -100);
@@ -405,8 +405,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YIStateClocker from,
 				YIStateClocker to,
 				YRequest causedBy,
-				YASpriteDomainLogic<?> context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
+				YASpriteDomainLogic context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			body.applyForce(vecAntiGrav, body.getPosition());
 			bLockOrientation = true;
@@ -430,7 +430,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic<?> domainLogicContext,
+				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
 			super.onClock(fElapseTime_s, domainLogicContext,
@@ -442,7 +442,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	private class DamageEnterAction
 			implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 		private Vec2 vec2Right = new Vec2(30, -50);
 		private Vec2 vec2Left = new Vec2(-30, -50);
@@ -452,8 +452,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YIStateClocker from,
 				YIStateClocker to,
 				YRequest causedBy,
-				YASpriteDomainLogic<?> context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
+				YASpriteDomainLogic context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			iDamageCounts = 0;
 			// body.applyForce(vecAntiGrav, body.getPosition());

@@ -24,7 +24,7 @@ enum YSpriteState implements YIStateClocker
 
 	@Override
 	public void onClock(float fElapseTime_s,
-			YASpriteDomainLogic<?> domainLogicContext,
+			YASpriteDomainLogic domainLogicContext,
 			YSystem system, YScene sceneCurrent)
 	{
 		clocker.onClock(fElapseTime_s, domainLogicContext, system,

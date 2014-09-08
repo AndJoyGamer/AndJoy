@@ -415,7 +415,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.sendRequest(domainSprite.TO_JUMP);
+				domainSprite.jump();
 			return false;
 		}
 	}
@@ -425,7 +425,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.sendRequest(domainSprite.TO_ATTACK1);
+				domainSprite.attack();
 			return false;
 		}
 	}
@@ -441,7 +441,7 @@ public class MainActivity extends Activity {
 					bRightPressing = true;
 				else
 					bLeftPressing = true;
-				domainSprite.sendRequest(domainSprite.TO_WALK);
+				domainSprite.walk();
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -449,7 +449,7 @@ public class MainActivity extends Activity {
 					bRightPressing = false;
 				else
 					bLeftPressing = false;
-				domainSprite.sendRequest(domainSprite.TO_WAIT);
+				domainSprite.waiting();
 				break;
 
 			default:
