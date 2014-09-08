@@ -1,7 +1,7 @@
 package game.AndJoy.sprite.concrete;
 
-import game.AndJoy.sprite.YASpriteDomainLogic;
-import game.AndJoy.sprite.YIStateClocker;
+import ygame.extension.domain.sprite.YASpriteDomainLogic;
+import ygame.extension.domain.sprite.YIStateClocker;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 

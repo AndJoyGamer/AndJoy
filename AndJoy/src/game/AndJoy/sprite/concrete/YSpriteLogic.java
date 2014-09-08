@@ -4,8 +4,6 @@ import game.AndJoy.MainActivity;
 import game.AndJoy.R;
 import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.concrete.YMonsterDomain;
-import game.AndJoy.sprite.YASpriteDomainLogic;
-import game.AndJoy.sprite.YIStateClocker;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
 import org.jbox2d.collision.shapes.CircleShape;
@@ -16,6 +14,9 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import ygame.common.YConstants;
+import ygame.extension.domain.sprite.YASpriteDomainLogic;
+import ygame.extension.domain.sprite.YIStateClocker;
 import ygame.extension.with_third_party.YIOnContactListener;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
@@ -27,30 +28,31 @@ import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 
-
 class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 {
 	private float fFrames;
-	//受伤状态维持的周期计数
+	// 受伤状态维持的周期计数
 	private int iDamageCounts;
 	private MainActivity activity;
 	private Vec2 vecAntiGrav;
 	private boolean ifInRadar;
-	//怪物是否在右边
+	// 怪物是否在右边
 	private boolean ifRightSide;
-	//怪物实体的KEY
+	// 怪物实体的KEY
 	private String monsterKey;
-	
+
 	private boolean bOnLand;
+
+	private boolean bRight = true;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
 				activity.getResources(), 3, 22), 13, world);
-//		fInitX_M = 200;
-		fInitX_M = (44-128) * 5;
-		//for FeiKuai
-//		fInitX_M = -60;
+		// fInitX_M = 200;
+		fInitX_M = (44 - 128) * 5;
+		// for FeiKuai
+		// fInitX_M = -60;
 		fInitY_M = 50;
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
@@ -90,10 +92,10 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		def.isSensor = true;
 		Fixture fixtureFoot = body.createFixture(def);
 		fixtureFoot.setOnContactListener(new FootContactLsn());
-		
+
 		// 感应攻击雷达
 		CircleShape shapeRadar = new CircleShape();
-		shapeRadar.setRadius(fBodySideLen/2);
+		shapeRadar.setRadius(fBodySideLen / 2);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -107,7 +109,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent , YBaseDomain domain)
+			YScene sceneCurrent, YBaseDomain domain)
 	{
 		if (request.iKEY == domainContext.TO_WALK.iKEY)
 		{
@@ -118,7 +120,8 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 							.mulLocal(body.getMass()),
 					body.getPosition());
 		}
-		return super.onDealRequest(request, system, sceneCurrent , domain);
+		return super.onDealRequest(request, system, sceneCurrent,
+				domain);
 	}
 
 	/**
@@ -171,22 +174,33 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				.on(domainContext.TO_ATTACK1);
 		builder.onEntry(YSpriteState.ATTACK1).perform(
 				new AttackEnterAction());
-		
-		//待机到受伤
-		//行走到受伤
-		builder.newTransition().from(YSpriteState.WAIT).to(YSpriteState.DAMAGE).on(domainContext.TO_DAMAGE);
-		builder.newTransition().from(YSpriteState.WALK).to(YSpriteState.DAMAGE).on(domainContext.TO_DAMAGE);
-		builder.onEntry(YSpriteState.DAMAGE).perform(new DamageEnterAction());
+
+		// 待机到受伤
+		// 行走到受伤
+		builder.newTransition().from(YSpriteState.WAIT)
+				.to(YSpriteState.DAMAGE)
+				.on(domainContext.TO_DAMAGE);
+		builder.newTransition().from(YSpriteState.WALK)
+				.to(YSpriteState.DAMAGE)
+				.on(domainContext.TO_DAMAGE);
+		builder.onEntry(YSpriteState.DAMAGE).perform(
+				new DamageEnterAction());
 		return YSpriteState.JUMP;
 	}
 
 	@Override
-	protected void confirmOrientation()
+	protected YConstants.Orientation updateCurrentOrientation()
 	{
 		if (activity.bRightPressing)
+		{
 			bRight = true;
-		else if (activity.bLeftPressing)
+			return YConstants.Orientation.RIGHT;
+		} else if (activity.bLeftPressing)
+		{
 			bRight = false;
+			return YConstants.Orientation.LEFT;
+		}
+		return null;
 	}
 
 	private void resetState()
@@ -367,7 +381,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			iRowIndex = (i_arrFrameIndex[iFrame] - 1) / 22;
 			iColumnIndex = (i_arrFrameIndex[iFrame] - 1) % 22;
 			body.applyForce(vecAntiGrav, body.getPosition());
-			
+
 			if (ifRightSide == bRight && ifInRadar)
 			// 确定精灵方向与怪物所在方向相同
 			{
@@ -375,7 +389,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 						.queryDomainByKey(monsterKey);
 				if (null != monster)
 					monster.sendRequest(monster.TO_DAMAGE);
-			}			
+			}
 		}
 	}
 
@@ -405,7 +419,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 					body.getPosition());
 		}
 	}
-	
+
 	/*************************** 关于受伤状态 **********************************/
 	private class DamageCloker extends BaseClocker
 	{
@@ -413,19 +427,22 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 		{
 			super(0, 1, 10, 0);
 		}
-		
+
 		@Override
 		public void onClock(float fElapseTime_s,
 				YASpriteDomainLogic<?> domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
-			super.onClock(fElapseTime_s, domainLogicContext, system, sceneCurrent);
-			if(iDamageCounts ++ > 30)
+			super.onClock(fElapseTime_s, domainLogicContext,
+					system, sceneCurrent);
+			if (iDamageCounts++ > 30)
 				resetState();
 		}
 	}
-	
-	private class DamageEnterAction implements YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
+
+	private class DamageEnterAction
+			implements
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic<?>>
 	{
 		private Vec2 vec2Right = new Vec2(30, -50);
 		private Vec2 vec2Left = new Vec2(-30, -50);
@@ -439,7 +456,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine)
 		{
 			iDamageCounts = 0;
-//			body.applyForce(vecAntiGrav, body.getPosition());
+			// body.applyForce(vecAntiGrav, body.getPosition());
 			SpriteReq req = (SpriteReq) causedBy;
 			boolean bAttackFromRight = Orientation.RIGHT == req.orientation;
 			Vec2 v1 = body.getLinearVelocity();
@@ -451,7 +468,7 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 					body.getPosition());
 		}
 	}
-	
+
 	/**************************************************************************/
 
 	private class FootContactLsn implements YIOnContactListener
@@ -463,14 +480,15 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YABaseDomain domainOther)
 		{
 			System.out.println("脚步碰撞");
-			//XXX temp code
-			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
-			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther)
+			// XXX temp code
+			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			// 之后可能有改动，会把地图实体的引用传过来
+			if (null == domainOther)
 			{
 				++iFootContact;
 				bOnLand = true;
-				if (YSpriteState.JUMP == stateMachine.getCurrentState())
+				if (YSpriteState.JUMP == stateMachine
+						.getCurrentState())
 					resetState();
 			}
 		}
@@ -480,10 +498,10 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 				YABaseDomain domainOther)
 		{
 			System.out.println("脚步离开");
-			//XXX temp code
-			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
-			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther)
+			// XXX temp code
+			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			// 之后可能有改动，会把地图实体的引用传过来
+			if (null == domainOther)
 			{
 				--iFootContact;
 				if (iFootContact == 0)
@@ -496,26 +514,30 @@ class YSpriteLogic extends YASpriteDomainLogic<YSpriteDomain>
 			}
 		}
 	}
-	
-	private class RadarContactLsn implements YIOnContactListener {
+
+	private class RadarContactLsn implements YIOnContactListener
+	{
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
-			if (null != domainOther && domainOther.KEY.contains("monster"))
-				{//与之碰撞的实体确实为怪物
-					ifRightSide = fixtureOther.getBody()
-							.getPosition().x > fixture
-							.getBody()
-							.getPosition().x ? true : false;
-					ifInRadar = true;
-					monsterKey = domainOther.KEY;
-				}
+				YABaseDomain domainOther)
+		{
+			if (null != domainOther
+					&& domainOther.KEY.contains("monster"))
+			{// 与之碰撞的实体确实为怪物
+				ifRightSide = fixtureOther.getBody()
+						.getPosition().x > fixture
+						.getBody().getPosition().x ? true
+						: false;
+				ifInRadar = true;
+				monsterKey = domainOther.KEY;
 			}
+		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther)
+		{
 			// TODO Auto-generated method stub
 			ifInRadar = false;
 			monsterKey = null;
