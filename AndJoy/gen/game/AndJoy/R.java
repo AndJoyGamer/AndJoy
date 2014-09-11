@@ -21,32 +21,47 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int city=0x7f020000;
-        public static final int fenkuai_left=0x7f020001;
-        public static final int fenkuai_right=0x7f020002;
-        public static final int fyy=0x7f020003;
-        public static final int hero_big=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
-        public static final int map0=0x7f020006;
-        public static final int map1=0x7f020007;
-        public static final int map10=0x7f020008;
-        public static final int map11=0x7f020009;
-        public static final int map12=0x7f02000a;
-        public static final int map13=0x7f02000b;
-        public static final int map14=0x7f02000c;
-        public static final int map15=0x7f02000d;
-        public static final int map2=0x7f02000e;
-        public static final int map3=0x7f02000f;
-        public static final int map4=0x7f020010;
-        public static final int map5=0x7f020011;
-        public static final int map6=0x7f020012;
-        public static final int map7=0x7f020013;
-        public static final int map8=0x7f020014;
-        public static final int map9=0x7f020015;
-        public static final int shan=0x7f020016;
-        public static final int test_tile=0x7f020017;
-        public static final int vertical_index_pic=0x7f020018;
-        public static final int yewai=0x7f020019;
+        public static final int attack=0x7f020000;
+        public static final int btn_blue=0x7f020001;
+        public static final int btn_blue_normal=0x7f020002;
+        public static final int btn_white=0x7f020003;
+        public static final int btn_white_normal=0x7f020004;
+        public static final int btn_white_pressed=0x7f020005;
+        public static final int city=0x7f020006;
+        public static final int fenkuai_left=0x7f020007;
+        public static final int fenkuai_right=0x7f020008;
+        public static final int fyy=0x7f020009;
+        public static final int hero_big=0x7f02000a;
+        public static final int ic_launcher=0x7f02000b;
+        public static final int jump=0x7f02000c;
+        public static final int map0=0x7f02000d;
+        public static final int map1=0x7f02000e;
+        public static final int map10=0x7f02000f;
+        public static final int map11=0x7f020010;
+        public static final int map12=0x7f020011;
+        public static final int map13=0x7f020012;
+        public static final int map14=0x7f020013;
+        public static final int map15=0x7f020014;
+        public static final int map2=0x7f020015;
+        public static final int map3=0x7f020016;
+        public static final int map4=0x7f020017;
+        public static final int map5=0x7f020018;
+        public static final int map6=0x7f020019;
+        public static final int map7=0x7f02001a;
+        public static final int map8=0x7f02001b;
+        public static final int map9=0x7f02001c;
+        public static final int shan=0x7f02001d;
+        public static final int skill1=0x7f02001e;
+        public static final int skill2=0x7f02001f;
+        public static final int skill3=0x7f020020;
+        public static final int skill4=0x7f020021;
+        public static final int skill5=0x7f020022;
+        public static final int test_tile=0x7f020023;
+        public static final int vertical_index_pic=0x7f020024;
+        public static final int wheel_bg=0x7f020025;
+        public static final int wheel_val=0x7f020026;
+        public static final int white=0x7f020028;
+        public static final int yewai=0x7f020027;
     }
     public static final class id {
         public static final int BtnJump=0x7f090004;
@@ -55,8 +70,9 @@ public final class R {
         public static final int BtnScene=0x7f090001;
         public static final int BtnXuanfeng=0x7f090005;
         public static final int YView=0x7f090000;
-        public static final int action_settings=0x7f090007;
-        public static final int tvFPS=0x7f090006;
+        public static final int action_settings=0x7f090008;
+        public static final int tvFPS=0x7f090007;
+        public static final int wv_skills=0x7f090006;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

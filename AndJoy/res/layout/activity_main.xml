@@ -1,8 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:layout_height="match_parent" >
 
     <ygame.framework.core.YView
         android:id="@+id/YView"
@@ -21,40 +20,64 @@
 
     <Button
         android:id="@+id/BtnLeft"
-        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="@string/left" />
+        android:text="@string/left"
+        android:textSize="30sp" />
 
     <Button
         android:id="@+id/BtnRight"
-        android:textSize="30sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/BtnLeft"
         android:layout_toRightOf="@id/BtnLeft"
-        android:text="@string/right" >
-    </Button>
+        android:text="@string/right"
+        android:textSize="30sp" />
 
-    <Button
+    <ImageView
         android:id="@+id/BtnJump"
-        android:textSize="30sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="@string/jump" />
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_white"
+        android:clickable="true"
+        android:padding="7dp"
+        android:src="@drawable/jump" />
 
-    <Button
-        android:textSize="20sp"
+    <ImageView
         android:id="@+id/BtnXuanfeng"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_toLeftOf="@id/BtnJump"
+        android:background="@drawable/btn_white"
+        android:clickable="true"
+        android:src="@drawable/attack" />
+
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/BtnJump"
+        android:layout_height="120dp"
+        android:layout_above="@id/BtnXuanfeng"
         android:layout_alignParentRight="true"
-        android:text="@string/xuanfeng" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/btn_blue"
+        android:paddingBottom="5dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingTop="5dp" >
+
+        <ygame.extension.third_party.kankan.wheel.widget.WheelView
+            android:id="@+id/wv_skills"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvFPS"
