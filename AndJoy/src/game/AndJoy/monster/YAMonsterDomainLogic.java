@@ -1,4 +1,4 @@
-package game.AndJoy.sprite;
+package game.AndJoy.monster;
 
 import game.AndJoy.common.YMirrorYSquare;
 
@@ -25,13 +25,13 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 import ygame.transformable.YMover;
 
-public abstract class YASpriteDomainLogic<D extends YDomain> extends
+public abstract class YAMonsterDomainLogic<D extends YDomain> extends
 		YADomainLogic {
 	private static final float RAD2DEG = 180 / MathUtils.PI;
 
 	protected int iRowIndex;
 	protected int iColumnIndex;
-	protected boolean bRight = true;
+	protected boolean bRight = false;
 	protected boolean bLockOrientation;
 
 	final private YTileSheet tileSheet;
@@ -40,16 +40,18 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	final protected float fSkeletonSideLen;
 	final protected YMover mover = new YMover();
 
-	protected StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine;
+	protected StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine;
 	protected Body body;
 	protected D domainContext;
 
 	protected float fInitX_M;
 	protected float fInitY_M;
+	
+//	protected int hp = 100;
+	
+	protected World world;
 
-	private World world;
-
-	protected YASpriteDomainLogic(YTileSheet tileSheet, float fSkeletonSideLen,
+	protected YAMonsterDomainLogic(YTileSheet tileSheet, float fSkeletonSideLen,
 			World world) {
 		this.fSkeletonSideLen = fSkeletonSideLen;
 		this.tileSheet = tileSheet;
@@ -67,9 +69,9 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 		this.domainContext = (D) domainContext;
 		super.onAttach(system, domainContext);
 		// 设计状态机
-		YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder = YStateMachineBuilder
-				.create(YIStateClocker.class, YRequest.class);
-		YIStateClocker stateInit = designStateMachine(builder);
+		YStateMachineBuilder<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> builder = YStateMachineBuilder
+				.create(YIMonsterStateClocker.class, YRequest.class);
+		YIMonsterStateClocker stateInit = designStateMachine(builder);
 		this.stateMachine = builder.buildTransitionTemplate().newStateMachine(
 				stateInit, this);
 
@@ -78,7 +80,7 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 		bd.type = BodyType.DYNAMIC;
 		bd.position.set(fInitX_M, fInitY_M);
 		this.body = world.createBody(bd);
-		world = null;// 释放之
+		//world = null;// 释放之
 		body.setDomain(domainContext);
 		body.setFixedRotation(true);
 		designBody(body);
@@ -100,8 +102,8 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	 *            状态机构建器
 	 * @return 状态机初始状态
 	 */
-	protected abstract YIStateClocker designStateMachine(
-			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder);
+	protected abstract YIMonsterStateClocker designStateMachine(
+			YStateMachineBuilder<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> builder);
 
 	/**
 	 * 确认当前朝向，根据输入，确认朝向是左还是右，即修改{@link #bRight}；
@@ -125,20 +127,25 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 		mover.setX(position.x).setY(position.y)
 				.setAngle(body.getAngle() * RAD2DEG);
 		// 3.摄像机追踪角色
-		sceneCurrent.getCurrentCamera().setX(position.x).setY(position.y);
+		//sceneCurrent.getCurrentCamera().setX(position.x).setY(position.y);
 		// 4.将参数交予着色程序渲染
 		YTileProgram.YAdapter adapter = (YTileProgram.YAdapter) domainContext
 				.getParametersAdapter();
 		adapter.paramFramePosition(iRowIndex, iColumnIndex)
 				.paramFrameSheet(tileSheet).paramMatrixPV(matrix4pv)
 				.paramMover(mover).paramSkeleton(skeletonCurrent);
-
+//		// 5.hp为0时移除实体
+//		if(hp==0){			
+//			system.getCurrentScene().removeDomains(domainContext.KEY);
+//			world.destroyBody(body);
+//			world=null;
+//		}
 	}
 
 	// 将请求交付状态机模型处理
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent) {
+			YScene sceneCurrent , YBaseDomain domainContext) {
 		return stateMachine.inputRequest(request);
 	}
 

@@ -18,6 +18,7 @@ import ygame.extension.program.YSimpleProgram;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
+import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
@@ -75,7 +76,7 @@ public final class YBox2dTestUtils {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent , YBaseDomain domainContext) {
 				return false;
 			}
 
@@ -136,7 +137,7 @@ public final class YBox2dTestUtils {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent ,  YBaseDomain domainContext) {
 				return false;
 			}
 

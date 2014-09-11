@@ -1,13 +1,13 @@
 package game.AndJoy.sprite.concrete;
 
-import game.AndJoy.sprite.YASpriteDomainLogic;
-import game.AndJoy.sprite.YIStateClocker;
+import ygame.extension.domain.sprite.YASpriteDomainLogic;
+import ygame.extension.domain.sprite.YIStateClocker;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 
 enum YSpriteState implements YIStateClocker
 {
-	WAIT("待机"), WALK("行走"), JUMP("跳跃"), ATTACK1("攻击1");
+	WAIT("待机"), WALK("行走"), JUMP("跳跃"), ATTACK1("攻击1"),DAMAGE("受伤");
 
 	private YIStateClocker clocker;
 	private String strName;
@@ -24,7 +24,7 @@ enum YSpriteState implements YIStateClocker
 
 	@Override
 	public void onClock(float fElapseTime_s,
-			YASpriteDomainLogic<?> domainLogicContext,
+			YASpriteDomainLogic domainLogicContext,
 			YSystem system, YScene sceneCurrent)
 	{
 		clocker.onClock(fElapseTime_s, domainLogicContext, system,

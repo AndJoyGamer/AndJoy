@@ -1,9 +1,10 @@
 package game.AndJoy;
 
 import game.AndJoy.Y2SandboxProgram.Y2SandboxAdapter;
+import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
-import game.AndJoy.monster.concrete.MonsterDomain;
+import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import java.text.DecimalFormat;
@@ -17,6 +18,7 @@ import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.YTiledJsonParser;
+import ygame.extension.domain.YProgressBarDomain;
 import ygame.extension.domain.tilemap.YTileMapDomain;
 import ygame.extension.primitives.YRectangle;
 import ygame.extension.primitives.YSphere;
@@ -26,6 +28,7 @@ import ygame.extension.with_third_party.YTiledJson_Box2dParser;
 import ygame.extension.with_third_party.YWorld;
 import ygame.framebuffer.YFBOScene;
 import ygame.framework.YIResultCallback;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
 import ygame.framework.core.YClusterDomain;
 import ygame.framework.core.YRequest;
@@ -33,6 +36,7 @@ import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.core.YSystem.YIOnFPSUpdatedListener;
 import ygame.framework.core.YView;
+import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
@@ -58,7 +62,8 @@ public class MainActivity extends Activity {
 
 	private YSpriteDomain domainSprite;
 	private YClusterDomain domainMap = null;
-	private MonsterDomain domainMonster;
+	private YMonsterDomain domainMonster2;
+	private YMonsterDomain domainMonster1;
 
 	private YScene mainScene;
 
@@ -117,8 +122,12 @@ public class MainActivity extends Activity {
 		// }
 
 		// 新建精灵实体
-		domainSprite = new YSpriteDomain("sprite", world, this);
-		// domainMonster = new MonsterDomain("monster", world, this);
+		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
+		// 新建怪物实体
+		domainMonster1 = new YMonsterDomain(Constants.MONSTER1, Constants.MONSTER1_HP,  world, this, -340, 20);
+		domainMonster2 = new YMonsterDomain(Constants.MONSTER2, Constants.MONSTER2_HP,world, this, -200, 20);
+		YProgressBarDomain monster1Hp = new YProgressBarDomain(Constants.MONSTER1_HP, getResources(), 5, 0.5f);
+		YProgressBarDomain monster2Hp = new YProgressBarDomain(Constants.MONSTER2_HP, getResources(), 5, 0.5f);
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());
@@ -126,7 +135,18 @@ public class MainActivity extends Activity {
 		//
 		// mainScene.addDomains(feiKuaiMapDomains);
 		mainScene.addDomains(getFeiKuaiMapDomains(world));
-		mainScene.addDomains(domainSprite, getBkgDomain());
+		mainScene.addDomains(domainSprite, domainMonster1,domainMonster2,getBkgDomain());
+		mainScene.addDomains(monster1Hp , monster2Hp);
+		
+//		mainScene.addDomains(new YMonsterDomain("m3", world, this, -100, 20));
+//		mainScene.addDomains(new YMonsterDomain("m4", world, this, -130, 20));
+//		mainScene.addDomains(new YMonsterDomain("m5", world, this, -160, 20));
+//		mainScene.addDomains(new YMonsterDomain("m6", world, this, -190, 20));
+//		mainScene.addDomains(new YMonsterDomain("m7", world, this, -220, 20));
+//		for (int i = 0; i < 10; i++)
+//			mainScene.addDomains(new YMonsterDomain("mm" + i,
+//					world, this, -250 - 30 * i, 20));
+		
 		// mainScene.addDomains(domainMonster, getBkgDomain());
 		// mainScene.addDomains(getTest2SandBoxDomain());//球
 		// // 特别地，场景处理实体
@@ -182,7 +202,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent  ,YBaseDomain domainContext) {
 				// TODO Auto-generated method stub
 				return false;
 			}
@@ -287,7 +307,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent  ,YBaseDomain domainContext) {
 				return false;
 			}
 
@@ -326,7 +346,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent) {
+					YScene sceneCurrent , YBaseDomain domainContext) {
 				return false;
 			}
 
@@ -395,7 +415,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.sendRequest(domainSprite.TO_JUMP);
+				domainSprite.jump();
 			return false;
 		}
 	}
@@ -405,7 +425,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.sendRequest(domainSprite.TO_ATTACK1);
+				domainSprite.attack();
 			return false;
 		}
 	}
@@ -421,7 +441,7 @@ public class MainActivity extends Activity {
 					bRightPressing = true;
 				else
 					bLeftPressing = true;
-				domainSprite.sendRequest(domainSprite.TO_WALK);
+				domainSprite.walk();
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -429,7 +449,7 @@ public class MainActivity extends Activity {
 					bRightPressing = false;
 				else
 					bLeftPressing = false;
-				domainSprite.sendRequest(domainSprite.TO_WAIT);
+				domainSprite.waiting();
 				break;
 
 			default:

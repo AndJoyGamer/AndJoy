@@ -9,6 +9,7 @@ import ygame.extension.program.YTextureProgram;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
+import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.MathUtils;
 import ygame.math.YMatrix;
@@ -50,7 +51,7 @@ class YDebrisDomainLogic extends YADomainLogic {
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent) {
+			YScene sceneCurrent , YBaseDomain domainContext) {
 		return false;
 	}
 
