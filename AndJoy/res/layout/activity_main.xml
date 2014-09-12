@@ -18,23 +18,24 @@
         android:onClick="dealScene"
         android:text="@string/deal_scene" />
 
-    <Button
+    <ImageView
         android:id="@+id/BtnLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="@string/left"
-        android:textSize="30sp" />
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_go_left"
+        android:clickable="true" />
 
-    <Button
+    <ImageView
         android:id="@+id/BtnRight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignBottom="@id/BtnLeft"
         android:layout_toRightOf="@id/BtnLeft"
-        android:text="@string/right"
-        android:textSize="30sp" />
+        android:background="@drawable/btn_go_right"
+        android:clickable="true" />
 
     <ImageView
         android:id="@+id/BtnJump"
