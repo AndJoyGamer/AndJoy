@@ -44,7 +44,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:background="@drawable/btn_white"
+        android:background="@drawable/btn_yellow"
         android:clickable="true"
         android:padding="7dp"
         android:src="@drawable/jump" />
@@ -56,8 +56,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_toLeftOf="@id/BtnJump"
-        android:background="@drawable/btn_white"
+        android:background="@drawable/btn_yellow"
         android:clickable="true"
+        android:padding="10dp"
         android:src="@drawable/attack" />
 
     <FrameLayout
@@ -67,7 +68,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/btn_blue"
+        android:background="@drawable/blue"
         android:paddingBottom="5dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"

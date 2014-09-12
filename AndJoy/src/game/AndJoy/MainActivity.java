@@ -126,8 +126,9 @@ public class MainActivity extends Activity
 		findViewById(R.id.BtnScene).setOnLongClickListener(
 				new SceneBtnLongLsn());
 		WheelView wv = (WheelView) findViewById(R.id.wv_skills);
-		wv.setWheelBackground(R.drawable.btn_blue);
-		wv.setShadowColor(0x22FFFFFF, 0x11AAAAAA, 0x22FFFFFF);
+		wv.setWheelBackground(R.drawable.transparent);
+//		wv.setShadowColor(0x22FFFFFF, 0x11AAAAAA, 0x22FFFFFF);
+		wv.setShadowColor(0x00FFFFFF, 0x00AAAAAA, 0x00FFFFFF);
 		wv.setVisibleItems(3);
 		wv.setViewAdapter(new SkillAdapter(this));
 
