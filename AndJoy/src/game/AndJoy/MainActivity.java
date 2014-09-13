@@ -73,6 +73,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
+
 	private YSystem system;
 
 	public volatile boolean bRightPressing;
@@ -126,9 +127,14 @@ public class MainActivity extends Activity
 		findViewById(R.id.BtnScene).setOnLongClickListener(
 				new SceneBtnLongLsn());
 		WheelView wv = (WheelView) findViewById(R.id.wv_skills);
-		wv.setWheelBackground(R.drawable.transparent);
-//		wv.setShadowColor(0x22FFFFFF, 0x11AAAAAA, 0x22FFFFFF);
-		wv.setShadowColor(0x00FFFFFF, 0x00AAAAAA, 0x00FFFFFF);
+		wv.setWheelForeground(R.drawable.skill_wheel_val);
+		wv.setWheelBackground(R.drawable.bg_orange);
+		
+		// 禁止使用自带背景、阴影效果，全部设置为透明
+		wv.setShadowColor(Constants.COLOR_TRANSPARENT,
+				Constants.COLOR_TRANSPARENT,
+				Constants.COLOR_TRANSPARENT);
+		
 		wv.setVisibleItems(3);
 		wv.setViewAdapter(new SkillAdapter(this));
 
