@@ -14,6 +14,9 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import android.view.View;
+import android.widget.ProgressBar;
+
 import ygame.common.YConstants;
 import ygame.extension.domain.sprite.YASpriteDomainLogic;
 import ygame.extension.domain.sprite.YIStateClocker;
@@ -44,6 +47,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private boolean bOnLand;
 
 	private boolean bRight = true;
+	private int hp=100;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
@@ -219,6 +223,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		final private int iFrameNum;
 		final private int iColStartIndex;
 		final private int iRowStartIndex;
+		ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.hp_bar);
 
 		BaseClocker(int iFPS, int iFrameNum, int iColStartIndex,
 				int iRowStartIndex)
@@ -239,6 +244,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 			iColumnIndex = iColStartIndex + iFrame;
 			if (bOnLand)
 				body.applyForce(vecAntiGrav, body.getPosition());
+			progressBar.setProgress(hp);
 		}
 	}
 
@@ -435,6 +441,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		{
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
+			hp--;
 			if (iDamageCounts++ > 30)
 				resetState();
 		}
