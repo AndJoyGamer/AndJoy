@@ -61,25 +61,16 @@
         android:padding="10dp"
         android:src="@drawable/attack" />
 
-    <FrameLayout
-        android:layout_width="wrap_content"
+    <ygame.extension.third_party.kankan.wheel.widget.WheelView
+        android:id="@+id/wv_skills"
+        android:layout_width="70dp"
         android:layout_height="120dp"
         android:layout_above="@id/BtnXuanfeng"
         android:layout_alignParentRight="true"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/blue"
-        android:paddingBottom="5dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:paddingTop="5dp" >
-
-        <ygame.extension.third_party.kankan.wheel.widget.WheelView
-            android:id="@+id/wv_skills"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
-    </FrameLayout>
+        android:clickable="true" />
 
     <TextView
         android:id="@+id/tvFPS"
