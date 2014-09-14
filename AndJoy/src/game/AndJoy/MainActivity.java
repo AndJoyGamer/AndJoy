@@ -5,6 +5,7 @@ import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
 import game.AndJoy.monster.concrete.YMonsterDomain;
+import game.AndJoy.obstacle.ObstacleDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import java.lang.ref.SoftReference;
@@ -168,6 +169,10 @@ public class MainActivity extends Activity
 				Constants.MONSTER1_HP, getResources(), 5, 0.5f);
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
 				Constants.MONSTER2_HP, getResources(), 5, 0.5f);
+		//添加测试障碍
+		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs", this, world);
+		mainScene.addDomains(obstacleDomain);
+		
 		// 向场景添加各个实体
 		// mainScene.addDomains(domainMap, domainSprite,
 		// getBkgDomain());

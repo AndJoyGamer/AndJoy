@@ -47,7 +47,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private boolean bOnLand;
 
 	private boolean bRight = true;
-	private int hp=100;
+	private int hp=200;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
@@ -189,6 +189,11 @@ class YSpriteLogic extends YASpriteDomainLogic
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		builder.onEntry(YSpriteState.DAMAGE).perform(
 				new DamageEnterAction());
+		
+		// 跳到受伤
+		builder.newTransition().from(YSpriteState.JUMP)
+				.to(YSpriteState.DAMAGE)
+				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		return YSpriteState.JUMP;
 	}
 

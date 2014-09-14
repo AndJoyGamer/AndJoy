@@ -90,8 +90,8 @@
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:progressDrawable="@drawable/hp_bar_style"
-        android:max="100" 
-        android:progress="100"/>
+        android:max="200" 
+        android:progress="200"/>
     
     <ProgressBar
         android:id="@+id/mp_bar"
