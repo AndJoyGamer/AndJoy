@@ -507,7 +507,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/res\/drawable\/yewai.png",
+         "image":"..\/res\/drawable-xxhdpi\/yewai.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,

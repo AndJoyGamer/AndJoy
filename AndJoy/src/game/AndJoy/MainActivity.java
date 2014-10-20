@@ -98,9 +98,9 @@ public class MainActivity extends Activity
 		OnTouchListener lsn = new SteerLsn();
 		findViewById(R.id.BtnLeft).setOnTouchListener(lsn);
 		findViewById(R.id.BtnRight).setOnTouchListener(lsn);
-		// _____________跳跃
+		// _____________跳跃按键
 		findViewById(R.id.BtnJump).setOnTouchListener(new JumpBtnLsn());
-		// _____________攻击
+		// _____________攻击按键
 		findViewById(R.id.BtnAttack).setOnTouchListener(
 				new AttackBtnLsn());
 		// _____________场景切换测试
@@ -132,7 +132,7 @@ public class MainActivity extends Activity
 		mainScene.requestEnter(null);
 
 		// _____________测试相关，放入测试箱子、测试吊桥
-		YBox2dTestUtils.addTestBox(world, mainScene, getResources());
+//		YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
 		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108,
 				4.5f), 1, world, mainScene, getResources());
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
@@ -143,15 +143,15 @@ public class MainActivity extends Activity
 		// _____________新建怪物实体
 		YABaseDomain domainMonster1 = new YMonsterDomain(
 				Constants.MONSTER1, Constants.MONSTER1_HP,
-				world, this, -340, 20);
+				world, this, -38, 8);
 		YABaseDomain domainMonster2 = new YMonsterDomain(
 				Constants.MONSTER2, Constants.MONSTER2_HP,
-				world, this, -200, 20);
+				world, this, 110, 8);
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
-				Constants.MONSTER1_HP, getResources(), 5, 0.5f);
+				Constants.MONSTER1_HP, getResources(), 1.5f, 0.1f);
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
-				Constants.MONSTER2_HP, getResources(), 5, 0.5f);
+				Constants.MONSTER2_HP, getResources(), 1.5f, 0.1f);
 		// _____________新建测试障碍
 		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs",
 				this, world);
@@ -161,6 +161,10 @@ public class MainActivity extends Activity
 				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
 				.append(new YStaticPolyLineTerrainParsePlugin("map", world, "box2d_bodies"))
 				.parse();
+//		new YTiledParser(mainScene, "city.json", this)
+//			.append(new YStaticImageLayerParsePlugin("map","background", "foreground"))
+//			.append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
+//			.parse();
 
 		// _____________向场景添加上述新建的实体
 		mainScene.addDomains(domainSprite, domainMonster1,
@@ -185,6 +189,8 @@ public class MainActivity extends Activity
 			private YMover mover = (YMover) new YMover().setZ(-3f);
 			private YSkeleton skeleton = new YRectangle(20, 20,false, true);
 			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.shan));
+//			private YSkeleton skeleton = new YRectangle(15, 20,false, true);
+//			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.city_bkg));
 			//@formatter:on
 
 			@Override
@@ -204,7 +210,8 @@ public class MainActivity extends Activity
 					YMatrix matrix4View)
 			{
 				// 背景跟着摄像机移动，使得玩家觉得背景水平方向没有移动
-				YCamera camera = sceneCurrent.getCurrentCamera();
+				YCamera camera = sceneCurrent
+						.getCurrentCamera();
 				mover.setX(camera.getX());
 
 				YTextureProgram.YAdapter adapter = (YTextureProgram.YAdapter) domainContext
@@ -299,19 +306,24 @@ public class MainActivity extends Activity
 			bWhich = !bWhich;
 			if (bWhich)
 			{
+				//@formatter:off
 				YScene scene = new YFBOScene(system, "测试");
-				new YTiledParser(scene, "test.json",MainActivity.this)
-						.append(new YStaticImageLayerParsePlugin("test_tile","bkg")).
-						parse();
-				system.switchScene(scene,
-						new YIResultCallback()
-						{
-							public void onResultReceived(
-									Object objResult)
-							{
-								bSwitchFinish = false;
-							}
-						});
+				new YTiledParser(scene, "city.json", MainActivity.this)
+					.append(new YStaticImageLayerParsePlugin("map_city","background", "foreground"))
+//					.append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
+					.parse();
+				//@formatter:on
+//				system.switchScene(scene,
+//						new YIResultCallback()
+//						{
+//							public void onResultReceived(
+//									Object objResult)
+//							{
+//								bSwitchFinish = false;
+//							}
+//						});
+				scene.getCurrentCamera().setZ(10);
+				system.forceSetCurrentScene(scene);
 			} else
 			{
 				system.switchScene(mainScene,

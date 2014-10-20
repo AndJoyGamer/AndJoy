@@ -37,7 +37,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private int iDamageCounts;
 	private float fFrames;
 	private boolean ifOnLand = false;
-	private MainActivity activity;
 	private Vec2 vecAntiGrav;
 	private YSystem system;
 	//是否在雷达1范围内
@@ -55,13 +54,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	final private String keyHP;
 
 	protected YMonsterLogic(World world, String keyHP, MainActivity activity, float fInitX_M, float fInitY_M) {
-		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
-				22), 13, world);
+		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,22), 2.5f, world);
 		this.fInitX_M = fInitX_M;
 		this.fInitY_M = fInitY_M;
-		//fInitX_M = (44 - 128) * 5 + 80;
-		//fInitY_M = 20;
-		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
 		this.keyHP = keyHP;
 	}
@@ -90,7 +85,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.friction = 0f;
 		def.restitution = 0f;
 		def.userData = "monstermain";
-		final float fBodySideLen = fSkeletonSideLen * 0.5f;
+		final float fBodySideLen = fSkeletonSideLen * 0.7f;
 		CircleShape shapeBody = new CircleShape();
 		shapeBody.setRadius(fBodySideLen / 2);
 		def.shape = shapeBody;
@@ -99,7 +94,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		// XXX
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
-		shapeFoot.setAsBox(fBodySideLen / 4, fBodySideLen / 10,
+		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10,
 				new Vec2(0, -fBodySideLen / 2), 0);
 		def.shape = shapeFoot;
 		def.friction = 0.5f;
@@ -108,9 +103,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		body.createFixture(def).setOnContactListener(new FootContactLsn());
 
 		// 感应行走雷达
-
 		CircleShape shapeRadar1 = new CircleShape();
-		shapeRadar1.setRadius(fBodySideLen * 3);
+		shapeRadar1.setRadius(fBodySideLen * 1.5f);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -121,7 +115,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		
 		// 感应攻击雷达
 		CircleShape shapeRadar2 = new CircleShape();
-		shapeRadar2.setRadius(fBodySideLen);
+		shapeRadar2.setRadius(fBodySideLen * 0.5f);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -141,7 +135,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		if (request.iKEY == domainContext.TO_WALK.iKEY)
 		{
 			Vec2 vec2 = new Vec2(body.getLinearVelocity());
-			vec2.x = bRight ? 10 : -10;
+			vec2.x = bRight ? 1 : -1;
 			body.applyLinearImpulse(
 					vec2.subLocal(body.getLinearVelocity())
 							.mulLocal(body.getMass()),
@@ -162,7 +156,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		if(null != domainHP)
 		{
 			Vec2 pos = body.getPosition();
-			domainHP.setPosition(pos.x, pos.y + 3, 1);
+			domainHP.setPosition(pos.x, pos.y + fSkeletonSideLen * 0.6f / 2 + 0.1f, 0.2f);
 			domainHP.setProgress(1 - hp / 100.0f);
 		}
 		// 5.hp为0时移除实体
@@ -304,8 +298,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	/*************************** 关于行走状态 **********************************/
 	private class WalkClocker extends BaseClocker
 	{
-		private final Vec2 vecRight = new Vec2(30, -30);
-		private final Vec2 vecLeft = new Vec2(-30, -30);
+		private final Vec2 vecRight = new Vec2(4, -2);
+		private final Vec2 vecLeft = new Vec2(-4, -2);
 
 		WalkClocker()
 		{
@@ -431,8 +425,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	
 	private class DeadEnterAction implements YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
 	{
-		private Vec2 vec2Right = new Vec2(500, 0);
-		private Vec2 vec2Left = new Vec2(-500, 0);
 		@Override
 		public void onTransition(
 				YIMonsterStateClocker from,
@@ -570,7 +562,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			//XXX temp code
 			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）；
 			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther)
+			if(null == domainOther || "map".equals(domainOther.KEY))
 			{
 				iFootContact++;
 				System.out.println(domainContext.KEY + "脚步碰撞");
@@ -584,7 +576,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			//XXX temp code
 			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther)
+			if(null == domainOther || "map".equals(domainOther.KEY))
 			{
 				iFootContact--;
 				if(iFootContact==0){

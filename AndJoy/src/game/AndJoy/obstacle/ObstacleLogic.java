@@ -33,8 +33,8 @@ import ygame.transformable.YMover;
 
 public class ObstacleLogic extends YADomainLogic {
 
-	private YMover mover = new YMover();
-	private YSkeleton skeleton = new YSquare(5, false, true);
+	private YMover mover = (YMover) new YMover().setX(68).setY(-3).setZ(0.2f);
+	private YSkeleton skeleton = new YSquare(2, false, true);
 	private MainActivity activity;
 	private YTileSheet tileSheet;
 	private World world;
@@ -58,7 +58,7 @@ public class ObstacleLogic extends YADomainLogic {
 		BodyDef bodyDef = new BodyDef();
 		FixtureDef def = new FixtureDef();
 		bodyDef.type = BodyType.STATIC;
-		bodyDef.position.set(-305, -3);
+		bodyDef.position.set(mover.getX(), mover.getY());
 		this.body = world.createBody(bodyDef);
 		body.setDomain(domainContext);
 		PolygonShape shape = new PolygonShape();
@@ -76,7 +76,6 @@ public class ObstacleLogic extends YADomainLogic {
 		YTileProgram.YAdapter parametersAdapter = (YAdapter) domainContext
 				.getParametersAdapter();
 
-		mover.setX(-305).setY(-3);
 		int iColumnIndex  = (int) ((fFrames += dbElapseTime_s * 10) % 4);
 		parametersAdapter.paramMatrixPV(matrix4pv).paramMover(mover)
 				.paramSkeleton(skeleton).paramFrameSheet(tileSheet)

@@ -50,9 +50,10 @@ class YSpriteLogic extends YASpriteDomainLogic
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
-				activity.getResources(), 3, 22), 2.5f, world);
-		fInitX_M = 105;
-		fInitY_M = 50;
+				activity.getResources(), 3, 22), 2.5f , world);
+		fInitX_M = 105;//for yewai
+//		fInitX_M = 0;//for city
+		fInitY_M = 8;
 
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
@@ -452,8 +453,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private class DamageEnterAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
-		private Vec2 vec2Right = new Vec2(30, -50);
-		private Vec2 vec2Left = new Vec2(-30, -50);
+		private Vec2 vec2Right = new Vec2(6, -2);
+		private Vec2 vec2Left = new Vec2(-6, -2);
 
 		@Override
 		public void onTransition(

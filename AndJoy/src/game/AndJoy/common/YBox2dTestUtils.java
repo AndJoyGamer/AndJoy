@@ -132,7 +132,7 @@ public final class YBox2dTestUtils
 		return body;
 	}
 
-	public static void addTestBox(World world, YScene scene,
+	public static void addTestBoxes(World world, YScene scene,
 			Resources resources)
 	{
 		final float fTileSize = 5;
