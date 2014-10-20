@@ -23,6 +23,7 @@
          "y":0
         }, 
         {
+         "draworder":"topdown",
          "height":16,
          "name":"box2d_bodies",
          "objects":[
@@ -47,10 +48,12 @@
                      "friction":"0.8",
                      "restitution":"0.02"
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":3,
-                 "y":667
+                 "y":657
                 }, 
                 {
                  "height":0,
@@ -76,10 +79,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":8322,
-                 "y":828
+                 "y":819
                 }, 
                 {
                  "height":0,
@@ -105,10 +110,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":8642,
-                 "y":762
+                 "y":764
                 }, 
                 {
                  "height":0,
@@ -134,10 +141,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":9026,
-                 "y":832
+                 "y":830
                 }, 
                 {
                  "height":0,
@@ -163,10 +172,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":9472,
-                 "y":700
+                 "y":696
                 }, 
                 {
                  "height":0,
@@ -224,10 +235,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":10430,
-                 "y":510
+                 "y":507
                 }, 
                 {
                  "height":0,
@@ -266,10 +279,12 @@
                      "friction":"0.8",
                      "restitution":"0.2"
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":766,
-                 "y":892
+                 "y":889
                 }, 
                 {
                  "height":0,
@@ -375,10 +390,12 @@
                     {
                      "friction":"0.5"
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":2818,
-                 "y":892
+                 "y":894
                 }, 
                 {
                  "height":0,
@@ -404,10 +421,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":10113,
-                 "y":575
+                 "y":578
                 }, 
                 {
                  "height":0,
@@ -429,10 +448,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":15106,
-                 "y":382
+                 "y":384
                 }, 
                 {
                  "height":0,
@@ -462,10 +483,12 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"",
+                 "visible":true,
                  "width":0,
                  "x":13988,
-                 "y":372
+                 "y":378
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -477,13 +500,14 @@
  "orientation":"orthogonal",
  "properties":
     {
-
+     "pixels_per_unit":"64"
     },
+ "renderorder":"right-down",
  "tileheight":64,
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/..\/..\/..\/TDDOWNLOAD\/asucai\/pic1047_\u5f69\u8679\u5c9b\u8fd1\u666f\u5305\/temp\/yewai.png",
+         "image":"..\/res\/drawable\/yewai.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,

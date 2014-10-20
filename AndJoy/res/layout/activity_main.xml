@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:onClick="dealScene"
         android:text="@string/deal_scene" />
 
     <ImageView
@@ -50,7 +49,7 @@
         android:src="@drawable/jump" />
 
     <ImageView
-        android:id="@+id/BtnXuanfeng"
+        android:id="@+id/BtnAttack"
         android:layout_width="70dp"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -65,7 +64,7 @@
         android:id="@+id/wv_skills"
         android:layout_width="70dp"
         android:layout_height="120dp"
-        android:layout_above="@id/BtnXuanfeng"
+        android:layout_above="@id/BtnAttack"
         android:layout_alignParentRight="true"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"

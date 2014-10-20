@@ -58,10 +58,9 @@ public class YDebrisClusterDomain extends YClusterDomain
 		super.onAttach(system);
 		try
 		{
-			addComponentDomains(
-					createDebrisDomains(system.getContext()
-							.getResources(), world,
-							texture), system);
+			addComponentDomains(createDebrisDomains(system
+					.getContext().getResources(), world,
+					texture));
 		} catch (JSONException e)
 		{
 			// TODO Auto-generated catch block
@@ -194,7 +193,7 @@ public class YDebrisClusterDomain extends YClusterDomain
 		// Vec2 position = body.getPosition();
 		world.step(1.0f / 60, 8, 3);
 		Vec2 vec2BodyMassCenter = body.getWorldCenter();
-		
+
 		// Vec2 position = body.getPosition();
 		// world.destroyBody(body);
 
@@ -221,7 +220,7 @@ public class YDebrisClusterDomain extends YClusterDomain
 			vec2.x = debris.vertexsAbsolute[i].x / (float) iWidth;
 			vec2.y = debris.vertexsAbsolute[i].y / (float) iHeight;
 			vec2.addLocal(vOFFSET);
-//			vec2.y = -vec2.y;
+			// vec2.y = -vec2.y;
 
 			debris.f_arrTexCoord[iOffset++] = vec2.x;
 			debris.f_arrTexCoord[iOffset++] = vec2.y;

@@ -52,7 +52,7 @@ public class YBlockMapDomain extends YClusterDomain {
 	protected void onGL_Initialize(YSystem system,
 			YGL_Configuration configurationGL, int iWidth, int iHeight) {
 		super.onGL_Initialize(system, configurationGL, iWidth, iHeight);
-		addComponentDomains(splitToDomains(system, configurationGL), system);
+		addComponentDomains(splitToDomains(system, configurationGL));
 	}
 
 	private Collection<YABaseDomain> splitToDomains(YSystem system,

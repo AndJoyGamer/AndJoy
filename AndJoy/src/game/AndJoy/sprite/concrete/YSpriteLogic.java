@@ -14,9 +14,6 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
-import android.view.View;
-import android.widget.ProgressBar;
-
 import ygame.common.YConstants;
 import ygame.extension.domain.sprite.YASpriteDomainLogic;
 import ygame.extension.domain.sprite.YIStateClocker;
@@ -30,6 +27,7 @@ import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
+import android.widget.ProgressBar;
 
 class YSpriteLogic extends YASpriteDomainLogic
 {
@@ -47,17 +45,15 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private boolean bOnLand;
 
 	private boolean bRight = true;
-	private int hp=200;
+	private int hp = 200;
 
 	protected YSpriteLogic(World world, MainActivity activity)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
-				activity.getResources(), 3, 22), 13, world);
-		// fInitX_M = 200;
-		fInitX_M = (44 - 128) * 5;
-		// for FeiKuai
-		// fInitX_M = -60;
+				activity.getResources(), 3, 22), 2.5f, world);
+		fInitX_M = 105;
 		fInitY_M = 50;
+
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
 	}
@@ -75,10 +71,10 @@ class YSpriteLogic extends YASpriteDomainLogic
 	{
 		// 主体部分（Main）
 		FixtureDef def = new FixtureDef();
-		def.density = 1;
+		def.density = 5;
 		def.friction = 0f;
 		def.restitution = 0f;
-		final float fBodySideLen = fSkeletonSideLen * 0.5f;
+		final float fBodySideLen = fSkeletonSideLen * 0.7f;
 		CircleShape shapeBody = new CircleShape();
 		shapeBody.setRadius(fBodySideLen / 2);
 		def.shape = shapeBody;
@@ -87,10 +83,11 @@ class YSpriteLogic extends YASpriteDomainLogic
 		// XXX
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
-		shapeFoot.setAsBox(fBodySideLen / 4, fBodySideLen / 10,
+		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10,
 				new Vec2(0, -fBodySideLen / 2), 0);
 		def.shape = shapeFoot;
 		def.friction = 0.5f;
+		def.restitution = 0;
 		def.density = 10;
 		def.userData = "foot";
 		def.isSensor = true;
@@ -118,7 +115,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		if (request.iKEY == YSpriteDomain.TO_WALK)
 		{
 			Vec2 vec2 = new Vec2(body.getLinearVelocity());
-			vec2.x = bRight ? 10 : -10;
+			vec2.x = bRight ? 1 : -1;
 			body.applyLinearImpulse(
 					vec2.subLocal(body.getLinearVelocity())
 							.mulLocal(body.getMass()),
@@ -161,10 +158,12 @@ class YSpriteLogic extends YASpriteDomainLogic
 		JumpUpAction action = new JumpUpAction();
 		builder.newTransition().from(YSpriteState.WAIT)
 				.to(YSpriteState.JUMP)
-				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP))
+				.perform(action);
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.JUMP)
-				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP))
+				.perform(action);
 		builder.onEntry(YSpriteState.JUMP).perform(
 				new JumpEnterAction());
 
@@ -189,7 +188,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		builder.onEntry(YSpriteState.DAMAGE).perform(
 				new DamageEnterAction());
-		
+
 		// 跳到受伤
 		builder.newTransition().from(YSpriteState.JUMP)
 				.to(YSpriteState.DAMAGE)
@@ -228,7 +227,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 		final private int iFrameNum;
 		final private int iColStartIndex;
 		final private int iRowStartIndex;
-		ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.hp_bar);
+		ProgressBar progressBar = (ProgressBar) activity
+				.findViewById(R.id.hp_bar);
 
 		BaseClocker(int iFPS, int iFrameNum, int iColStartIndex,
 				int iRowStartIndex)
@@ -278,8 +278,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 	/*************************** 关于行走状态 **********************************/
 	private class WalkClocker extends BaseClocker
 	{
-		private final Vec2 vecRight = new Vec2(30, -30);
-		private final Vec2 vecLeft = new Vec2(-30, -30);
+		private final Vec2 vecRight = new Vec2(4, -2);
+		private final Vec2 vecLeft = new Vec2(-4, -2);
 
 		WalkClocker()
 		{
@@ -317,8 +317,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		}
 	}
 
-	private class JumpUpAction
-			implements
+	private class JumpUpAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 
@@ -332,7 +331,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		{
 			bLockOrientation = true;
 			Vec2 v1 = body.getLinearVelocity();
-			Vec2 v2 = new Vec2(v1.x, 50);
+			Vec2 v2 = new Vec2(v1.x, 10);
 
 			body.applyLinearImpulse(
 					v2.subLocal(v1)
@@ -341,8 +340,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		}
 	}
 
-	private class JumpEnterAction
-			implements
+	private class JumpEnterAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 
@@ -355,10 +353,10 @@ class YSpriteLogic extends YASpriteDomainLogic
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			Vec2 v1 = body.getLinearVelocity();
-			if (Math.abs(v1.x) <= 40)
+			if (Math.abs(v1.x) <= 4)
 				return;
 
-			Vec2 v2 = new Vec2(40 * v1.x / Math.abs(v1.x), v1.y);
+			Vec2 v2 = new Vec2(4 * v1.x / Math.abs(v1.x), v1.y);
 
 			body.applyLinearImpulse(
 					v2.subLocal(v1)
@@ -404,12 +402,11 @@ class YSpriteLogic extends YASpriteDomainLogic
 		}
 	}
 
-	private class AttackEnterAction
-			implements
+	private class AttackEnterAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
-		private Vec2 vec2Right = new Vec2(120, -100);
-		private Vec2 vec2Left = new Vec2(-120, -100);
+		private Vec2 vec2Right = new Vec2(10, -10);
+		private Vec2 vec2Left = new Vec2(-10, -10);
 
 		@Override
 		public void onTransition(
@@ -452,8 +449,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		}
 	}
 
-	private class DamageEnterAction
-			implements
+	private class DamageEnterAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
 		private Vec2 vec2Right = new Vec2(30, -50);
@@ -495,7 +491,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther)
+			if (null == domainOther
+					|| domainOther.KEY.equals("map"))
 			{
 				++iFootContact;
 				bOnLand = true;
@@ -513,7 +510,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther)
+			if (null == domainOther
+					|| domainOther.KEY.equals("map"))
 			{
 				--iFootContact;
 				if (iFootContact == 0)
@@ -550,7 +548,6 @@ class YSpriteLogic extends YASpriteDomainLogic
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther)
 		{
-			// TODO Auto-generated method stub
 			ifInRadar = false;
 			monsterKey = null;
 		}

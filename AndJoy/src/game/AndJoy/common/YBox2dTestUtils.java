@@ -26,36 +26,45 @@ import ygame.skeleton.YSkeleton;
 import ygame.transformable.YMover;
 import android.content.res.Resources;
 
-public final class YBox2dTestUtils {
-	private YBox2dTestUtils() {
+public final class YBox2dTestUtils
+{
+	private YBox2dTestUtils()
+	{
 	}
 
 	public static void addTestBridge(Vec2 vec2Start, Vec2 vec2End,
-			float fTileLen, World world, YScene scene, Resources resources) {
+			float fTileLen, World world, YScene scene,
+			Resources resources)
+	{
 		final int N = (int) (vec2End.sub(vec2Start).x / fTileLen);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(fTileLen / 2, 1f);
+		shape.setAsBox(fTileLen / 2, 0.25f / 2);
 
 		FixtureDef fd = new FixtureDef();
 		fd.shape = shape;
-		fd.density = 3.0f;
-		fd.friction = 0.6f;
+		fd.density = 10.0f;
+		fd.friction = 1f;
+		fd.restitution = 0;
 
 		RevoluteJointDef jd = new RevoluteJointDef();
-		YSkeleton skeleton = new YRectangle(fTileLen, 1f, true, false);
+		YSkeleton skeleton = new YRectangle(fTileLen, 0.25f, true,
+				false);
 		Body prevBody = newStaticBody(vec2Start, world);
-		for (int i = 0; i < N; ++i) {
+		for (int i = 0; i < N; ++i)
+		{
 			BodyDef bd = new BodyDef();
 			bd.type = BodyType.DYNAMIC;
-			bd.position.set(vec2Start.x + 0.05f + fTileLen / 2 + fTileLen * i,
-					vec2Start.y);
+			bd.position.set(vec2Start.x + 0.05f + fTileLen / 2
+					+ fTileLen * i, vec2Start.y);
 			Body body = world.createBody(bd);
+			String domainKey = "map_test_bridge" +i; 
+//			body.setDomainKey(domainKey);
 			body.createFixture(fd);
-
-			scene.addDomains(newBridgeComponent("test_bridge" + i, body,
-					skeleton, resources));
-			Vec2 anchor = new Vec2(vec2Start.x + 0.05f + fTileLen * i,
-					vec2Start.y);
+			
+			scene.addDomains(newBridgeComponent(domainKey,
+					body, skeleton, resources));
+			Vec2 anchor = new Vec2(vec2Start.x + 0.05f + fTileLen
+					* i, vec2Start.y);
 			jd.initialize(prevBody, body, anchor);
 			world.createJoint(jd);
 
@@ -68,29 +77,38 @@ public final class YBox2dTestUtils {
 	}
 
 	private static YDomain newBridgeComponent(String KEY, final Body body,
-			final YSkeleton skeleton, Resources resources) {
-		YADomainLogic logic = new YADomainLogic() {
+			final YSkeleton skeleton, Resources resources)
+	{
+		YADomainLogic logic = new YADomainLogic()
+		{
 
-			private YMover mover = (YMover) new YMover().setZ(-1).setShaft(
-					new Vector3(0, 0, 1));
+			private YMover mover = (YMover) new YMover().setZ(-1)
+					.setShaft(new Vector3(0, 0, 1));
 
 			@Override
-			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent , YBaseDomain domainContext) {
+			protected boolean onDealRequest(YRequest request,
+					YSystem system, YScene sceneCurrent,
+					YBaseDomain domainContext)
+			{
 				return false;
 			}
 
 			@Override
 			protected void onCycle(double dbElapseTime_s,
-					YDomain domainContext, YWriteBundle bundle, YSystem system,
+					YDomain domainContext,
+					YWriteBundle bundle, YSystem system,
 					YScene sceneCurrent, YMatrix matrix4pv,
-					YMatrix matrix4Projection, YMatrix matrix4View) {
+					YMatrix matrix4Projection,
+					YMatrix matrix4View)
+			{
 				Vec2 position = body.getPosition();
-				mover.setX(position.x).setY(position.y)
+				mover.setX(position.x)
+						.setY(position.y)
 						.setAngle(body.getAngle() * 180 / 3.1415f);
 				YSimpleProgram.YAdapter adapter = (YSimpleProgram.YAdapter) domainContext
 						.getParametersAdapter();
-				adapter.paramMatrixPV(matrix4pv).paramMover(mover)
+				adapter.paramMatrixPV(matrix4pv)
+						.paramMover(mover)
 						.paramSkeleton(skeleton);
 			}
 		};
@@ -102,7 +120,8 @@ public final class YBox2dTestUtils {
 		return new YDomain(KEY, logic, view);
 	}
 
-	private static Body newStaticBody(Vec2 vecPosition, World world) {
+	private static Body newStaticBody(Vec2 vecPosition, World world)
+	{
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.STATIC;
 		bd.position.set(vecPosition);
@@ -113,7 +132,9 @@ public final class YBox2dTestUtils {
 		return body;
 	}
 
-	public static void addTestBox(World world, YScene scene, Resources resources) {
+	public static void addTestBox(World world, YScene scene,
+			Resources resources)
+	{
 		final float fTileSize = 5;
 		YSkeleton skeleton = new YSquare(fTileSize, true, false);
 		YSimpleProgram program = YSimpleProgram.getInstance(resources);
@@ -121,37 +142,58 @@ public final class YBox2dTestUtils {
 			// scene.addDomains(newTestBoxDomain(world, skeleton,
 			// program, "test_box" + i, -100,
 			// 10 * i + 10, fTileSize));
-			scene.addDomains(newTestBoxDomain(world, skeleton, program,
-					"test_box" + i, (176 - 128) * 5, 10 * i + 40, fTileSize));
+			scene.addDomains(newTestBoxDomain(world, skeleton,
+					program, "test_box" + i,
+					(176 - 128) * 5, 10 * i + 40, fTileSize));
+	}
+
+	public static void addOneTestBox(World world, YScene scene,
+			Resources resources, Vec2 position)
+	{
+		YSkeleton skeleton = new YSquare(1, true, false);
+		YSimpleProgram program = YSimpleProgram.getInstance(resources);
+		scene.addDomains(newTestBoxDomain(world, skeleton, program,
+				"one_test_box", position.x, position.y, 1));
 	}
 
 	private static YDomain newTestBoxDomain(World world,
-			final YSkeleton skeleton, YSimpleProgram program, String KEY,
-			float fInitX_M, float fInitY_M, float fTileSize) {
-		final Body body = newTestBoxBody(world, fInitX_M, fInitY_M, fTileSize);
+			final YSkeleton skeleton, YSimpleProgram program,
+			String KEY, float fInitX_M, float fInitY_M,
+			float fTileSize)
+	{
+		final Body body = newTestBoxBody(world, fInitX_M, fInitY_M,
+				fTileSize);
 
-		YADomainLogic logic = new YADomainLogic() {
+		YADomainLogic logic = new YADomainLogic()
+		{
 
-			private YMover mover = (YMover) new YMover().setZ(2).setShaft(
-					new Vector3(0, 0, 1));
+			private YMover mover = (YMover) new YMover().setZ(2)
+					.setShaft(new Vector3(0, 0, 1));
 
 			@Override
-			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent ,  YBaseDomain domainContext) {
+			protected boolean onDealRequest(YRequest request,
+					YSystem system, YScene sceneCurrent,
+					YBaseDomain domainContext)
+			{
 				return false;
 			}
 
 			@Override
 			protected void onCycle(double dbElapseTime_s,
-					YDomain domainContext, YWriteBundle bundle, YSystem system,
+					YDomain domainContext,
+					YWriteBundle bundle, YSystem system,
 					YScene sceneCurrent, YMatrix matrix4pv,
-					YMatrix matrix4Projection, YMatrix matrix4View) {
+					YMatrix matrix4Projection,
+					YMatrix matrix4View)
+			{
 				Vec2 position = body.getPosition();
-				mover.setX(position.x).setY(position.y)
+				mover.setX(position.x)
+						.setY(position.y)
 						.setAngle(body.getAngle() * 180 / 3.1415f);
 				YSimpleProgram.YAdapter adapter = (YSimpleProgram.YAdapter) domainContext
 						.getParametersAdapter();
-				adapter.paramMatrixPV(matrix4pv).paramMover(mover)
+				adapter.paramMatrixPV(matrix4pv)
+						.paramMover(mover)
 						.paramSkeleton(skeleton);
 			}
 		};
@@ -164,7 +206,8 @@ public final class YBox2dTestUtils {
 	}
 
 	private static Body newTestBoxBody(World world, float fInitX_M,
-			float fInitY_M, float fBODY_SIZE_M) {
+			float fInitY_M, float fBODY_SIZE_M)
+	{
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.DYNAMIC;
 		bd.position.set(fInitX_M, fInitY_M);
