@@ -7,6 +7,9 @@ import org.jbox2d.dynamics.World;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.program.YTileProgram;
+import ygame.extension.tiled.YBaseParsePlugin.YIDomainBuilder;
+import ygame.extension.tiled.YDomainBuildInfo;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
 
 public class YMonsterDomain extends YDomain
@@ -17,9 +20,11 @@ public class YMonsterDomain extends YDomain
 	public final YRequest TO_DAMAGE;
 	final YRequest TO_DEAD;
 
-	public YMonsterDomain(String KEY, String keyHP, World world, MainActivity activity, float fInitX_M, float fInitY_M)
+	protected YMonsterDomain(String KEY, String keyHP, World world,
+			MainActivity activity, float fInitX_M, float fInitY_M)
 	{
-		super(KEY, new YMonsterLogic(world, keyHP,activity, fInitX_M, fInitY_M), new YDomainView(
+		super(KEY, new YMonsterLogic(world, keyHP, activity, fInitX_M,
+				fInitY_M), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);
@@ -32,6 +37,23 @@ public class YMonsterDomain extends YDomain
 		TO_DAMAGE.setName("受伤");
 		this.TO_DEAD = new YRequest(4);
 		TO_DEAD.setName("死亡");
+	}
+
+	public static class YBuilder implements YIDomainBuilder
+	{
+
+		@Override
+		public YABaseDomain build(YDomainBuildInfo info,
+				Object[] extraParams)
+		{
+			String[] keys = info.key.split("\\:");
+			final String domainKey = keys[0];
+			final String hpKey = keys[1];
+			return new YMonsterDomain(domainKey, hpKey,
+					(World) extraParams[0],
+					(MainActivity) extraParams[1], info.x,
+					info.y);
+		}
 	}
 
 }

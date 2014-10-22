@@ -515,6 +515,34 @@
                  "width":161.333333333333,
                  "x":965.333333333333,
                  "y":426.666666666667
+                }, 
+                {
+                 "height":164,
+                 "name":"monster_1:monster_1_hp",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.monster.concrete.YMonsterDomain$YBuilder",
+                 "visible":true,
+                 "width":161.333,
+                 "x":5950.00016666667,
+                 "y":194
+                }, 
+                {
+                 "height":164,
+                 "name":"monster_2:monster_2_hp",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.monster.concrete.YMonsterDomain$YBuilder",
+                 "visible":true,
+                 "width":161.333,
+                 "x":15171.3335,
+                 "y":1.99999999999997
                 }],
          "opacity":1,
          "type":"objectgroup",

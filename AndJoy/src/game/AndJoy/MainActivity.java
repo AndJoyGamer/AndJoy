@@ -142,12 +142,12 @@ public class MainActivity extends Activity
 		// _____________新建精灵实体
 //		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// _____________新建怪物实体
-		YABaseDomain domainMonster1 = new YMonsterDomain(
-				Constants.MONSTER1, Constants.MONSTER1_HP,
-				world, this, -38, 8);
-		YABaseDomain domainMonster2 = new YMonsterDomain(
-				Constants.MONSTER2, Constants.MONSTER2_HP,
-				world, this, 110, 8);
+//		YABaseDomain domainMonster1 = new YMonsterDomain(
+//				Constants.MONSTER1, Constants.MONSTER1_HP,
+//				world, this, -38, 8);
+//		YABaseDomain domainMonster2 = new YMonsterDomain(
+//				Constants.MONSTER2, Constants.MONSTER2_HP,
+//				world, this, 110, 8);
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1.5f, 0.1f);
@@ -169,8 +169,8 @@ public class MainActivity extends Activity
 //			.parse();
 
 		// _____________向场景添加上述新建的实体
-		mainScene.addDomains(/*domainSprite,*/ domainMonster1,
-				domainMonster2, monster1Hp, monster2Hp,
+		mainScene.addDomains(/*domainSprite,*//* domainMonster1,
+				domainMonster2,*/ monster1Hp, monster2Hp,
 				obstacleDomain, getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
