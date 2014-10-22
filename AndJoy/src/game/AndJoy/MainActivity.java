@@ -23,6 +23,7 @@ import ygame.extension.primitives.YRectangle;
 import ygame.extension.program.YTextureProgram;
 import ygame.extension.third_party.kankan.wheel.widget.WheelView;
 import ygame.extension.third_party.kankan.wheel.widget.adapters.AbstractWheelAdapter;
+import ygame.extension.tiled.YBaseParsePlugin;
 import ygame.extension.tiled.YStaticImageLayerParsePlugin;
 import ygame.extension.tiled.YStaticPolyLineTerrainParsePlugin;
 import ygame.extension.tiled.YTiledParser;
@@ -75,7 +76,7 @@ public class MainActivity extends Activity
 	public volatile boolean bRightPressing;
 	public volatile boolean bLeftPressing;
 
-	private YSpriteDomain domainSprite;
+	// private YSpriteDomain domainSprite;
 
 	private YScene mainScene;
 
@@ -126,7 +127,7 @@ public class MainActivity extends Activity
 	private void initMainScene()
 	{
 		// _____________新建场景
-		YWorld world = new YWorld(new Vec2(0, -15f), system);
+		final YWorld world = new YWorld(new Vec2(0, -15f), system);
 		mainScene = new YFBOScene(system, "野外");
 		mainScene.addClockerPlugin(world);
 		mainScene.requestEnter(null);
@@ -139,7 +140,7 @@ public class MainActivity extends Activity
 				new Vec2(-127, 8));
 
 		// _____________新建精灵实体
-		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
+//		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// _____________新建怪物实体
 		YABaseDomain domainMonster1 = new YMonsterDomain(
 				Constants.MONSTER1, Constants.MONSTER1_HP,
@@ -160,6 +161,7 @@ public class MainActivity extends Activity
 		new YTiledParser(mainScene, "2mi.json", this)
 				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
 				.append(new YStaticPolyLineTerrainParsePlugin("map", world, "box2d_bodies"))
+				.append(new YBaseParsePlugin(new Object[]{world , MainActivity.this},"dynamic"))
 				.parse();
 //		new YTiledParser(mainScene, "city.json", this)
 //			.append(new YStaticImageLayerParsePlugin("map","background", "foreground"))
@@ -167,7 +169,7 @@ public class MainActivity extends Activity
 //			.parse();
 
 		// _____________向场景添加上述新建的实体
-		mainScene.addDomains(domainSprite, domainMonster1,
+		mainScene.addDomains(/*domainSprite,*/ domainMonster1,
 				domainMonster2, monster1Hp, monster2Hp,
 				obstacleDomain, getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
@@ -234,7 +236,11 @@ public class MainActivity extends Activity
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.jump();
+			{
+				YSpriteDomain sprite = (YSpriteDomain) mainScene
+						.queryDomainByKey("sprite");
+				sprite.jump();
+			}
 			return false;
 		}
 	}
@@ -246,7 +252,11 @@ public class MainActivity extends Activity
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-				domainSprite.attack();
+			{
+				YSpriteDomain sprite = (YSpriteDomain) mainScene
+						.queryDomainByKey("sprite");
+				sprite.attack();
+			}
 			return false;
 		}
 	}
@@ -258,6 +268,7 @@ public class MainActivity extends Activity
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			boolean bRight = v.getId() == R.id.BtnRight;
+
 			switch (event.getAction())
 			{
 			case MotionEvent.ACTION_DOWN:
@@ -265,7 +276,11 @@ public class MainActivity extends Activity
 					bRightPressing = true;
 				else
 					bLeftPressing = true;
-				domainSprite.walk();
+				{
+					YSpriteDomain sprite = (YSpriteDomain) mainScene
+							.queryDomainByKey("sprite");
+					sprite.walk();
+				}
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -273,7 +288,11 @@ public class MainActivity extends Activity
 					bRightPressing = false;
 				else
 					bLeftPressing = false;
-				domainSprite.waiting();
+				{
+					YSpriteDomain sprite = (YSpriteDomain) mainScene
+							.queryDomainByKey("sprite");
+					sprite.waiting();
+				}
 				break;
 
 			default:
@@ -313,15 +332,15 @@ public class MainActivity extends Activity
 //					.append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
 					.parse();
 				//@formatter:on
-//				system.switchScene(scene,
-//						new YIResultCallback()
-//						{
-//							public void onResultReceived(
-//									Object objResult)
-//							{
-//								bSwitchFinish = false;
-//							}
-//						});
+				// system.switchScene(scene,
+				// new YIResultCallback()
+				// {
+				// public void onResultReceived(
+				// Object objResult)
+				// {
+				// bSwitchFinish = false;
+				// }
+				// });
 				scene.getCurrentCamera().setZ(10);
 				system.forceSetCurrentScene(scene);
 			} else

@@ -47,13 +47,15 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private boolean bRight = true;
 	private int hp = 200;
 
-	protected YSpriteLogic(World world, MainActivity activity)
+	protected YSpriteLogic(World world, MainActivity activity, float initX,
+			float initY , float skeletonSideLen)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
-				activity.getResources(), 3, 22), 2.5f , world);
-		fInitX_M = 105;//for yewai
-//		fInitX_M = 0;//for city
-		fInitY_M = 8;
+				activity.getResources(), 3, 22), skeletonSideLen, world);
+		// fInitX_M = 105;//for yewai
+		// fInitY_M = 8;
+		fInitX_M = initX;
+		fInitY_M = initY;
 
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
