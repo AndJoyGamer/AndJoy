@@ -3,7 +3,6 @@ package game.AndJoy;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
-import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.obstacle.ObstacleDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
@@ -30,7 +29,6 @@ import ygame.extension.tiled.YTiledParser;
 import ygame.extension.with_third_party.YWorld;
 import ygame.framebuffer.YFBOScene;
 import ygame.framework.YIResultCallback;
-import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
@@ -238,7 +236,7 @@ public class MainActivity extends Activity
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
 				YSpriteDomain sprite = (YSpriteDomain) mainScene
-						.queryDomainByKey("sprite");
+						.queryDomainByKey(Constants.SPRITE);
 				sprite.jump();
 			}
 			return false;
@@ -254,7 +252,7 @@ public class MainActivity extends Activity
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
 				YSpriteDomain sprite = (YSpriteDomain) mainScene
-						.queryDomainByKey("sprite");
+						.queryDomainByKey(Constants.SPRITE);
 				sprite.attack();
 			}
 			return false;
@@ -278,7 +276,7 @@ public class MainActivity extends Activity
 					bLeftPressing = true;
 				{
 					YSpriteDomain sprite = (YSpriteDomain) mainScene
-							.queryDomainByKey("sprite");
+							.queryDomainByKey(Constants.SPRITE);
 					sprite.walk();
 				}
 				break;
@@ -290,7 +288,7 @@ public class MainActivity extends Activity
 					bLeftPressing = false;
 				{
 					YSpriteDomain sprite = (YSpriteDomain) mainScene
-							.queryDomainByKey("sprite");
+							.queryDomainByKey(Constants.SPRITE);
 					sprite.waiting();
 				}
 				break;
