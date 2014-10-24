@@ -33,7 +33,7 @@ import ygame.transformable.YMover;
 
 public class ObstacleLogic extends YADomainLogic {
 
-	private YMover mover = (YMover) new YMover().setX(-68).setY(-3).setZ(0.2f);
+	private YMover mover = (YMover) new YMover().setX(68).setY(-3).setZ(0.2f);
 	private YSkeleton skeleton = new YSquare(1.5f, false, true);
 	private MainActivity activity;
 	private YTileSheet tileSheet;

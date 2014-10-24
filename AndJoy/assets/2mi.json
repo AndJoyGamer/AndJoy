@@ -45,8 +45,7 @@
                         }],
                  "properties":
                     {
-                     "friction":"0.8",
-                     "restitution":"0.02"
+                     "friction":"0.8"
                     },
                  "rotation":0,
                  "type":"",
@@ -276,8 +275,7 @@
                         }],
                  "properties":
                     {
-                     "friction":"0.8",
-                     "restitution":"0.2"
+                     "friction":"0.8"
                     },
                  "rotation":0,
                  "type":"",
@@ -504,20 +502,6 @@
          "objects":[
                 {
                  "height":164,
-                 "name":"sprite",
-                 "properties":
-                    {
-
-                    },
-                 "rotation":0,
-                 "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
-                 "visible":true,
-                 "width":161.333333333333,
-                 "x":965.333333333333,
-                 "y":426.666666666667
-                }, 
-                {
-                 "height":164,
                  "name":"monster_1:monster_1_hp",
                  "properties":
                     {
@@ -528,7 +512,7 @@
                  "visible":true,
                  "width":161.333,
                  "x":5950.00016666667,
-                 "y":194
+                 "y":133.393939393939
                 }, 
                 {
                  "height":164,
@@ -542,7 +526,21 @@
                  "visible":true,
                  "width":161.333,
                  "x":15171.3335,
-                 "y":1.99999999999997
+                 "y":-40.4242424242425
+                }, 
+                {
+                 "height":164,
+                 "name":"sprite",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
+                 "visible":true,
+                 "width":161.333,
+                 "x":2922.36380303031,
+                 "y":399.818181818182
                 }],
          "opacity":1,
          "type":"objectgroup",

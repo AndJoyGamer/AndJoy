@@ -84,10 +84,10 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.density = 1;
 		def.friction = 0f;
 		def.restitution = 0f;
-		def.userData = "monstermain";
+		def.userData = "monsterMain";
 		final float fBodySideLen = fSkeletonSideLen * 0.7f;
 		CircleShape shapeBody = new CircleShape();
-		shapeBody.setRadius(fBodySideLen / 2);
+		shapeBody.setRadius(fBodySideLen / 2.5f);
 		def.shape = shapeBody;
 		body.createFixture(def);
 
@@ -95,7 +95,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
 		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10,
-				new Vec2(0, -fBodySideLen / 2), 0);
+				new Vec2(0, -fBodySideLen / 2f), 0);
 		def.shape = shapeFoot;
 		def.friction = 0.5f;
 		def.density = 10;
@@ -104,7 +104,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		// 感应行走雷达
 		CircleShape shapeRadar1 = new CircleShape();
-		shapeRadar1.setRadius(fBodySideLen * 1.5f);
+		shapeRadar1.setRadius(fBodySideLen * 3f);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -115,7 +115,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		
 		// 感应攻击雷达
 		CircleShape shapeRadar2 = new CircleShape();
-		shapeRadar2.setRadius(fBodySideLen * 0.5f);
+		shapeRadar2.setRadius(fBodySideLen/2);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -200,7 +200,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		builder.onEntry(attack1).perform(
 				new AttackEnterAction());
 		//攻1到行走
-		builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
+		//builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
 		
 		//行走到受伤
 		builder.newTransition().from(walk).to(damage).on(domainContext.TO_DAMAGE);
@@ -288,7 +288,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					system, sceneCurrent);
 			if(!ifOnLand){
 				body.applyLinearImpulse(new Vec2(0,-body.getMass()), body.getPosition());
-				//System.out.println(body.getLinearVelocity().y);
 			}else{
 				body.setLinearVelocity(vec2);
 			}
@@ -337,13 +336,16 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			iColumnIndex = (i_arrFrameIndex[iFrame] - 1) % 22;
 			body.applyForce(vecAntiGrav, body.getPosition());
 			
-			if(0 == iFrame)
+			if(3 == iFrame)
 			{
 				YSpriteDomain sprite = (YSpriteDomain) system
 						.queryDomainByKey(Constants.SPRITE);
 				if (null != sprite)
 					sprite.damage(bRight ? Orientation.RIGHT
 							: Orientation.LEFT);
+			}
+			if(8 == iFrame){
+				resetState();
 			}
 		}
 	}
@@ -358,6 +360,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YRequest causedBy,
 				YAMonsterDomainLogic<?> context,
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine){
+			fFrames = 0;
 		}
 	}
 
@@ -392,7 +395,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YAMonsterDomainLogic<?> context,
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
 			// TODO Auto-generated method stub
-			
 			iDamageCounts = 0;
 		}
 	}
@@ -456,8 +458,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			{// 与之碰撞的实体确实为精灵
 //				if (fixtureOther.m_userData == "foot")
 				{
-					System.out.println(domainOther.KEY
-							+ "进入雷达范围");
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
 							.getBody()
@@ -481,7 +481,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			{// 与之碰撞的实体确实为精灵
 //				if (fixtureOther.m_userData == "foot")
 				{
-					System.out.println("离开雷达范围");
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
 							.getBody()
@@ -506,7 +505,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 //				YSpriteDomain sprite = (YSpriteDomain) domainOther;
 //				if (fixtureOther.m_userData == "foot")
 				{
-					System.out.println("进入攻击范围");
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
 							.getBody()
@@ -517,11 +515,11 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					domainContext.sendRequest(domainContext.TO_ATTACK1);
 					ifInRadar2 = true;
 					
-					YSpriteDomain sprite = (YSpriteDomain) system
-							.queryDomainByKey(Constants.SPRITE);
-					if (null != sprite)
-						sprite.damage(bRight ? Orientation.RIGHT
-								: Orientation.LEFT);
+//					YSpriteDomain sprite = (YSpriteDomain) system
+//							.queryDomainByKey(Constants.SPRITE);
+//					if (null != sprite)
+//						sprite.damage(bRight ? Orientation.RIGHT
+//								: Orientation.LEFT);
 					// domainSprite.sendRequest(domainSprite.TO_DAMAGE);
 //					sprite.damage(bRight ? Orientation.RIGHT : Orientation.LEFT);
 				}
@@ -538,7 +536,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			{// 与之碰撞的实体确实为精灵
 //				if (fixtureOther.m_userData == "foot")
 				{
-					System.out.println("离开攻击范围");
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
 							.getBody()
@@ -565,7 +562,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			if(null == domainOther || "map".equals(domainOther.KEY))
 			{
 				iFootContact++;
-				System.out.println(domainContext.KEY + "脚步碰撞");
 				ifOnLand = true;
 			}
 		}

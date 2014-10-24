@@ -79,7 +79,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		def.restitution = 0f;
 		final float fBodySideLen = fSkeletonSideLen * 0.7f;
 		CircleShape shapeBody = new CircleShape();
-		shapeBody.setRadius(fBodySideLen / 2);
+		shapeBody.setRadius(fBodySideLen / 2.5f);
 		def.shape = shapeBody;
 		body.createFixture(def);
 
@@ -87,7 +87,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
 		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10,
-				new Vec2(0, -fBodySideLen / 2), 0);
+				new Vec2(0, -fBodySideLen / 2f), 0);
 		def.shape = shapeFoot;
 		def.friction = 0.5f;
 		def.restitution = 0;
@@ -536,7 +536,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YABaseDomain domainOther)
 		{
 			if (null != domainOther
-					&& domainOther.KEY.contains("monster"))
+					&& domainOther.KEY.contains("monster") && !fixtureOther.isSensor())
 			{// 与之碰撞的实体确实为怪物
 				ifRightSide = fixtureOther.getBody()
 						.getPosition().x > fixture
