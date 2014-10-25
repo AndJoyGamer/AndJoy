@@ -75,10 +75,13 @@ public class YSpriteDomain extends YDomain
 	{
 
 		@Override
-		public YABaseDomain build(YDomainBuildInfo info , Object[] extraParams)
+		public YABaseDomain build(YDomainBuildInfo info,
+				Object[] extraParams)
 		{
-			return new YSpriteDomain(info.key, (World)extraParams[0], (MainActivity) extraParams[1],
-					info.x, info.y, info.width);
+			return new YSpriteDomain(info.key,
+					(World) extraParams[0],
+					(MainActivity) extraParams[1], info.x,
+					info.y, info.width);
 		}
 	}
 

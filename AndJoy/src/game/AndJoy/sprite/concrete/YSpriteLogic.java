@@ -2,6 +2,9 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.DamageDisp.DamageDomain;
+import game.AndJoy.DamageDisp.DamageReq;
+import game.AndJoy.DamageDisp.IDamageDisplayer;
 import game.AndJoy.common.Constants;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
@@ -28,9 +31,10 @@ import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
+import android.util.Log;
 import android.widget.ProgressBar;
 
-class YSpriteLogic extends YASpriteDomainLogic
+class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 {
 	private float fFrames;
 	// 受伤状态维持的周期计数
@@ -61,6 +65,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
+		// damageDomain = new DamageDomain("damage", activity);
 	}
 
 	/**
@@ -389,6 +394,15 @@ class YSpriteLogic extends YASpriteDomainLogic
 		}
 	}
 
+	@Override
+	protected void onAttach(YSystem system, YBaseDomain domainContext)
+	{
+		// TODO Auto-generated method stub
+		super.onAttach(system, domainContext);
+		// this.damageDomain = new DamageDomain("damage", activity);
+		// system.getCurrentScene().addDomains(damageDomain);
+	}
+
 	/*************************** 关于攻击1状态 **********************************/
 	private class Attack1Cloker implements YIStateClocker
 	{
@@ -449,6 +463,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 					v2.subLocal(v1)
 							.mulLocal(body.getMass()),
 					body.getPosition());
+
 		}
 	}
 
@@ -467,15 +482,33 @@ class YSpriteLogic extends YASpriteDomainLogic
 		{
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
-			hp--;
+			Log.d("伤害显示", "进入了受伤onclock");
 
+			hp--;
 			if (hp <= 0)
 			{
 				resetGame();
 				return;
 			}
+			if (iDamageCounts == 0)
+			{
+				YScene scene = system.getCurrentScene();
+				DamageDomain damageDomain = new DamageDomain(
+						(YSpriteLogic) domainLogicContext,
+						activity);
+				float[] pos = new float[]
+				{ mover.getX(), mover.getY() };
+
+				damageDomain.sendRequest(new DamageReq(pos,
+						(int) (Math.random() * 1000)));
+				scene.addDomains(damageDomain);
+			}
 			if (iDamageCounts++ > 30)
+			{
+				iDamageCounts = 0;
+				// scene.removeDomains("damage");
 				resetState();
+			}
 		}
 	}
 
@@ -493,6 +526,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YASpriteDomainLogic context,
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
+			Log.d("伤害显示", "进入了受伤状态");
 			iDamageCounts = 0;
 			// body.applyForce(vecAntiGrav, body.getPosition());
 			SpriteReq req = (SpriteReq) causedBy;
@@ -504,6 +538,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 					v2.subLocal(v1)
 							.mulLocal(body.getMass()),
 					body.getPosition());
+
 		}
 	}
 
@@ -531,7 +566,6 @@ class YSpriteLogic extends YASpriteDomainLogic
 					resetGame();
 					return;
 				}
-
 				++iFootContact;
 				bOnLand = true;
 				if (YSpriteState.JUMP == stateMachine
@@ -591,4 +625,13 @@ class YSpriteLogic extends YASpriteDomainLogic
 			monsterKey = null;
 		}
 	}
+
+	@Override
+	public float[] getCurrentXY()
+	{
+		// TODO Auto-generated method stub
+		return new float[]
+		{ mover.getX(), mover.getY() };
+	}
+
 }

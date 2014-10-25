@@ -1,5 +1,6 @@
 package game.AndJoy;
 
+import game.AndJoy.DamageDisp.NumBitmap;
 import game.AndJoy.common.AndjoyApp;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
@@ -63,6 +64,7 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -85,6 +87,7 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		setupViews();
 		initMainScene();
+
 	}
 
 	private void setupViews()
@@ -92,6 +95,28 @@ public class MainActivity extends Activity
 		// _____________YView
 		YView yview = (YView) findViewById(R.id.YView);
 		this.system = yview.SYSTEM;
+		// test
+		Button btn_test = (Button) findViewById(R.id.btn_test);
+		btn_test.setOnClickListener(new OnClickListener()
+		{
+
+			@Override
+			public void onClick(View arg0)
+			{
+				// TODO Auto-generated method stub
+				// YSpriteDomain domainByKey = (YSpriteDomain)
+				// system
+				// .getCurrentScene().queryDomainByKey(Constants.SPRITE);
+				// DamageDomain dd = new DamageDomain(
+				// mainActivity);
+				// system.getCurrentScene().addDomains(dd);
+				// dd.sendRequest(new DamageReq(new float[] {
+				// system.getCurrentScene().getCurrentCamera().getX(),
+				// system.getCurrentScene().getCurrentCamera().getY()
+				// },
+				// (int) (Math.random() * 1000)));
+			}
+		});
 		// _____________左右移动按键
 		OnTouchListener lsn = new SteerLsn();
 		findViewById(R.id.BtnLeft).setOnTouchListener(lsn);
@@ -138,21 +163,23 @@ public class MainActivity extends Activity
 		mainScene.addClockerPlugin(world);
 
 		// _____________测试相关，放入测试箱子、测试吊桥
-//		YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
-		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108,
-				4.5f), 1, world, mainScene, getResources());
+		// YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
+		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108, 4.5f),
+				1, world, mainScene, getResources());
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
 				new Vec2(-127, 8));
 
+		// 测试伤害显示
+		NumBitmap.setRes(getResources());
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1, 0.1f);
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
 				Constants.MONSTER2_HP, getResources(), 1f, 0.1f);
 		// _____________新建测试障碍
-		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs",
-				this, world);
-		
+		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs", this,
+				world);
+
 		// _____________解析Tiled生成的静态地图
 		new YTiledParser(mainScene, "2mi.json", this)
 				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
@@ -173,7 +200,8 @@ public class MainActivity extends Activity
 		
 		mainScene.requestEnter(null);
 	}
-	//@formatter:on
+
+	// @formatter:on
 
 	/**
 	 * 获取背景实体
@@ -184,7 +212,7 @@ public class MainActivity extends Activity
 	{
 		YADomainLogic logic = new YADomainLogic()
 		{
-			//@formatter:off
+			// @formatter:off
 			private YMover mover = (YMover) new YMover().setZ(-3f);
 			private YSkeleton skeleton = new YRectangle(20, 20,false, true);
 			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.shan));
@@ -263,7 +291,6 @@ public class MainActivity extends Activity
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			boolean bRight = v.getId() == R.id.BtnRight;
-
 			switch (event.getAction())
 			{
 			case MotionEvent.ACTION_DOWN:
@@ -320,7 +347,7 @@ public class MainActivity extends Activity
 			bWhich = !bWhich;
 			if (bWhich)
 			{
-				//@formatter:off
+				// @formatter:off
 				YScene scene = new YFBOScene(system, "测试");
 				new YTiledParser(scene, "city.json", MainActivity.this)
 					.append(new YStaticImageLayerParsePlugin("map_city","background", "foreground"))
@@ -359,14 +386,11 @@ public class MainActivity extends Activity
 		final int IMAGE_WIDTH = 120;
 		final int IMAGE_HEIGHT = 90;
 
-		//@formatter:off
-		private final int items[] = new int[]
-		{ 		R.drawable.skill1 , 
-				R.drawable.skill2 , 
-				R.drawable.skill3 , 
-				R.drawable.skill4 , 
-				R.drawable.skill5 , };
-		//@formatter:on
+		// @formatter:off
+		private final int items[] = new int[] { R.drawable.skill1,
+				R.drawable.skill2, R.drawable.skill3, R.drawable.skill4,
+				R.drawable.skill5, };
+		// @formatter:on
 
 		// Cached images
 		private List<SoftReference<Bitmap>> images;
