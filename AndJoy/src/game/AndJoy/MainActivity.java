@@ -25,6 +25,7 @@ import ygame.extension.program.YTextureProgram;
 import ygame.extension.third_party.kankan.wheel.widget.WheelView;
 import ygame.extension.third_party.kankan.wheel.widget.adapters.AbstractWheelAdapter;
 import ygame.extension.tiled.YBaseParsePlugin;
+import ygame.extension.tiled.YDestructibleTerrainParsePlugin;
 import ygame.extension.tiled.YStaticImageLayerParsePlugin;
 import ygame.extension.tiled.YStaticPolyLineTerrainParsePlugin;
 import ygame.extension.tiled.YTiledParser;
@@ -87,7 +88,6 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		setupViews();
 		initMainScene();
-
 	}
 
 	private void setupViews()
@@ -185,6 +185,7 @@ public class MainActivity extends Activity
 				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
 				.append(new YStaticPolyLineTerrainParsePlugin("map", world, "box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[]{world , MainActivity.this},"dynamic"))
+				.append(new YDestructibleTerrainParsePlugin("destroy", "destroyable_img", "destroyable_body", world))
 				.parse();
 //		new YTiledParser(mainScene, "city.json", this)
 //			.append(new YStaticImageLayerParsePlugin("map","background", "foreground"))

@@ -9,6 +9,7 @@ import game.AndJoy.common.Constants;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
+import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -16,11 +17,13 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import ygame.common.YConstants;
 import ygame.common.YConstants.Orientation;
 import ygame.extension.domain.sprite.YASpriteDomainLogic;
 import ygame.extension.domain.sprite.YIStateClocker;
+import ygame.extension.tiled.domain.YDestructibleTerrainDomain;
 import ygame.extension.with_third_party.YIOnContactListener;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
@@ -88,7 +91,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		CircleShape shapeBody = new CircleShape();
 		shapeBody.setRadius(fBodySideLen / 2.5f);
 		def.shape = shapeBody;
-		body.createFixture(def);
+		Fixture fixtureMain = body.createFixture(def);
+		fixtureMain.setOnContactListener(new MainContactLsn());
 
 		// XXX
 		// 足部感应器（foot）
@@ -550,7 +554,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			System.out.println("脚步碰撞");
 			// XXX temp code
@@ -576,7 +580,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			System.out.println("脚步离开");
 			// XXX temp code
@@ -597,12 +601,45 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		}
 	}
 
+	private class MainContactLsn implements YIOnContactListener
+	{
+		private WorldManifold fold = new WorldManifold();
+
+		@Override
+		public void beginContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther, Contact contact)
+		{
+			if (null != domainOther
+					&& domainOther.KEY.contains("destroy"))
+			{
+				if (stateMachine.getCurrentState() == YSpriteState.ATTACK1)
+				{
+					YDestructibleTerrainDomain dtd = (YDestructibleTerrainDomain) domainOther;
+					contact.getWorldManifold(fold);
+					for (Vec2 pointContact : fold.points)
+						dtd.destroyCircle(
+								pointContact.x,
+								pointContact.y,
+								0.3f);
+				}
+			}
+		}
+
+		@Override
+		public void endContact(Fixture fixture, Fixture fixtureOther,
+				YABaseDomain domainOther, Contact contact)
+		{
+			// TODO Auto-generated method stub
+
+		}
+	}
+
 	private class RadarContactLsn implements YIOnContactListener
 	{
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			if (null != domainOther
 					&& domainOther.KEY.contains("monster")
@@ -619,7 +656,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			ifInRadar = false;
 			monsterKey = null;

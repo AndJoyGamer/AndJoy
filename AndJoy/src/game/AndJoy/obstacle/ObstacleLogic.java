@@ -13,6 +13,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import ygame.common.YConstants.Orientation;
 import ygame.domain.YADomainLogic;
@@ -95,7 +96,7 @@ public class ObstacleLogic extends YADomainLogic {
 		protected boolean bRight = false;
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther , Contact contact) {
 			// TODO Auto-generated method stub
 
 			System.out.println(domainOther.KEY);
@@ -116,7 +117,7 @@ public class ObstacleLogic extends YADomainLogic {
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther , Contact contact) {
 			// TODO Auto-generated method stub
 			
 		}

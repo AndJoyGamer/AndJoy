@@ -14,6 +14,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import ygame.common.YConstants.Orientation;
 import ygame.domain.YDomain;
@@ -476,7 +477,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			if (null != domainOther
 					&& domainOther.KEY
@@ -500,7 +501,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			if (null != domainOther
 					&& domainOther.KEY
@@ -527,7 +528,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			if (null != domainOther
 					&& domainOther.KEY
@@ -535,7 +536,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			{// 与之碰撞的实体确实为精灵
 				// YSpriteDomain sprite = (YSpriteDomain)
 				// domainOther;
-			// if (fixtureOther.m_userData == "foot")
+				// if (fixtureOther.m_userData == "foot")
 				{
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
@@ -565,7 +566,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			if (null != domainOther
 					&& domainOther.KEY
@@ -594,7 +595,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）；
@@ -609,7 +610,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
+				YABaseDomain domainOther, Contact contact)
 		{
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
