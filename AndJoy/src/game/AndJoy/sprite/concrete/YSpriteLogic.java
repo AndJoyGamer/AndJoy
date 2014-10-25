@@ -2,6 +2,7 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.common.Constants;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
@@ -48,10 +49,11 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private int hp = 200;
 
 	protected YSpriteLogic(World world, MainActivity activity, float initX,
-			float initY , float skeletonSideLen)
+			float initY, float skeletonSideLen)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
-				activity.getResources(), 3, 22), skeletonSideLen, world);
+				activity.getResources(), 3, 22),
+				skeletonSideLen, world);
 		// fInitX_M = 105;//for yewai
 		// fInitY_M = 8;
 		fInitX_M = initX;
@@ -220,6 +222,25 @@ class YSpriteLogic extends YASpriteDomainLogic
 			stateMachine.forceSetState(YSpriteState.WALK);
 		else
 			stateMachine.forceSetState(YSpriteState.WAIT);
+	}
+
+	// XXX temp code，之后会有一个死亡状态与之对应，目前暂时用一个标志位表示
+	private boolean bDead;
+
+	private void resetGame()
+	{
+		if (bDead)
+			return;
+		bDead = true;
+		activity.runOnUiThread(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				activity.initMainScene();
+			}
+		});
 	}
 
 	/******************************** 各状态之详细描述 *****************************************/
@@ -447,6 +468,12 @@ class YSpriteLogic extends YASpriteDomainLogic
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
 			hp--;
+
+			if (hp <= 0)
+			{
+				resetGame();
+				return;
+			}
 			if (iDamageCounts++ > 30)
 				resetState();
 		}
@@ -497,6 +524,14 @@ class YSpriteLogic extends YASpriteDomainLogic
 			if (null == domainOther
 					|| domainOther.KEY.equals("map"))
 			{
+				String objName = (String) fixtureOther
+						.getUserData();
+				if (Constants.FIXTURE_DEAD_LINE.equals(objName))
+				{
+					resetGame();
+					return;
+				}
+
 				++iFootContact;
 				bOnLand = true;
 				if (YSpriteState.JUMP == stateMachine
@@ -536,7 +571,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YABaseDomain domainOther)
 		{
 			if (null != domainOther
-					&& domainOther.KEY.contains("monster") && !fixtureOther.isSensor())
+					&& domainOther.KEY.contains("monster")
+					&& !fixtureOther.isSensor())
 			{// 与之碰撞的实体确实为怪物
 				ifRightSide = fixtureOther.getBody()
 						.getPosition().x > fixture

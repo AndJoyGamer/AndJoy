@@ -65,7 +65,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -76,8 +75,6 @@ public class MainActivity extends Activity
 
 	public volatile boolean bRightPressing;
 	public volatile boolean bLeftPressing;
-
-	// private YSpriteDomain domainSprite;
 
 	private YScene mainScene;
 
@@ -113,7 +110,6 @@ public class MainActivity extends Activity
 				AndjoyApp.getScreenWidth() / 4,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
 		findViewById(R.id.mp_bar).setLayoutParams(mpHpBar);
-
 		// _____________场景切换测试
 		View btnSwitchScene = findViewById(R.id.BtnScene);
 		btnSwitchScene.setOnLongClickListener(new SceneBtnLongLsn());
@@ -134,13 +130,12 @@ public class MainActivity extends Activity
 	}
 
 	//@formatter:off
-	private void initMainScene()
+	public void initMainScene()
 	{
 		// _____________新建场景
 		final YWorld world = new YWorld(new Vec2(0, -30f), system);
 		mainScene = new YFBOScene(system, "野外");
 		mainScene.addClockerPlugin(world);
-		mainScene.requestEnter(null);
 
 		// _____________测试相关，放入测试箱子、测试吊桥
 //		YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
@@ -149,15 +144,6 @@ public class MainActivity extends Activity
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
 				new Vec2(-127, 8));
 
-		// _____________新建精灵实体
-//		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
-		// _____________新建怪物实体
-//		YABaseDomain domainMonster1 = new YMonsterDomain(
-//				Constants.MONSTER1, Constants.MONSTER1_HP,
-//				world, this, -38, 8);
-//		YABaseDomain domainMonster2 = new YMonsterDomain(
-//				Constants.MONSTER2, Constants.MONSTER2_HP,
-//				world, this, 110, 8);
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1, 0.1f);
@@ -179,12 +165,13 @@ public class MainActivity extends Activity
 //			.parse();
 
 		// _____________向场景添加上述新建的实体
-		mainScene.addDomains(/*domainSprite,*//* domainMonster1,
-				domainMonster2,*/ monster1Hp, monster2Hp,
+		mainScene.addDomains(monster1Hp, monster2Hp,
 				obstacleDomain, getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
 		mainScene.getCurrentCamera().setZ(10);
+		
+		mainScene.requestEnter(null);
 	}
 	//@formatter:on
 
@@ -201,8 +188,6 @@ public class MainActivity extends Activity
 			private YMover mover = (YMover) new YMover().setZ(-3f);
 			private YSkeleton skeleton = new YRectangle(20, 20,false, true);
 			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.shan));
-//			private YSkeleton skeleton = new YRectangle(15, 20,false, true);
-//			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.city_bkg));
 			//@formatter:on
 
 			@Override

@@ -106,10 +106,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				new FootContactLsn());
 
 		// 感应行走雷达
-		// CircleShape shapeRadar1 = new CircleShape();
-		// shapeRadar1.setRadius(fBodySideLen * 3f);
-		PolygonShape shapeRadar1 = new PolygonShape();
-		shapeRadar1.setAsBox(fBodySideLen * 3, fBodySideLen);
+		CircleShape shapeRadar1 = new CircleShape();
+		shapeRadar1.setRadius(fBodySideLen * 3f);
 
 		def.isSensor = true;
 		def.friction = 0f;
