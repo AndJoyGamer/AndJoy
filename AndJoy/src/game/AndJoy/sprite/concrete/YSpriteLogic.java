@@ -2,7 +2,6 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
-import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
@@ -15,6 +14,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import ygame.common.YConstants;
+import ygame.common.YConstants.Orientation;
 import ygame.extension.domain.sprite.YASpriteDomainLogic;
 import ygame.extension.domain.sprite.YIStateClocker;
 import ygame.extension.with_third_party.YIOnContactListener;

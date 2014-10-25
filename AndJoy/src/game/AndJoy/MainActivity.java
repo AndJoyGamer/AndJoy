@@ -1,5 +1,6 @@
 package game.AndJoy;
 
+import game.AndJoy.common.AndjoyApp;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
@@ -83,7 +84,6 @@ public class MainActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 		setupViews();
 		initMainScene();
 	}

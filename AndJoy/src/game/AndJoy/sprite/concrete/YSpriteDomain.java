@@ -1,10 +1,10 @@
 package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
-import game.AndJoy.common.Constants.Orientation;
 
 import org.jbox2d.dynamics.World;
 
+import ygame.common.YConstants.Orientation;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.program.YTileProgram;

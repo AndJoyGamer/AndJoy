@@ -3,7 +3,6 @@ package game.AndJoy.monster.concrete;
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
 import game.AndJoy.common.Constants;
-import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.YAMonsterDomainLogic;
 import game.AndJoy.monster.YIMonsterStateClocker;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
@@ -16,6 +15,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import ygame.common.YConstants.Orientation;
 import ygame.domain.YDomain;
 import ygame.extension.domain.YProgressBarDomain;
 import ygame.extension.with_third_party.YIOnContactListener;

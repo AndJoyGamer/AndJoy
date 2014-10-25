@@ -14,8 +14,4 @@ public final class Constants
 	
 	public static final int COLOR_TRANSPARENT = 0x00000000;
 	
-	public static enum Orientation
-	{
-		RIGHT , LEFT
-	}
 }

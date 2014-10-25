@@ -1,5 +1,10 @@
 package game.AndJoy.obstacle;
 
+import game.AndJoy.MainActivity;
+import game.AndJoy.R;
+import game.AndJoy.common.Constants;
+import game.AndJoy.sprite.concrete.YSpriteDomain;
+
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -9,11 +14,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
-import game.AndJoy.MainActivity;
-import game.AndJoy.R;
-import game.AndJoy.common.Constants;
-import game.AndJoy.common.Constants.Orientation;
-import game.AndJoy.sprite.concrete.YSpriteDomain;
+import ygame.common.YConstants.Orientation;
 import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.extension.primitives.YSquare;
