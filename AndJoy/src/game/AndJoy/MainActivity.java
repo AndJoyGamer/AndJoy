@@ -64,6 +64,8 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -102,6 +104,16 @@ public class MainActivity extends Activity
 		// _____________攻击按键
 		findViewById(R.id.BtnAttack).setOnTouchListener(
 				new AttackBtnLsn());
+		// _____________hp、mp条动态布局
+		android.widget.LinearLayout.LayoutParams lpHpBar = new LinearLayout.LayoutParams(
+				AndjoyApp.getScreenWidth() / 2,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		findViewById(R.id.hp_bar).setLayoutParams(lpHpBar);
+		android.widget.LinearLayout.LayoutParams mpHpBar = new LinearLayout.LayoutParams(
+				AndjoyApp.getScreenWidth() / 4,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		findViewById(R.id.mp_bar).setLayoutParams(mpHpBar);
+
 		// _____________场景切换测试
 		View btnSwitchScene = findViewById(R.id.BtnScene);
 		btnSwitchScene.setOnLongClickListener(new SceneBtnLongLsn());

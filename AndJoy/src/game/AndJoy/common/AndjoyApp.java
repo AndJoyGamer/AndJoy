@@ -12,11 +12,27 @@ public class AndjoyApp extends Application
 	{
 		super.onCreate();
 		resources = getResources();
+
 	}
 
 	public static Resources getResource()
 	{
 		return resources;
+	}
+
+	public static int getScreenWidth()
+	{
+		return resources.getDisplayMetrics().widthPixels;
+	}
+
+	public static int getScreenHeight()
+	{
+		return resources.getDisplayMetrics().heightPixels;
+	}
+
+	public static float getScreenDen()
+	{
+		return resources.getDisplayMetrics().density;
 	}
 
 	@Override
