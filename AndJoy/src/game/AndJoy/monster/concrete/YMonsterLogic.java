@@ -31,7 +31,6 @@ import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 
-
 class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 {
 	private int iDamageCounts;
@@ -39,13 +38,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	private boolean ifOnLand = false;
 	private Vec2 vecAntiGrav;
 	private YSystem system;
-	//是否在雷达1范围内
+	// 是否在雷达1范围内
 	private boolean ifInRadar1;
-	//是否在雷达2范围内
+	// 是否在雷达2范围内
 	private boolean ifInRadar2;
-	
+
 	private int hp = 100;
-	
+
 	final YIMonsterStateClocker wait = new WaitClocker();
 	final WalkClocker walk = new WalkClocker();
 	final Attack1Cloker attack1 = new Attack1Cloker();
@@ -53,14 +52,17 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	final DeadClocker dead = new DeadClocker();
 	final private String keyHP;
 
-	protected YMonsterLogic(World world, String keyHP, MainActivity activity, float fInitX_M, float fInitY_M) {
-		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,22), 2.5f, world);
+	protected YMonsterLogic(World world, String keyHP,
+			MainActivity activity, float fInitX_M, float fInitY_M)
+	{
+		super(new YTileSheet(R.drawable.hero_big,
+				activity.getResources(), 3, 22), 2.5f, world);
 		this.fInitX_M = fInitX_M;
 		this.fInitY_M = fInitY_M;
 		vecAntiGrav = new Vec2(world.getGravity());
 		this.keyHP = keyHP;
 	}
-	
+
 	@Override
 	protected void onAttach(YSystem system, YBaseDomain domainContext)
 	{
@@ -100,11 +102,14 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.friction = 0.5f;
 		def.density = 10;
 		def.isSensor = true;
-		body.createFixture(def).setOnContactListener(new FootContactLsn());
+		body.createFixture(def).setOnContactListener(
+				new FootContactLsn());
 
 		// 感应行走雷达
-		CircleShape shapeRadar1 = new CircleShape();
-		shapeRadar1.setRadius(fBodySideLen * 3f);
+		// CircleShape shapeRadar1 = new CircleShape();
+		// shapeRadar1.setRadius(fBodySideLen * 3f);
+		PolygonShape shapeRadar1 = new PolygonShape();
+		shapeRadar1.setAsBox(fBodySideLen * 3, fBodySideLen);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -112,10 +117,10 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.shape = shapeRadar1;
 		Fixture fixtureRadar1 = body.createFixture(def);
 		fixtureRadar1.setOnContactListener(new Radar1ContactLsn());
-		
+
 		// 感应攻击雷达
 		CircleShape shapeRadar2 = new CircleShape();
-		shapeRadar2.setRadius(fBodySideLen/2);
+		shapeRadar2.setRadius(fBodySideLen / 2);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -123,14 +128,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		def.shape = shapeRadar2;
 		Fixture fixtureRadar2 = body.createFixture(def);
 		fixtureRadar2.setOnContactListener(new Radar2ContactLsn());
-		
-		
+
 		vecAntiGrav.mulLocal(-body.getMass());
 	}
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent , YBaseDomain domain)
+			YScene sceneCurrent, YBaseDomain domain)
 	{
 		if (request.iKEY == domainContext.TO_WALK.iKEY)
 		{
@@ -141,25 +145,31 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 							.mulLocal(body.getMass()),
 					body.getPosition());
 		}
-		return super.onDealRequest(request, system, sceneCurrent , domain);
+		return super.onDealRequest(request, system, sceneCurrent,
+				domain);
 	}
-	
+
 	@Override
 	protected void onCycle(double dbElapseTime_s, YDomain domainContext,
 			YWriteBundle bundle, YSystem system,
 			YScene sceneCurrent, YMatrix matrix4pv,
 			YMatrix matrix4Projection, YMatrix matrix4View)
 	{
-		super.onCycle(dbElapseTime_s, domainContext, bundle, system, sceneCurrent,
-				matrix4pv, matrix4Projection, matrix4View);
-		YProgressBarDomain domainHP = (YProgressBarDomain) system.queryDomainByKey(keyHP);
-		if(null != domainHP)
+		super.onCycle(dbElapseTime_s, domainContext, bundle, system,
+				sceneCurrent, matrix4pv, matrix4Projection,
+				matrix4View);
+		YProgressBarDomain domainHP = (YProgressBarDomain) system
+				.queryDomainByKey(keyHP);
+		if (null != domainHP)
 		{
 			Vec2 pos = body.getPosition();
-			domainHP.setPosition(pos.x, pos.y + fSkeletonSideLen * 0.6f / 2 + 0.1f, 0.2f);
+			final float fXOffset = bRight ? -fSkeletonSideLen * 0.1f
+					: fSkeletonSideLen * 0.1f;
+			domainHP.setPosition(pos.x + fXOffset, pos.y
+					+ fSkeletonSideLen * 0.6f / 2 + 0.1f, 0);
 			domainHP.setProgress(1 - hp / 100.0f);
 		}
-		// 5.hp为0时移除实体
+		// hp为0时移除实体
 		if (hp == 0)
 		{
 			stateMachine.forceSetState(dead);
@@ -181,37 +191,36 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			YStateMachineBuilder<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> builder)
 	{
 		// 待机到行走
-		builder.newTransition().from(wait)
-				.to(walk)
+		builder.newTransition().from(wait).to(walk)
 				.on(domainContext.TO_WALK);
 		// 行走到待机
-		builder.newTransition().from(walk)
-				.to(wait)
+		builder.newTransition().from(walk).to(wait)
 				.on(domainContext.TO_WAIT);
 
 		// 待机到攻1
 		// 行走到攻1
-		builder.newTransition().from(wait)
-				.to(attack1)
+		builder.newTransition().from(wait).to(attack1)
 				.on(domainContext.TO_ATTACK1);
-		builder.newTransition().from(walk)
-				.to(attack1)
+		builder.newTransition().from(walk).to(attack1)
 				.on(domainContext.TO_ATTACK1);
-		builder.onEntry(attack1).perform(
-				new AttackEnterAction());
-		//攻1到行走
-		//builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
-		
-		//行走到受伤
-		builder.newTransition().from(walk).to(damage).on(domainContext.TO_DAMAGE);
-		//攻1到受伤
-		builder.newTransition().from(attack1).to(damage).on(domainContext.TO_DAMAGE);
-		//受伤到行走
-		builder.newTransition().from(damage).to(walk).on(domainContext.TO_WALK);
+		builder.onEntry(attack1).perform(new AttackEnterAction());
+		// 攻1到行走
+		// builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
+
+		// 行走到受伤
+		builder.newTransition().from(walk).to(damage)
+				.on(domainContext.TO_DAMAGE);
+		// 攻1到受伤
+		builder.newTransition().from(attack1).to(damage)
+				.on(domainContext.TO_DAMAGE);
+		// 受伤到行走
+		builder.newTransition().from(damage).to(walk)
+				.on(domainContext.TO_WALK);
 		builder.onEntry(damage).perform(new DamageEnterAction());
-		
-		//各种状态到死亡
-		builder.newTransition().fromAll().to(dead).on(domainContext.TO_DEAD);
+
+		// 各种状态到死亡
+		builder.newTransition().fromAll().to(dead)
+				.on(domainContext.TO_DEAD);
 		builder.onEntry(dead).perform(new DeadEnterAction());
 		return wait;
 	}
@@ -225,12 +234,12 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	{
 		if (ifInRadar2)
 			stateMachine.forceSetState(attack1);
-		else if(ifInRadar1)
+		else if (ifInRadar1)
 			stateMachine.forceSetState(walk);
 		else
 			stateMachine.forceSetState(wait);
 	}
-	
+
 	@Override
 	public String toString()
 	{
@@ -286,9 +295,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			bLockOrientation = false;
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
-			if(!ifOnLand){
-				body.applyLinearImpulse(new Vec2(0,-body.getMass()), body.getPosition());
-			}else{
+			if (!ifOnLand)
+			{
+				body.applyLinearImpulse(
+						new Vec2(0, -body.getMass()),
+						body.getPosition());
+			} else
+			{
 				body.setLinearVelocity(vec2);
 			}
 		}
@@ -319,24 +332,27 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	}
 
 	/*************************** 关于攻击1状态 **********************************/
-	private class Attack1Cloker implements YIMonsterStateClocker {
-//		 private int[] i_arrFrameIndex =
-//		 { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
+	private class Attack1Cloker implements YIMonsterStateClocker
+	{
+		// private int[] i_arrFrameIndex =
+		// { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
 		// private int[] i_arrFrameIndex =
 		// { 17, 18, };
-		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
+		private int[] i_arrFrameIndex =
+		{ 23, 24, 25, 20, 21, 1, 2, 3, 4 };
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YAMonsterDomainLogic<?> domainLogicContext, YSystem system,
-				YScene sceneCurrent) {
+				YAMonsterDomainLogic<?> domainLogicContext,
+				YSystem system, YScene sceneCurrent)
+		{
 			int iFrame = (int) ((fFrames += fElapseTime_s * 10) % i_arrFrameIndex.length);
 
 			iRowIndex = (i_arrFrameIndex[iFrame] - 1) / 22;
 			iColumnIndex = (i_arrFrameIndex[iFrame] - 1) % 22;
 			body.applyForce(vecAntiGrav, body.getPosition());
-			
-			if(3 == iFrame)
+
+			if (3 == iFrame)
 			{
 				YSpriteDomain sprite = (YSpriteDomain) system
 						.queryDomainByKey(Constants.SPRITE);
@@ -344,14 +360,17 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 					sprite.damage(bRight ? Orientation.RIGHT
 							: Orientation.LEFT);
 			}
-			if(8 == iFrame){
+			if (8 == iFrame)
+			{
 				resetState();
 			}
 		}
 	}
 
-	private class AttackEnterAction implements
-	YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> {
+	private class AttackEnterAction
+			implements
+			YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
+	{
 
 		@Override
 		public void onTransition(
@@ -359,7 +378,8 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YIMonsterStateClocker to,
 				YRequest causedBy,
 				YAMonsterDomainLogic<?> context,
-				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine){
+				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine)
+		{
 			fFrames = 0;
 		}
 	}
@@ -371,20 +391,23 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		{
 			super(0, 1, 10, 0);
 		}
-		
+
 		@Override
 		public void onClock(float fElapseTime_s,
 				YAMonsterDomainLogic<?> domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
-			super.onClock(fElapseTime_s, domainLogicContext, system, sceneCurrent);
+			super.onClock(fElapseTime_s, domainLogicContext,
+					system, sceneCurrent);
 			hp--;
-			if(iDamageCounts ++ > 30)
+			if (iDamageCounts++ > 30)
 				resetState();
 		}
 	}
-	
-	private class DamageEnterAction implements YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
+
+	private class DamageEnterAction
+			implements
+			YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
 	{
 
 		@Override
@@ -393,12 +416,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YIMonsterStateClocker to,
 				YRequest causedBy,
 				YAMonsterDomainLogic<?> context,
-				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
+				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine)
+		{
 			// TODO Auto-generated method stub
 			iDamageCounts = 0;
 		}
 	}
-	
+
 	/*************************** 关于死亡状态 **********************************/
 	private class DeadClocker extends BaseClocker
 	{
@@ -406,7 +430,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		{
 			super(2, 4, 10, 0);
 		}
-		
+
 		@Override
 		public void onClock(float fElapseTime_s,
 				YAMonsterDomainLogic<?> domainLogicContext,
@@ -421,11 +445,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 						domainContext.KEY);
 				world.destroyBody(body);
 			}
-//			world = null;
+			// world = null;
 		}
 	}
-	
-	private class DeadEnterAction implements YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
+
+	private class DeadEnterAction
+			implements
+			YIAction<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>>
 	{
 		@Override
 		public void onTransition(
@@ -433,30 +459,32 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 				YIMonsterStateClocker to,
 				YRequest causedBy,
 				YAMonsterDomainLogic<?> context,
-				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
+				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine)
+		{
 			fFrames = 0;
 			bLockOrientation = true;
-//			Vec2 v1 = body.getLinearVelocity();
-//			Vec2 v2 = new Vec2(!bRight ? vec2Right
-//					: vec2Left);
-//			body.applyLinearImpulse(
-//					v2.subLocal(v1)
-//							.mulLocal(body.getMass()),
-//					body.getPosition());
+			// Vec2 v1 = body.getLinearVelocity();
+			// Vec2 v2 = new Vec2(!bRight ? vec2Right
+			// : vec2Left);
+			// body.applyLinearImpulse(
+			// v2.subLocal(v1)
+			// .mulLocal(body.getMass()),
+			// body.getPosition());
 		}
 	}
-	
-	
-	private class Radar1ContactLsn implements YIOnContactListener {
+
+	private class Radar1ContactLsn implements YIOnContactListener
+	{
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther)
+		{
 			if (null != domainOther
 					&& domainOther.KEY
 							.equals(Constants.SPRITE))
 			{// 与之碰撞的实体确实为精灵
-//				if (fixtureOther.m_userData == "foot")
+				// if (fixtureOther.m_userData == "foot")
 				{
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
@@ -474,12 +502,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther)
+		{
 			if (null != domainOther
 					&& domainOther.KEY
 							.equals(Constants.SPRITE))
 			{// 与之碰撞的实体确实为精灵
-//				if (fixtureOther.m_userData == "foot")
+				// if (fixtureOther.m_userData == "foot")
 				{
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
@@ -495,15 +524,20 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 		}
 	}
 
-	private class Radar2ContactLsn implements YIOnContactListener {
+	private class Radar2ContactLsn implements YIOnContactListener
+	{
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
-			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE))
-			{//与之碰撞的实体确实为精灵
-//				YSpriteDomain sprite = (YSpriteDomain) domainOther;
-//				if (fixtureOther.m_userData == "foot")
+				YABaseDomain domainOther)
+		{
+			if (null != domainOther
+					&& domainOther.KEY
+							.equals(Constants.SPRITE))
+			{// 与之碰撞的实体确实为精灵
+				// YSpriteDomain sprite = (YSpriteDomain)
+				// domainOther;
+			// if (fixtureOther.m_userData == "foot")
 				{
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
@@ -514,14 +548,18 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 						bRight = true;
 					domainContext.sendRequest(domainContext.TO_ATTACK1);
 					ifInRadar2 = true;
-					
-//					YSpriteDomain sprite = (YSpriteDomain) system
-//							.queryDomainByKey(Constants.SPRITE);
-//					if (null != sprite)
-//						sprite.damage(bRight ? Orientation.RIGHT
-//								: Orientation.LEFT);
+
+					// YSpriteDomain sprite =
+					// (YSpriteDomain) system
+					// .queryDomainByKey(Constants.SPRITE);
+					// if (null != sprite)
+					// sprite.damage(bRight ?
+					// Orientation.RIGHT
+					// : Orientation.LEFT);
 					// domainSprite.sendRequest(domainSprite.TO_DAMAGE);
-//					sprite.damage(bRight ? Orientation.RIGHT : Orientation.LEFT);
+					// sprite.damage(bRight ?
+					// Orientation.RIGHT :
+					// Orientation.LEFT);
 				}
 			}
 
@@ -529,12 +567,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
+				YABaseDomain domainOther)
+		{
 			if (null != domainOther
 					&& domainOther.KEY
 							.equals(Constants.SPRITE))
 			{// 与之碰撞的实体确实为精灵
-//				if (fixtureOther.m_userData == "foot")
+				// if (fixtureOther.m_userData == "foot")
 				{
 					if (fixtureOther.getBody()
 							.getPosition().x < fixture
@@ -549,17 +588,21 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 			}
 		}
 	}
-	
-	private class FootContactLsn implements YIOnContactListener{
+
+	private class FootContactLsn implements YIOnContactListener
+	{
 
 		private int iFootContact;
+
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
-			//XXX temp code
-			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）；
-			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther || "map".equals(domainOther.KEY))
+				YABaseDomain domainOther)
+		{
+			// XXX temp code
+			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）；
+			// 之后可能有改动，会把地图实体的引用传过来
+			if (null == domainOther
+					|| "map".equals(domainOther.KEY))
 			{
 				iFootContact++;
 				ifOnLand = true;
@@ -568,15 +611,18 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther) {
-			//XXX temp code
-			//目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
-			//之后可能有改动，会把地图实体的引用传过来
-			if(null == domainOther || "map".equals(domainOther.KEY))
+				YABaseDomain domainOther)
+		{
+			// XXX temp code
+			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
+			// 之后可能有改动，会把地图实体的引用传过来
+			if (null == domainOther
+					|| "map".equals(domainOther.KEY))
 			{
 				iFootContact--;
-				if(iFootContact==0){
-					ifOnLand=false;
+				if (iFootContact == 0)
+				{
+					ifOnLand = false;
 				}
 			}
 		}

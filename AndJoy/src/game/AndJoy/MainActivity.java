@@ -125,7 +125,7 @@ public class MainActivity extends Activity
 	private void initMainScene()
 	{
 		// _____________新建场景
-		final YWorld world = new YWorld(new Vec2(0, -15f), system);
+		final YWorld world = new YWorld(new Vec2(0, -30f), system);
 		mainScene = new YFBOScene(system, "野外");
 		mainScene.addClockerPlugin(world);
 		mainScene.requestEnter(null);
@@ -148,9 +148,9 @@ public class MainActivity extends Activity
 //				world, this, 110, 8);
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
-				Constants.MONSTER1_HP, getResources(), 1.5f, 0.1f);
+				Constants.MONSTER1_HP, getResources(), 1, 0.1f);
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
-				Constants.MONSTER2_HP, getResources(), 1.5f, 0.1f);
+				Constants.MONSTER2_HP, getResources(), 1f, 0.1f);
 		// _____________新建测试障碍
 		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs",
 				this, world);

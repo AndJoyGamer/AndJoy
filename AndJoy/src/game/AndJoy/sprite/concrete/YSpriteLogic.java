@@ -334,7 +334,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 		{
 			bLockOrientation = true;
 			Vec2 v1 = body.getLinearVelocity();
-			Vec2 v2 = new Vec2(v1.x, 10);
+			Vec2 v2 = new Vec2(v1.x, 15);
 
 			body.applyLinearImpulse(
 					v2.subLocal(v1)
