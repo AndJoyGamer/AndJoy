@@ -105,4 +105,13 @@
         android:max="100" 
         android:progress="100"/>
 
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/wv_skills"
+        android:layout_alignRight="@+id/BtnLeft"
+        android:layout_marginBottom="15dp"
+        android:text="test" />
+
 </RelativeLayout>

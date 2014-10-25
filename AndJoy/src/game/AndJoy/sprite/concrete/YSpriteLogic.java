@@ -2,6 +2,10 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.DamageDisp.DamageDomain;
+import game.AndJoy.DamageDisp.DamageLogic;
+import game.AndJoy.DamageDisp.DamageReq;
+import game.AndJoy.DamageDisp.IDamageDisplayer;
 import game.AndJoy.common.Constants.Orientation;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
@@ -15,8 +19,11 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import ygame.common.YConstants;
+import ygame.domain.YDomain;
+import ygame.domain.YDomainView;
 import ygame.extension.domain.sprite.YASpriteDomainLogic;
 import ygame.extension.domain.sprite.YIStateClocker;
+import ygame.extension.program.YTileProgram;
 import ygame.extension.with_third_party.YIOnContactListener;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
@@ -27,10 +34,11 @@ import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
+import android.transition.Scene;
+import android.util.Log;
 import android.widget.ProgressBar;
 
-class YSpriteLogic extends YASpriteDomainLogic
-{
+class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer {
 	private float fFrames;
 	// 受伤状态维持的周期计数
 	private int iDamageCounts;
@@ -47,16 +55,21 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private boolean bRight = true;
 	private int hp = 200;
 
-	protected YSpriteLogic(World world, MainActivity activity)
-	{
-		super(new YTileSheet(R.drawable.hero_big,
-				activity.getResources(), 3, 22), 2.5f , world);
-		fInitX_M = 105;//for yewai
-//		fInitX_M = 0;//for city
+	// 伤害显示
+	private DamageDomain damageDomain = null;
+	private YSystem ysystem;
+	private YSpriteDomain spriteDomain;
+
+	protected YSpriteLogic(World world, MainActivity activity) {
+		super(new YTileSheet(R.drawable.hero_big, activity.getResources(), 3,
+				22), 2.5f, world);
+		fInitX_M = 105;// for yewai
+		// fInitX_M = 0;//for city
 		fInitY_M = 8;
 
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
+		// damageDomain = new DamageDomain("damage", activity);
 	}
 
 	/**
@@ -68,8 +81,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	 * @see game.AndJoy.sprite.YASpriteDomainLogic#designBody(org.jbox2d.dynamics.Body)
 	 */
 	@Override
-	protected void designBody(Body body)
-	{
+	protected void designBody(Body body) {
 		// 主体部分（Main）
 		FixtureDef def = new FixtureDef();
 		def.density = 5;
@@ -84,8 +96,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 		// XXX
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
-		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10,
-				new Vec2(0, -fBodySideLen / 2), 0);
+		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10, new Vec2(0,
+				-fBodySideLen / 2), 0);
 		def.shape = shapeFoot;
 		def.friction = 0.5f;
 		def.restitution = 0;
@@ -111,19 +123,14 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 	@Override
 	protected boolean onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent, YBaseDomain domain)
-	{
-		if (request.iKEY == YSpriteDomain.TO_WALK)
-		{
+			YScene sceneCurrent, YBaseDomain domain) {
+		if (request.iKEY == YSpriteDomain.TO_WALK) {
 			Vec2 vec2 = new Vec2(body.getLinearVelocity());
 			vec2.x = bRight ? 1 : -1;
-			body.applyLinearImpulse(
-					vec2.subLocal(body.getLinearVelocity())
-							.mulLocal(body.getMass()),
-					body.getPosition());
+			body.applyLinearImpulse(vec2.subLocal(body.getLinearVelocity())
+					.mulLocal(body.getMass()), body.getPosition());
 		}
-		return super.onDealRequest(request, system, sceneCurrent,
-				domain);
+		return super.onDealRequest(request, system, sceneCurrent, domain);
 	}
 
 	/**
@@ -137,8 +144,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	 */
 	@Override
 	protected YIStateClocker designStateMachine(
-			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic> builder)
-	{
+			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic> builder) {
 		YSpriteState.WAIT.setStateClocker(new WaitClocker());
 		YSpriteState.WALK.setStateClocker(new WalkClocker());
 		YSpriteState.JUMP.setStateClocker(new JumpClocker());
@@ -146,27 +152,20 @@ class YSpriteLogic extends YASpriteDomainLogic
 		YSpriteState.DAMAGE.setStateClocker(new DamageCloker());
 
 		// 待机到行走
-		builder.newTransition().from(YSpriteState.WAIT)
-				.to(YSpriteState.WALK)
+		builder.newTransition().from(YSpriteState.WAIT).to(YSpriteState.WALK)
 				.on(new SpriteReq(YSpriteDomain.TO_WALK));
 		// 行走到待机
-		builder.newTransition().from(YSpriteState.WALK)
-				.to(YSpriteState.WAIT)
+		builder.newTransition().from(YSpriteState.WALK).to(YSpriteState.WAIT)
 				.on(new SpriteReq(YSpriteDomain.TO_WAIT));
 
 		// 待机到跳
 		// 行走到跳
 		JumpUpAction action = new JumpUpAction();
-		builder.newTransition().from(YSpriteState.WAIT)
-				.to(YSpriteState.JUMP)
-				.on(new SpriteReq(YSpriteDomain.TO_JUMP))
-				.perform(action);
-		builder.newTransition().from(YSpriteState.WALK)
-				.to(YSpriteState.JUMP)
-				.on(new SpriteReq(YSpriteDomain.TO_JUMP))
-				.perform(action);
-		builder.onEntry(YSpriteState.JUMP).perform(
-				new JumpEnterAction());
+		builder.newTransition().from(YSpriteState.WAIT).to(YSpriteState.JUMP)
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
+		builder.newTransition().from(YSpriteState.WALK).to(YSpriteState.JUMP)
+				.on(new SpriteReq(YSpriteDomain.TO_JUMP)).perform(action);
+		builder.onEntry(YSpriteState.JUMP).perform(new JumpEnterAction());
 
 		// 待机到攻1
 		// 行走到攻1
@@ -176,44 +175,35 @@ class YSpriteLogic extends YASpriteDomainLogic
 		builder.newTransition().from(YSpriteState.WALK)
 				.to(YSpriteState.ATTACK1)
 				.on(new SpriteReq(YSpriteDomain.TO_ATTACK1));
-		builder.onEntry(YSpriteState.ATTACK1).perform(
-				new AttackEnterAction());
+		builder.onEntry(YSpriteState.ATTACK1).perform(new AttackEnterAction());
 
 		// 待机到受伤
 		// 行走到受伤
-		builder.newTransition().from(YSpriteState.WAIT)
-				.to(YSpriteState.DAMAGE)
+		builder.newTransition().from(YSpriteState.WAIT).to(YSpriteState.DAMAGE)
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
-		builder.newTransition().from(YSpriteState.WALK)
-				.to(YSpriteState.DAMAGE)
+		builder.newTransition().from(YSpriteState.WALK).to(YSpriteState.DAMAGE)
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
-		builder.onEntry(YSpriteState.DAMAGE).perform(
-				new DamageEnterAction());
+		builder.onEntry(YSpriteState.DAMAGE).perform(new DamageEnterAction());
 
 		// 跳到受伤
-		builder.newTransition().from(YSpriteState.JUMP)
-				.to(YSpriteState.DAMAGE)
+		builder.newTransition().from(YSpriteState.JUMP).to(YSpriteState.DAMAGE)
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 		return YSpriteState.JUMP;
 	}
 
 	@Override
-	protected YConstants.Orientation updateCurrentOrientation()
-	{
-		if (activity.bRightPressing)
-		{
+	protected YConstants.Orientation updateCurrentOrientation() {
+		if (activity.bRightPressing) {
 			bRight = true;
 			return YConstants.Orientation.RIGHT;
-		} else if (activity.bLeftPressing)
-		{
+		} else if (activity.bLeftPressing) {
 			bRight = false;
 			return YConstants.Orientation.LEFT;
 		}
 		return super.updateCurrentOrientation();
 	}
 
-	private void resetState()
-	{
+	private void resetState() {
 		if (activity.bLeftPressing || activity.bRightPressing)
 			stateMachine.forceSetState(YSpriteState.WALK);
 		else
@@ -222,8 +212,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 	/******************************** 各状态之详细描述 *****************************************/
 	/******************************** 基础 *****************************************/
-	private class BaseClocker implements YIStateClocker
-	{
+	private class BaseClocker implements YIStateClocker {
 		final private int iFPS;
 		final private int iFrameNum;
 		final private int iColStartIndex;
@@ -232,8 +221,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 				.findViewById(R.id.hp_bar);
 
 		BaseClocker(int iFPS, int iFrameNum, int iColStartIndex,
-				int iRowStartIndex)
-		{
+				int iRowStartIndex) {
 			this.iFPS = iFPS;
 			this.iFrameNum = iFrameNum;
 			this.iColStartIndex = iColStartIndex;
@@ -242,9 +230,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
 			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
 			iRowIndex = iRowStartIndex;
 			iColumnIndex = iColStartIndex + iFrame;
@@ -255,60 +242,52 @@ class YSpriteLogic extends YASpriteDomainLogic
 	}
 
 	/*************************** 关于待机状态 **********************************/
-	private class WaitClocker extends BaseClocker
-	{
+	private class WaitClocker extends BaseClocker {
 		private final Vec2 vec2 = new Vec2(0, 0);
 
-		WaitClocker()
-		{
+		WaitClocker() {
 			super(6, 4, 0, 0);
 		}
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
 			bLockOrientation = false;
-			super.onClock(fElapseTime_s, domainLogicContext,
-					system, sceneCurrent);
+			super.onClock(fElapseTime_s, domainLogicContext, system,
+					sceneCurrent);
 			body.setLinearVelocity(vec2);
 		}
 	}
 
 	/*************************** 关于行走状态 **********************************/
-	private class WalkClocker extends BaseClocker
-	{
+	private class WalkClocker extends BaseClocker {
 		private final Vec2 vecRight = new Vec2(4, -2);
 		private final Vec2 vecLeft = new Vec2(-4, -2);
 
-		WalkClocker()
-		{
+		WalkClocker() {
 			super(8, 6, 4, 0);
 		}
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
 			bLockOrientation = false;
-			super.onClock(fElapseTime_s, domainLogicContext,
-					system, sceneCurrent);
+			super.onClock(fElapseTime_s, domainLogicContext, system,
+					sceneCurrent);
 			Vec2 vec2 = bRight ? vecRight : vecLeft;
 			body.setLinearVelocity(vec2);
 		}
 	}
 
 	/*************************** 关于跳跃状态 **********************************/
-	private class JumpClocker implements YIStateClocker
-	{
+	private class JumpClocker implements YIStateClocker {
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
 			iRowIndex = 1;
 			Vec2 velocity = body.getLinearVelocity();
 			if (velocity.y > 0.5)
@@ -319,8 +298,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	}
 
 	private class JumpUpAction implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
-	{
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic> {
 
 		@Override
 		public void onTransition(
@@ -328,22 +306,18 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YIStateClocker to,
 				YRequest causedBy,
 				YASpriteDomainLogic context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
-		{
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine) {
 			bLockOrientation = true;
 			Vec2 v1 = body.getLinearVelocity();
 			Vec2 v2 = new Vec2(v1.x, 10);
 
-			body.applyLinearImpulse(
-					v2.subLocal(v1)
-							.mulLocal(body.getMass()),
+			body.applyLinearImpulse(v2.subLocal(v1).mulLocal(body.getMass()),
 					body.getPosition());
 		}
 	}
 
 	private class JumpEnterAction implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
-	{
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic> {
 
 		@Override
 		public void onTransition(
@@ -351,39 +325,42 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YIStateClocker to,
 				YRequest causedBy,
 				YASpriteDomainLogic context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
-		{
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine) {
 			Vec2 v1 = body.getLinearVelocity();
 			if (Math.abs(v1.x) <= 4)
 				return;
 
 			Vec2 v2 = new Vec2(4 * v1.x / Math.abs(v1.x), v1.y);
 
-			body.applyLinearImpulse(
-					v2.subLocal(v1)
-							.mulLocal(body.getMass()),
+			body.applyLinearImpulse(v2.subLocal(v1).mulLocal(body.getMass()),
 					body.getPosition());
 		}
 	}
 
+	@Override
+	protected void onAttach(YSystem system, YBaseDomain domainContext) {
+		// TODO Auto-generated method stub
+		super.onAttach(system, domainContext);
+		this.ysystem = system;
+		this.spriteDomain = (YSpriteDomain) domainContext;
+		// this.damageDomain = new DamageDomain("damage", activity);
+		// system.getCurrentScene().addDomains(damageDomain);
+	}
+
 	/*************************** 关于攻击1状态 **********************************/
-	private class Attack1Cloker implements YIStateClocker
-	{
+	private class Attack1Cloker implements YIStateClocker {
 		// private int[] i_arrFrameIndex =
 		// { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
 		// private int[] i_arrFrameIndex =
 		// { 17, 18, };
-		private int[] i_arrFrameIndex =
-		{ 23, 24, 25, 20, 21, 0 };
+		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 0 };
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
 			int iFrame = (int) ((fFrames += fElapseTime_s * 10) % i_arrFrameIndex.length);
-			if (i_arrFrameIndex.length - 1 == iFrame)
-			{
+			if (i_arrFrameIndex.length - 1 == iFrame) {
 				resetState();
 				return;
 			}
@@ -404,8 +381,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 	}
 
 	private class AttackEnterAction implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
-	{
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic> {
 		private Vec2 vec2Right = new Vec2(10, -10);
 		private Vec2 vec2Left = new Vec2(-10, -10);
 
@@ -415,44 +391,53 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YIStateClocker to,
 				YRequest causedBy,
 				YASpriteDomainLogic context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
-		{
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine) {
 			body.applyForce(vecAntiGrav, body.getPosition());
 			bLockOrientation = true;
 			fFrames = 0;
 			Vec2 v1 = body.getLinearVelocity();
 			Vec2 v2 = new Vec2(bRight ? vec2Right : vec2Left);
-			body.applyLinearImpulse(
-					v2.subLocal(v1)
-							.mulLocal(body.getMass()),
+			body.applyLinearImpulse(v2.subLocal(v1).mulLocal(body.getMass()),
 					body.getPosition());
+
 		}
 	}
 
 	/*************************** 关于受伤状态 **********************************/
-	private class DamageCloker extends BaseClocker
-	{
-		DamageCloker()
-		{
+	private class DamageCloker extends BaseClocker {
+		DamageCloker() {
 			super(0, 1, 10, 0);
 		}
 
 		@Override
 		public void onClock(float fElapseTime_s,
-				YASpriteDomainLogic domainLogicContext,
-				YSystem system, YScene sceneCurrent)
-		{
-			super.onClock(fElapseTime_s, domainLogicContext,
-					system, sceneCurrent);
+				YASpriteDomainLogic domainLogicContext, YSystem system,
+				YScene sceneCurrent) {
+			super.onClock(fElapseTime_s, domainLogicContext, system,
+					sceneCurrent);
+			Log.d("伤害显示", "进入了受伤onclock");
+
 			hp--;
-			if (iDamageCounts++ > 30)
+			if (iDamageCounts == 0) {
+				YScene scene = ysystem.getCurrentScene();
+				DamageDomain damageDomain = new DamageDomain(
+						(YSpriteLogic) domainLogicContext, activity);
+				float[] pos = new float[] { mover.getX(), mover.getY() };
+
+				damageDomain.sendRequest(new DamageReq(pos, (int) (Math
+						.random() * 1000)));
+				scene.addDomains(damageDomain);
+			}
+			if (iDamageCounts++ > 30) {
+				iDamageCounts = 0;
+				// scene.removeDomains("damage");
 				resetState();
+			}
 		}
 	}
 
 	private class DamageEnterAction implements
-			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
-	{
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic> {
 		private Vec2 vec2Right = new Vec2(6, -2);
 		private Vec2 vec2Left = new Vec2(-6, -2);
 
@@ -462,84 +447,66 @@ class YSpriteLogic extends YASpriteDomainLogic
 				YIStateClocker to,
 				YRequest causedBy,
 				YASpriteDomainLogic context,
-				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
-		{
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine) {
+			Log.d("伤害显示", "进入了受伤状态");
 			iDamageCounts = 0;
 			// body.applyForce(vecAntiGrav, body.getPosition());
 			SpriteReq req = (SpriteReq) causedBy;
 			boolean bAttackFromRight = Orientation.RIGHT == req.orientation;
 			Vec2 v1 = body.getLinearVelocity();
-			Vec2 v2 = new Vec2(bAttackFromRight ? vec2Right
-					: vec2Left);
-			body.applyLinearImpulse(
-					v2.subLocal(v1)
-							.mulLocal(body.getMass()),
+			Vec2 v2 = new Vec2(bAttackFromRight ? vec2Right : vec2Left);
+			body.applyLinearImpulse(v2.subLocal(v1).mulLocal(body.getMass()),
 					body.getPosition());
+
 		}
 	}
 
 	/**************************************************************************/
 
-	private class FootContactLsn implements YIOnContactListener
-	{
+	private class FootContactLsn implements YIOnContactListener {
 		private int iFootContact;
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
-		{
+				YABaseDomain domainOther) {
 			System.out.println("脚步碰撞");
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther
-					|| domainOther.KEY.equals("map"))
-			{
+			if (null == domainOther || domainOther.KEY.equals("map")) {
 				++iFootContact;
 				bOnLand = true;
-				if (YSpriteState.JUMP == stateMachine
-						.getCurrentState())
+				if (YSpriteState.JUMP == stateMachine.getCurrentState())
 					resetState();
 			}
 		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
-		{
+				YABaseDomain domainOther) {
 			System.out.println("脚步离开");
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther
-					|| domainOther.KEY.equals("map"))
-			{
+			if (null == domainOther || domainOther.KEY.equals("map")) {
 				--iFootContact;
-				if (iFootContact == 0)
-				{
+				if (iFootContact == 0) {
 					bOnLand = false;
-					if (YSpriteState.JUMP != stateMachine
-							.getCurrentState())
+					if (YSpriteState.JUMP != stateMachine.getCurrentState())
 						stateMachine.forceSetState(YSpriteState.JUMP);
 				}
 			}
 		}
 	}
 
-	private class RadarContactLsn implements YIOnContactListener
-	{
+	private class RadarContactLsn implements YIOnContactListener {
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
-		{
-			if (null != domainOther
-					&& domainOther.KEY.contains("monster"))
-			{// 与之碰撞的实体确实为怪物
-				ifRightSide = fixtureOther.getBody()
-						.getPosition().x > fixture
-						.getBody().getPosition().x ? true
-						: false;
+				YABaseDomain domainOther) {
+			if (null != domainOther && domainOther.KEY.contains("monster")) {// 与之碰撞的实体确实为怪物
+				ifRightSide = fixtureOther.getBody().getPosition().x > fixture
+						.getBody().getPosition().x ? true : false;
 				ifInRadar = true;
 				monsterKey = domainOther.KEY;
 			}
@@ -547,10 +514,17 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
-				YABaseDomain domainOther)
-		{
+				YABaseDomain domainOther) {
 			ifInRadar = false;
 			monsterKey = null;
 		}
 	}
+
+	@Override
+	public float[] getCurrentXY() {
+		// TODO Auto-generated method stub
+		return new float[] { mover.getX(), mover.getY() };
+	}
+
+
 }

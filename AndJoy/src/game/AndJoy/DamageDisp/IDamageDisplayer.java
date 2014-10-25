@@ -3,10 +3,12 @@ package game.AndJoy.DamageDisp;
 import ygame.domain.YDomain;
 
 public interface IDamageDisplayer {
-	//TODO 编写伤害显示接口
-	
-	public void getSpriteXY();
-//	public <D extends YDomain> getSpriteDomain();
-//	public 
-	
+
+	/**
+	 * 返回一个包含当前坐标的float数组，0标号为X坐标，1标号为Y坐标
+	 * 
+	 * @return
+	 */
+	public float[] getCurrentXY();
+
 }

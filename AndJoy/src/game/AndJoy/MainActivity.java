@@ -1,5 +1,8 @@
 package game.AndJoy;
 
+import game.AndJoy.DamageDisp.DamageDomain;
+import game.AndJoy.DamageDisp.DamageReq;
+import game.AndJoy.DamageDisp.NumBitmap;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
@@ -63,12 +66,12 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class MainActivity extends Activity
-{
+public class MainActivity extends Activity {
 
 	private YSystem system;
 
@@ -79,21 +82,39 @@ public class MainActivity extends Activity
 
 	private YScene mainScene;
 
+	private MainActivity mainActivity;
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		mainActivity = this;
 		setupViews();
 		initMainScene();
+
 	}
 
-	private void setupViews()
-	{
+	private void setupViews() {
 		// _____________YView
 		YView yview = (YView) findViewById(R.id.YView);
 		this.system = yview.SYSTEM;
+		// test
+		Button btn_test = (Button) findViewById(R.id.btn_test);
+		btn_test.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+//				YSpriteDomain domainByKey = (YSpriteDomain) system
+//						.getCurrentScene().queryDomainByKey(Constants.SPRITE);
+//				DamageDomain dd = new DamageDomain( mainActivity);
+//				system.getCurrentScene().addDomains(dd);
+//				dd.sendRequest(new DamageReq(new float[] {
+//						system.getCurrentScene().getCurrentCamera().getX(),
+//						system.getCurrentScene().getCurrentCamera().getY() },
+//						(int) (Math.random() * 1000)));
+			}
+		});
 		// _____________左右移动按键
 		OnTouchListener lsn = new SteerLsn();
 		findViewById(R.id.BtnLeft).setOnTouchListener(lsn);
@@ -101,8 +122,7 @@ public class MainActivity extends Activity
 		// _____________跳跃按键
 		findViewById(R.id.BtnJump).setOnTouchListener(new JumpBtnLsn());
 		// _____________攻击按键
-		findViewById(R.id.BtnAttack).setOnTouchListener(
-				new AttackBtnLsn());
+		findViewById(R.id.BtnAttack).setOnTouchListener(new AttackBtnLsn());
 		// _____________场景切换测试
 		View btnSwitchScene = findViewById(R.id.BtnScene);
 		btnSwitchScene.setOnLongClickListener(new SceneBtnLongLsn());
@@ -113,8 +133,7 @@ public class MainActivity extends Activity
 		wv.setWheelBackground(R.drawable.bg_orange);
 		// 禁止使用自带背景、阴影效果，全部设置为透明
 		wv.setShadowColor(Constants.COLOR_TRANSPARENT,
-				Constants.COLOR_TRANSPARENT,
-				Constants.COLOR_TRANSPARENT);
+				Constants.COLOR_TRANSPARENT, Constants.COLOR_TRANSPARENT);
 		wv.setVisibleItems(3);
 		wv.setViewAdapter(new SkillAdapter(this));
 		// _____________FPS显示文本
@@ -122,9 +141,8 @@ public class MainActivity extends Activity
 		this.system.setOnFPSUpdatedListener(new FPSLsn(tvFps));
 	}
 
-	//@formatter:off
-	private void initMainScene()
-	{
+	// @formatter:off
+	private void initMainScene() {
 		// _____________新建场景
 		YWorld world = new YWorld(new Vec2(0, -15f), system);
 		mainScene = new YFBOScene(system, "野外");
@@ -132,94 +150,91 @@ public class MainActivity extends Activity
 		mainScene.requestEnter(null);
 
 		// _____________测试相关，放入测试箱子、测试吊桥
-//		YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
-		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108,
-				4.5f), 1, world, mainScene, getResources());
+		// YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
+		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108, 4.5f),
+				1, world, mainScene, getResources());
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
 				new Vec2(-127, 8));
+
+		// 测试伤害显示
+		NumBitmap.setRes(getResources());
 
 		// _____________新建精灵实体
 		domainSprite = new YSpriteDomain(Constants.SPRITE, world, this);
 		// _____________新建怪物实体
-		YABaseDomain domainMonster1 = new YMonsterDomain(
-				Constants.MONSTER1, Constants.MONSTER1_HP,
-				world, this, -38, 8);
-		YABaseDomain domainMonster2 = new YMonsterDomain(
-				Constants.MONSTER2, Constants.MONSTER2_HP,
-				world, this, 110, 8);
+		YABaseDomain domainMonster1 = new YMonsterDomain(Constants.MONSTER1,
+				Constants.MONSTER1_HP, world, this, -38, 8);
+		YABaseDomain domainMonster2 = new YMonsterDomain(Constants.MONSTER2,
+				Constants.MONSTER2_HP, world, this, 110, 8);
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1.5f, 0.1f);
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
 				Constants.MONSTER2_HP, getResources(), 1.5f, 0.1f);
 		// _____________新建测试障碍
-		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs",
-				this, world);
-		
+		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs", this,
+				world);
+
 		// _____________解析Tiled生成的静态地图
 		new YTiledParser(mainScene, "2mi.json", this)
-				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
-				.append(new YStaticPolyLineTerrainParsePlugin("map", world, "box2d_bodies"))
-				.parse();
-//		new YTiledParser(mainScene, "city.json", this)
-//			.append(new YStaticImageLayerParsePlugin("map","background", "foreground"))
-//			.append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
-//			.parse();
+				.append(new YStaticImageLayerParsePlugin("map", "base_bkg",
+						"decoration_bkg"))
+				.append(new YStaticPolyLineTerrainParsePlugin("map", world,
+						"box2d_bodies")).parse();
+		// new YTiledParser(mainScene, "city.json", this)
+		// .append(new YStaticImageLayerParsePlugin("map","background",
+		// "foreground"))
+		// .append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
+		// .parse();
 
 		// _____________向场景添加上述新建的实体
-		mainScene.addDomains(domainSprite, domainMonster1,
-				domainMonster2, monster1Hp, monster2Hp,
-				obstacleDomain, getBkgDomain());
+		mainScene.addDomains(domainSprite, domainMonster1, domainMonster2,
+				monster1Hp, monster2Hp, obstacleDomain, getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
 		mainScene.getCurrentCamera().setZ(10);
 	}
-	//@formatter:on
+
+	// @formatter:on
 
 	/**
 	 * 获取背景实体
 	 * 
 	 * @return 背景实体
 	 */
-	private YDomain getBkgDomain()
-	{
-		YADomainLogic logic = new YADomainLogic()
-		{
-			//@formatter:off
+	private YDomain getBkgDomain() {
+		YADomainLogic logic = new YADomainLogic() {
+			// @formatter:off
 			private YMover mover = (YMover) new YMover().setZ(-3f);
-			private YSkeleton skeleton = new YRectangle(20, 20,false, true);
-			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.shan));
-//			private YSkeleton skeleton = new YRectangle(15, 20,false, true);
-//			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.city_bkg));
-			//@formatter:on
+			private YSkeleton skeleton = new YRectangle(20, 20, false, true);
+			private YTexture texture = new YTexture(
+					BitmapFactory.decodeResource(getResources(),
+							R.drawable.shan));
+
+			// private YSkeleton skeleton = new YRectangle(15, 20,false, true);
+			// private YTexture texture = new
+			// YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.city_bkg));
+			// @formatter:on
 
 			@Override
-			protected boolean onDealRequest(YRequest request,
-					YSystem system, YScene sceneCurrent,
-					YBaseDomain domainContext)
-			{
+			protected boolean onDealRequest(YRequest request, YSystem system,
+					YScene sceneCurrent, YBaseDomain domainContext) {
 				return false;
 			}
 
 			@Override
 			protected void onCycle(double dbElapseTime_s,
-					YDomain domainContext,
-					YWriteBundle bundle, YSystem system,
+					YDomain domainContext, YWriteBundle bundle, YSystem system,
 					YScene sceneCurrent, YMatrix matrix4pv,
-					YMatrix matrix4Projection,
-					YMatrix matrix4View)
-			{
+					YMatrix matrix4Projection, YMatrix matrix4View) {
 				// 背景跟着摄像机移动，使得玩家觉得背景水平方向没有移动
-				YCamera camera = sceneCurrent
-						.getCurrentCamera();
+				YCamera camera = sceneCurrent.getCurrentCamera();
 				mover.setX(camera.getX());
 
 				YTextureProgram.YAdapter adapter = (YTextureProgram.YAdapter) domainContext
 						.getParametersAdapter();
-				adapter.paramMatrixPV(matrix4pv)
-						.paramMover(mover)
-						.paramSkeleton(skeleton)
-						.paramTexture(texture);
+				adapter.paramMatrixPV(matrix4pv).paramMover(mover)
+						.paramSkeleton(skeleton).paramTexture(texture);
 			}
 		};
 
@@ -228,38 +243,31 @@ public class MainActivity extends Activity
 		return new YDomain("bkg", logic, view);
 	}
 
-	private class JumpBtnLsn implements OnTouchListener
-	{
+	private class JumpBtnLsn implements OnTouchListener {
 		@Override
-		public boolean onTouch(View v, MotionEvent event)
-		{
+		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 				domainSprite.jump();
 			return false;
 		}
 	}
 
-	private class AttackBtnLsn implements OnTouchListener
-	{
+	private class AttackBtnLsn implements OnTouchListener {
 
 		@Override
-		public boolean onTouch(View v, MotionEvent event)
-		{
+		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 				domainSprite.attack();
 			return false;
 		}
 	}
 
-	private class SteerLsn implements OnTouchListener
-	{
+	private class SteerLsn implements OnTouchListener {
 
 		@Override
-		public boolean onTouch(View v, MotionEvent event)
-		{
+		public boolean onTouch(View v, MotionEvent event) {
 			boolean bRight = v.getId() == R.id.BtnRight;
-			switch (event.getAction())
-			{
+			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				if (bRight)
 					bRightPressing = true;
@@ -283,76 +291,64 @@ public class MainActivity extends Activity
 		}
 	}
 
-	private class SceneBtnLongLsn implements OnLongClickListener
-	{
+	private class SceneBtnLongLsn implements OnLongClickListener {
 		@Override
-		public boolean onLongClick(View arg0)
-		{// TODO for test , by yunzhong
+		public boolean onLongClick(View arg0) {// TODO for test , by yunzhong
 			return true;
 		}
 	}
 
-	private class SceneBtnLsn implements OnClickListener
-	{
+	private class SceneBtnLsn implements OnClickListener {
 		private boolean bWhich;
 		private volatile boolean bSwitchFinish;
 
 		@Override
-		public void onClick(View view)
-		{
+		public void onClick(View view) {
 			if (bSwitchFinish)
 				return;
 			bSwitchFinish = true;
 			bWhich = !bWhich;
-			if (bWhich)
-			{
-				//@formatter:off
+			if (bWhich) {
+				// @formatter:off
 				YScene scene = new YFBOScene(system, "测试");
-				new YTiledParser(scene, "city.json", MainActivity.this)
-					.append(new YStaticImageLayerParsePlugin("map_city","background", "foreground"))
-//					.append(new YStaticPolyLineTerrainParsePlugin("map", world, "obj"))
-					.parse();
-				//@formatter:on
-//				system.switchScene(scene,
-//						new YIResultCallback()
-//						{
-//							public void onResultReceived(
-//									Object objResult)
-//							{
-//								bSwitchFinish = false;
-//							}
-//						});
+				new YTiledParser(scene, "city.json", MainActivity.this).append(
+						new YStaticImageLayerParsePlugin("map_city",
+								"background", "foreground"))
+				// .append(new YStaticPolyLineTerrainParsePlugin("map", world,
+				// "obj"))
+						.parse();
+				// @formatter:on
+				// system.switchScene(scene,
+				// new YIResultCallback()
+				// {
+				// public void onResultReceived(
+				// Object objResult)
+				// {
+				// bSwitchFinish = false;
+				// }
+				// });
 				scene.getCurrentCamera().setZ(10);
 				system.forceSetCurrentScene(scene);
-			} else
-			{
-				system.switchScene(mainScene,
-						new YIResultCallback()
-						{
-							public void onResultReceived(
-									Object objResult)
-							{
-								bSwitchFinish = false;
-							}
-						});
+			} else {
+				system.switchScene(mainScene, new YIResultCallback() {
+					public void onResultReceived(Object objResult) {
+						bSwitchFinish = false;
+					}
+				});
 			}
 		}
 	}
 
-	private static class SkillAdapter extends AbstractWheelAdapter
-	{
+	private static class SkillAdapter extends AbstractWheelAdapter {
 		// Image size
 		final int IMAGE_WIDTH = 120;
 		final int IMAGE_HEIGHT = 90;
 
-		//@formatter:off
-		private final int items[] = new int[]
-		{ 		R.drawable.skill1 , 
-				R.drawable.skill2 , 
-				R.drawable.skill3 , 
-				R.drawable.skill4 , 
-				R.drawable.skill5 , };
-		//@formatter:on
+		// @formatter:off
+		private final int items[] = new int[] { R.drawable.skill1,
+				R.drawable.skill2, R.drawable.skill3, R.drawable.skill4,
+				R.drawable.skill5, };
+		// @formatter:on
 
 		// Cached images
 		private List<SoftReference<Bitmap>> images;
@@ -363,60 +359,48 @@ public class MainActivity extends Activity
 		/**
 		 * Constructor
 		 */
-		public SkillAdapter(Context context)
-		{
+		public SkillAdapter(Context context) {
 			this.context = context;
-			images = new ArrayList<SoftReference<Bitmap>>(
-					items.length);
-			for (int id : items)
-			{
-				images.add(new SoftReference<Bitmap>(
-						loadImage(id)));
+			images = new ArrayList<SoftReference<Bitmap>>(items.length);
+			for (int id : items) {
+				images.add(new SoftReference<Bitmap>(loadImage(id)));
 			}
 		}
 
 		/**
 		 * Loads image from resources
 		 */
-		private Bitmap loadImage(int id)
-		{
+		private Bitmap loadImage(int id) {
 			Bitmap bitmap = BitmapFactory.decodeResource(
 					context.getResources(), id);
-			Bitmap scaled = Bitmap.createScaledBitmap(bitmap,
-					IMAGE_WIDTH, IMAGE_HEIGHT - 10, true);
+			Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH,
+					IMAGE_HEIGHT - 10, true);
 			bitmap.recycle();
 			return getRoundedCornerBitmap(scaled);
 		}
 
 		@Override
-		public int getItemsCount()
-		{
+		public int getItemsCount() {
 			return items.length;
 		}
 
 		// Layout params for image view
-		final LayoutParams params = new LayoutParams(IMAGE_WIDTH,
-				IMAGE_HEIGHT);
+		final LayoutParams params = new LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
 
 		@Override
-		public View getItem(int index, View cachedView, ViewGroup parent)
-		{
+		public View getItem(int index, View cachedView, ViewGroup parent) {
 			ImageView img;
-			if (cachedView != null)
-			{
+			if (cachedView != null) {
 				img = (ImageView) cachedView;
-			} else
-			{
+			} else {
 				img = new ImageView(context);
 			}
 			img.setLayoutParams(params);
 			SoftReference<Bitmap> bitmapRef = images.get(index);
 			Bitmap bitmap = bitmapRef.get();
-			if (bitmap == null)
-			{
+			if (bitmap == null) {
 				bitmap = loadImage(items[index]);
-				images.set(index, new SoftReference<Bitmap>(
-						bitmap));
+				images.set(index, new SoftReference<Bitmap>(bitmap));
 			}
 			img.setImageBitmap(bitmap);
 
@@ -424,58 +408,45 @@ public class MainActivity extends Activity
 		}
 
 		// 生成圆角图片
-		public static Bitmap getRoundedCornerBitmap(Bitmap bitmap)
-		{
-			try
-			{
-				Bitmap output = Bitmap.createBitmap(
-						bitmap.getWidth(),
-						bitmap.getHeight(),
-						Config.ARGB_8888);
+		public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+			try {
+				Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+						bitmap.getHeight(), Config.ARGB_8888);
 				Canvas canvas = new Canvas(output);
 				final Paint paint = new Paint();
-				final Rect rect = new Rect(0, 0,
-						bitmap.getWidth(),
+				final Rect rect = new Rect(0, 0, bitmap.getWidth(),
 						bitmap.getHeight());
-				final RectF rectF = new RectF(new Rect(0, 0,
-						bitmap.getWidth(),
+				final RectF rectF = new RectF(new Rect(0, 0, bitmap.getWidth(),
 						bitmap.getHeight()));
 				final float roundPx = 14;
 				paint.setAntiAlias(true);
 				canvas.drawARGB(0, 0, 0, 0);
 				paint.setColor(Color.BLACK);
-				canvas.drawRoundRect(rectF, roundPx, roundPx,
-						paint);
-				paint.setXfermode(new PorterDuffXfermode(
-						Mode.SRC_IN));
+				canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+				paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
 
-				final Rect src = new Rect(0, 0,
-						bitmap.getWidth(),
+				final Rect src = new Rect(0, 0, bitmap.getWidth(),
 						bitmap.getHeight());
 
 				canvas.drawBitmap(bitmap, src, rect, paint);
 				bitmap.recycle();
 				return output;
-			} catch (Exception e)
-			{
+			} catch (Exception e) {
 				return bitmap;
 			}
 		}
 	}
 
-	private static class FPSLsn implements YIOnFPSUpdatedListener
-	{
+	private static class FPSLsn implements YIOnFPSUpdatedListener {
 		private NumberFormat formatter = new DecimalFormat("#0.00");
 		private TextView tvFps;
 
-		private FPSLsn(TextView tvFps)
-		{
+		private FPSLsn(TextView tvFps) {
 			this.tvFps = tvFps;
 		}
 
 		@Override
-		public void onFPSUpdated(double fps)
-		{
+		public void onFPSUpdated(double fps) {
 			tvFps.setText("fps:" + formatter.format(fps));
 		}
 	}
