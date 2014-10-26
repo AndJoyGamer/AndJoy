@@ -185,7 +185,7 @@ public class MainActivity extends Activity
 				.append(new YStaticImageLayerParsePlugin("map","base_bkg", "decoration_bkg"))
 				.append(new YStaticPolyLineTerrainParsePlugin("map", world, "box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[]{world , MainActivity.this},"dynamic"))
-				.append(new YDestructibleTerrainParsePlugin("destroy", "destroyable_img", "destroyable_body", world))
+//				.append(new YDestructibleTerrainParsePlugin("destroy", "destroyable_img", "destroyable_body", world))
 				.parse();
 //		new YTiledParser(mainScene, "city.json", this)
 //			.append(new YStaticImageLayerParsePlugin("map","background", "foreground"))

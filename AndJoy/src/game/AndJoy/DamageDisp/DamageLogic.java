@@ -61,7 +61,7 @@ public class DamageLogic extends YADomainLogic {
 		if (isHurt && hurtCount < 20) {
 			mover.setX((float) (damageDisplayer.getCurrentXY()[0]))
 					.setY((float) (damageDisplayer.getCurrentXY()[1] + timeStep
-							* hurtCount * 0.2f / dbElapseTime_s)).setZ(-1f);
+							* hurtCount * 0.2f / dbElapseTime_s)).setZ(2f);
 			hurtCount++;
 			// mover.setX((44 - 128) * 5).setY(0);
 		} else if (hurtCount >= 20) {

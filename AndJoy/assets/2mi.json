@@ -23,7 +23,6 @@
          "y":0
         }, 
         {
-         "draworder":"topdown",
          "height":16,
          "name":"box2d_bodies",
          "objects":[
@@ -47,9 +46,7 @@
                     {
                      "friction":"0.8"
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":3,
                  "y":657
@@ -78,9 +75,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":8322,
                  "y":819
@@ -109,9 +104,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":8642,
                  "y":764
@@ -140,9 +133,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":9026,
                  "y":830
@@ -171,9 +162,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":9472,
                  "y":696
@@ -234,9 +223,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":10430,
                  "y":507
@@ -277,9 +264,7 @@
                     {
                      "friction":"0.8"
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":766,
                  "y":889
@@ -388,9 +373,7 @@
                     {
                      "friction":"0.5"
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":2818,
                  "y":894
@@ -419,9 +402,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":10113,
                  "y":578
@@ -446,9 +427,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":15106,
                  "y":384
@@ -481,9 +460,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":13988,
                  "y":378
@@ -504,9 +481,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":0,
                  "y":1024
@@ -519,7 +494,6 @@
          "y":0
         }, 
         {
-         "draworder":"topdown",
          "height":16,
          "name":"dynamic",
          "objects":[
@@ -530,12 +504,10 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"game.AndJoy.monster.concrete.YMonsterDomain$YBuilder",
-                 "visible":true,
-                 "width":161.333,
-                 "x":5950.00016666667,
-                 "y":133.393939393939
+                 "width":161,
+                 "x":5950,
+                 "y":133
                 }, 
                 {
                  "height":164,
@@ -544,12 +516,10 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"game.AndJoy.monster.concrete.YMonsterDomain$YBuilder",
-                 "visible":true,
-                 "width":161.333,
-                 "x":15171.3335,
-                 "y":-40.4242424242425
+                 "width":161,
+                 "x":15171,
+                 "y":-40
                 }, 
                 {
                  "height":164,
@@ -558,12 +528,10 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
-                 "visible":true,
-                 "width":161.333,
-                 "x":1543.57592424242,
-                 "y":227.090909090909
+                 "width":161,
+                 "x":3666,
+                 "y":238
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -584,7 +552,6 @@
          "y":0
         }, 
         {
-         "draworder":"topdown",
          "height":16,
          "name":"destroyable_body",
          "objects":[
@@ -612,9 +579,7 @@
                     {
 
                     },
-                 "rotation":0,
                  "type":"",
-                 "visible":true,
                  "width":0,
                  "x":1990,
                  "y":573
@@ -631,7 +596,6 @@
     {
      "pixels_per_unit":"64"
     },
- "renderorder":"right-down",
  "tileheight":64,
  "tilesets":[
         {
