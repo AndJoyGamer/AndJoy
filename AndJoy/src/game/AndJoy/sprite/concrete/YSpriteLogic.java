@@ -11,6 +11,7 @@ import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
 import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -583,13 +584,22 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
 		{
-			System.out.println("脚步碰撞");
+			++iFootContact;
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
 			if (null == domainOther
 					|| domainOther.KEY.equals("map"))
 			{
+				if (fixtureOther.m_shape instanceof EdgeShape)
+				{
+					EdgeShape es = (EdgeShape) fixtureOther.m_shape;
+					if (Math.abs(es.m_vertex2.x
+							- es.m_vertex1.x) < 0.2)
+						// 太陡峭视为碰到了竖直折线，不看做是地面
+						return;
+				}
+
 				String objName = (String) fixtureOther
 						.getUserData();
 				if (Constants.FIXTURE_DEAD_LINE.equals(objName))
@@ -597,7 +607,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 					resetGame();
 					return;
 				}
-				++iFootContact;
+
 				bOnLand = true;
 				if (YSpriteState.JUMP == stateMachine
 						.getCurrentState())
@@ -609,6 +619,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
 		{
+			--iFootContact;
 			System.out.println("脚步离开");
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
@@ -616,7 +627,6 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 			if (null == domainOther
 					|| domainOther.KEY.equals("map"))
 			{
-				--iFootContact;
 				if (iFootContact == 0)
 				{
 					bOnLand = false;
