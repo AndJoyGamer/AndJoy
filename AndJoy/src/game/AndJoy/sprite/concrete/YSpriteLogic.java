@@ -578,19 +578,19 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 	private class FootContactLsn implements YIOnContactListener
 	{
-		private int iFootContact;
+		private int iFootFloorContact;
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
 		{
-			++iFootContact;
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
 			if (null == domainOther
 					|| domainOther.KEY.equals("map"))
 			{
+				++iFootFloorContact;
 				if (fixtureOther.m_shape instanceof EdgeShape)
 				{
 					EdgeShape es = (EdgeShape) fixtureOther.m_shape;
@@ -619,15 +619,14 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
 		{
-			--iFootContact;
-			System.out.println("脚步离开");
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
 			if (null == domainOther
 					|| domainOther.KEY.equals("map"))
 			{
-				if (iFootContact == 0)
+				--iFootFloorContact;
+				if (iFootFloorContact == 0)
 				{
 					bOnLand = false;
 					if (YSpriteState.JUMP != stateMachine
