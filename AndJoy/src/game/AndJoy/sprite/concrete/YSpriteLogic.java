@@ -55,6 +55,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	private boolean bRight = true;
 	private int hp = 200;
 
+	private YSystem system;
+
 	protected YSpriteLogic(World world, MainActivity activity, float initX,
 			float initY, float skeletonSideLen)
 	{
@@ -207,6 +209,11 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		builder.newTransition().from(YSpriteState.JUMP)
 				.to(YSpriteState.DAMAGE)
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
+
+		// 进入或离开行走状态
+		WalkEnterQuitAction walkEnterQuitAction = new WalkEnterQuitAction();
+		builder.onEntry(YSpriteState.WALK).perform(walkEnterQuitAction);
+		builder.onExit(YSpriteState.WALK).perform(walkEnterQuitAction);
 		return YSpriteState.JUMP;
 	}
 
@@ -260,7 +267,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		final private int iFrameNum;
 		final private int iColStartIndex;
 		final private int iRowStartIndex;
-		ProgressBar progressBar = (ProgressBar) activity
+		private ProgressBar progressBar = (ProgressBar) activity
 				.findViewById(R.id.hp_bar);
 
 		BaseClocker(int iFPS, int iFrameNum, int iColStartIndex,
@@ -277,9 +284,9 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
-			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
+			int iFrameCur = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
 			iRowIndex = iRowStartIndex;
-			iColumnIndex = iColStartIndex + iFrame;
+			iColumnIndex = iColStartIndex + iFrameCur;
 			if (bOnLand)
 				body.applyForce(vecAntiGrav, body.getPosition());
 			progressBar.setProgress(hp);
@@ -309,6 +316,27 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	}
 
 	/*************************** 关于行走状态 **********************************/
+	private class WalkEnterQuitAction implements
+			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
+	{
+		private int streamID;
+
+		@Override
+		public void onTransition(
+				YIStateClocker from,
+				YIStateClocker to,
+				YRequest causedBy,
+				YASpriteDomainLogic context,
+				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
+		{
+			if (YSpriteState.WALK == to)
+				streamID = system.getAudioManager().playSound(
+						R.raw.sprite_walk, 100, 1f, 1);
+			else
+				system.getAudioManager().pauseSound(streamID);
+		}
+	}
+
 	private class WalkClocker extends BaseClocker
 	{
 		private final Vec2 vecRight = new Vec2(4, -2);
@@ -401,10 +429,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	@Override
 	protected void onAttach(YSystem system, YBaseDomain domainContext)
 	{
-		// TODO Auto-generated method stub
 		super.onAttach(system, domainContext);
-		// this.damageDomain = new DamageDomain("damage", activity);
-		// system.getCurrentScene().addDomains(damageDomain);
+		this.system = system;
 	}
 
 	/*************************** 关于攻击1状态 **********************************/
@@ -507,7 +533,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 						(int) (Math.random() * 1000)));
 				scene.addDomains(damageDomain);
 			}
-			if (iDamageCounts++ > 30)
+			if (iDamageCounts++ > 15)
 			{
 				iDamageCounts = 0;
 				// scene.removeDomains("damage");
@@ -519,8 +545,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	private class DamageEnterAction implements
 			YIAction<YIStateClocker, YRequest, YASpriteDomainLogic>
 	{
-		private Vec2 vec2Right = new Vec2(6, -2);
-		private Vec2 vec2Left = new Vec2(-6, -2);
+		private Vec2 vec2Right = new Vec2(4, -2);
+		private Vec2 vec2Left = new Vec2(-4, -2);
 
 		@Override
 		public void onTransition(
@@ -542,7 +568,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 					v2.subLocal(v1)
 							.mulLocal(body.getMass()),
 					body.getPosition());
-
+			system.getAudioManager().playSound(R.raw.sprite_heart,
+					1, 1, 1);
 		}
 	}
 
