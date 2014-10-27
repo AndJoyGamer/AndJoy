@@ -32,6 +32,7 @@ import ygame.extension.tiled.YTiledParser;
 import ygame.extension.with_third_party.YWorld;
 import ygame.framebuffer.YFBOScene;
 import ygame.framework.YIResultCallback;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
@@ -194,12 +195,56 @@ public class MainActivity extends Activity
 
 		// _____________向场景添加上述新建的实体
 		mainScene.addDomains(monster1Hp, monster2Hp,
-				obstacleDomain, getBkgDomain());
+				obstacleDomain, getBkgDomain(), getWaterDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
 		mainScene.getCurrentCamera().setZ(10);
 		
 		mainScene.requestEnter(null);
+	}
+
+	private YDomain getWaterDomain() {
+		YADomainLogic logic = new YADomainLogic()
+		{
+			// @formatter:off
+			private YMover mover = (YMover) new YMover().setY(-10).setZ(1.1f);
+			private YSkeleton skeleton = new YRectangle(12, 8,false, true);
+			private YTexture texture = new YTexture(BitmapFactory.decodeResource(getResources(),R.drawable.water));
+			//@formatter:on
+
+			@Override
+			protected boolean onDealRequest(YRequest request,
+					YSystem system, YScene sceneCurrent,
+					YBaseDomain domainContext)
+			{
+				return false;
+			}
+
+			@Override
+			protected void onCycle(double dbElapseTime_s,
+					YDomain domainContext,
+					YWriteBundle bundle, YSystem system,
+					YScene sceneCurrent, YMatrix matrix4pv,
+					YMatrix matrix4Projection,
+					YMatrix matrix4View)
+			{
+				// 背景跟着摄像机移动，使得玩家觉得背景水平方向没有移动
+				YCamera camera = sceneCurrent
+						.getCurrentCamera();
+				mover.setX(camera.getX());
+
+				YTextureProgram.YAdapter adapter = (YTextureProgram.YAdapter) domainContext
+						.getParametersAdapter();
+				adapter.paramMatrixPV(matrix4pv)
+						.paramMover(mover)
+						.paramSkeleton(skeleton)
+						.paramTexture(texture);
+			}
+		};
+
+		YDomainView view = new YDomainView(
+				YTextureProgram.getInstance(getResources()));
+		return new YDomain("water", logic, view);
 	}
 
 	// @formatter:on
