@@ -570,7 +570,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 							.mulLocal(body.getMass()),
 					body.getPosition());
 			system.getAudioManager().playSound(R.raw.sprite_heart,
-					1, 1, 1);
+					0, 1, 1);
 		}
 	}
 
