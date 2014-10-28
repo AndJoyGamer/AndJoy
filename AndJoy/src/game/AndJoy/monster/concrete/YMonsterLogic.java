@@ -54,12 +54,13 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain>
 	final private String keyHP;
 
 	protected YMonsterLogic(World world, String keyHP,
-			MainActivity activity, float fInitX_M, float fInitY_M)
+			MainActivity activity, float fInitX_M, float fInitY_M, float fInitZ_M)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
 				activity.getResources(), 3, 22), 2.5f, world);
 		this.fInitX_M = fInitX_M;
 		this.fInitY_M = fInitY_M;
+		this.fInitZ_M = fInitZ_M;
 		vecAntiGrav = new Vec2(world.getGravity());
 		this.keyHP = keyHP;
 	}

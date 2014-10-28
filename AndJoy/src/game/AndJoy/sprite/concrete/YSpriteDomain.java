@@ -22,10 +22,11 @@ public class YSpriteDomain extends YDomain
 	static final int TO_JUMP = 4;
 
 	protected YSpriteDomain(String KEY, World world, MainActivity activity,
-			float initX, float initY, float skeletonSideLen)
+			float initX, float initY, float initZ,
+			float skeletonSideLen)
 	{
 		super(KEY, new YSpriteLogic(world, activity, initX, initY,
-				skeletonSideLen), new YDomainView(
+				initZ, skeletonSideLen), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 	}
@@ -81,7 +82,7 @@ public class YSpriteDomain extends YDomain
 			return new YSpriteDomain(info.key,
 					(World) extraParams[0],
 					(MainActivity) extraParams[1], info.x,
-					info.y, info.width);
+					info.y, info.z, info.width);
 		}
 	}
 

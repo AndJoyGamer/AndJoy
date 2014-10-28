@@ -59,16 +59,15 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	private YSystem system;
 
 	protected YSpriteLogic(World world, MainActivity activity, float initX,
-			float initY, float skeletonSideLen)
+			float initY, float initZ, float skeletonSideLen)
 	{
 		super(new YTileSheet(R.drawable.hero_big,
 				activity.getResources(), 3, 22),
 				skeletonSideLen, world);
-		// fInitX_M = 105;//for yewai
-		// fInitY_M = 8;
 		fInitX_M = initX;
 		fInitY_M = initY;
-
+		fInitZ_M = initZ;
+		
 		this.activity = activity;
 		vecAntiGrav = new Vec2(world.getGravity());
 		// damageDomain = new DamageDomain("damage", activity);

@@ -21,10 +21,11 @@ public class YMonsterDomain extends YDomain
 	final YRequest TO_DEAD;
 
 	protected YMonsterDomain(String KEY, String keyHP, World world,
-			MainActivity activity, float fInitX_M, float fInitY_M)
+			MainActivity activity, float fInitX_M, float fInitY_M,
+			float z)
 	{
 		super(KEY, new YMonsterLogic(world, keyHP, activity, fInitX_M,
-				fInitY_M), new YDomainView(
+				fInitY_M, z), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
 		this.TO_WAIT = new YRequest(0);
@@ -52,7 +53,7 @@ public class YMonsterDomain extends YDomain
 			return new YMonsterDomain(domainKey, hpKey,
 					(World) extraParams[0],
 					(MainActivity) extraParams[1], info.x,
-					info.y);
+					info.y, info.z);
 		}
 	}
 
