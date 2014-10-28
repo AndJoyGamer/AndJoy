@@ -55,7 +55,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 	private boolean bRight = true;
 	private int hp = 200;
-
+	private boolean stateMachineLock = false;
 	private YSystem system;
 
 	protected YSpriteLogic(World world, MainActivity activity, float initX,
@@ -235,14 +235,18 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 
 	private void resetState()
 	{
-		if (activity.bLeftPressing || activity.bRightPressing)
-			stateMachine.forceSetState(YSpriteState.WALK);
-		else
-			stateMachine.forceSetState(YSpriteState.WAIT);
+		if(!stateMachineLock){
+			
+			if (activity.bLeftPressing || activity.bRightPressing)
+				stateMachine.forceSetState(YSpriteState.WALK);
+			else
+				stateMachine.forceSetState(YSpriteState.WAIT);
+		}
 	}
 
 	// XXX temp code，之后会有一个死亡状态与之对应，目前暂时用一个标志位表示
 	private boolean bDead;
+	public int iJumpClockCount;
 
 	private void resetGame()
 	{
@@ -370,6 +374,13 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 				YASpriteDomainLogic domainLogicContext,
 				YSystem system, YScene sceneCurrent)
 		{
+			iJumpClockCount++;
+			if(bOnLand){
+				resetState();
+			}
+			if(stateMachineLock && iJumpClockCount>2){
+				stateMachineLock =false;
+			}
 			iRowIndex = 1;
 			Vec2 velocity = body.getLinearVelocity();
 			if (velocity.y > 0.5)
@@ -414,6 +425,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 				YASpriteDomainLogic context,
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
+			iJumpClockCount = 0;
+			stateMachineLock = true;
 			Vec2 v1 = body.getLinearVelocity();
 			if (Math.abs(v1.x) <= 4)
 				return;
@@ -579,7 +592,6 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	private class FootContactLsn implements YIOnContactListener
 	{
 		private int iFootFloorContact;
-
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
@@ -587,19 +599,19 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther
-					|| domainOther.KEY.equals("map"))
+			if (null == domainOther || domainOther.KEY.equals("map")
+					|| domainOther instanceof YDestructibleTerrainDomain)
 			{
 				++iFootFloorContact;
-				if (fixtureOther.m_shape instanceof EdgeShape)
-				{
-					EdgeShape es = (EdgeShape) fixtureOther.m_shape;
-					if (Math.abs(es.m_vertex2.x
-							- es.m_vertex1.x) < 0.2)
-						// 太陡峭视为碰到了竖直折线，不看做是地面
-						return;
-				}
-
+//				if (fixtureOther.m_shape instanceof EdgeShape)
+//				{
+//					EdgeShape es = (EdgeShape) fixtureOther.m_shape;
+//					if (Math.abs(es.m_vertex2.x
+//							- es.m_vertex1.x) < 0.2){
+//						// 太陡峭视为碰到了竖直折线，不看做是地面
+//						return;
+//					}
+//				}
 				String objName = (String) fixtureOther
 						.getUserData();
 				if (Constants.FIXTURE_DEAD_LINE.equals(objName))
@@ -609,9 +621,10 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 				}
 
 				bOnLand = true;
-				if (YSpriteState.JUMP == stateMachine
-						.getCurrentState())
-					resetState();
+//				if (YSpriteState.JUMP == stateMachine
+//						.getCurrentState()){
+//					resetState();
+//				}
 			}
 		}
 
@@ -622,9 +635,8 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 			// XXX temp code
 			// 目前框架实现为：domainOther为null时，表示碰到了地面（地图障碍物）
 			// 之后可能有改动，会把地图实体的引用传过来
-			if (null == domainOther
-					|| domainOther.KEY.equals("map"))
-			{
+			if (null == domainOther || domainOther.KEY.equals("map")
+					|| domainOther instanceof YDestructibleTerrainDomain) {
 				--iFootFloorContact;
 				if (iFootFloorContact == 0)
 				{

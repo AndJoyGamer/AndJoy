@@ -184,8 +184,8 @@ public class MainActivity extends Activity {
 						"box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[] { world,
 						MainActivity.this }, "dynamic"))
-				// .append(new YDestructibleTerrainParsePlugin("destroy",
-				// "destroyable_img", "destroyable_body", world))
+				 .append(new YDestructibleTerrainParsePlugin("destroy",
+				 "destroyable_img", "destroyable_body", world))
 				.parse();
 		// new YTiledParser(mainScene, "city.json", this)
 		// .append(new YStaticImageLayerParsePlugin("map","background",
