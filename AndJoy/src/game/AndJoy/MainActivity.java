@@ -8,7 +8,6 @@ import game.AndJoy.common.YSceneDomain;
 import game.AndJoy.obstacle.ObstacleDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
-import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,7 +32,6 @@ import ygame.extension.tiled.YTiledParser;
 import ygame.extension.with_third_party.YWorld;
 import ygame.framebuffer.YFBOScene;
 import ygame.framework.YIResultCallback;
-import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
@@ -52,7 +50,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -61,7 +58,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -179,7 +175,7 @@ public class MainActivity extends Activity {
 		// _____________解析Tiled生成的静态地图
 		new YTiledParser(mainScene, "2mi.json", this)
 				.append(new YStaticImageLayerParsePlugin("map", "base_bkg",
-						"decoration_bkg"))
+						"decoration_bkg", "water"))
 				.append(new YStaticPolyLineTerrainParsePlugin("map", world,
 						"box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[] { world,
@@ -195,55 +191,12 @@ public class MainActivity extends Activity {
 
 		// _____________向场景添加上述新建的实体
 		mainScene.addDomains(monster1Hp, monster2Hp, obstacleDomain,
-				getBkgDomain(), getWaterDomain());
+				getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
 		mainScene.getCurrentCamera().setZ(10);
 
 		mainScene.requestEnter(null);
-	}
-
-	private YDomain getWaterDomain() {
-		BitmapFactory.Options opt = new BitmapFactory.Options();
-		opt.inPreferredConfig = Bitmap.Config.RGB_565;
-		//获取资源图片
-		InputStream input = getResources().openRawResource(R.drawable.water);
-		final Bitmap bitmap = BitmapFactory.decodeStream(input,null,opt);
-		System.out.println("height = " + bitmap.getHeight() + " width = "
-				+ bitmap.getWidth());
-		YADomainLogic logic = new YADomainLogic() {
-			// @formatter:off
-			private YMover mover = (YMover) new YMover().setY(-8).setZ(1.1f);
-			private YSkeleton skeleton = new YRectangle(14, 4, false, true);
-			private YTexture texture = new YTexture(bitmap);
-
-			// @formatter:on
-
-			@Override
-			protected boolean onDealRequest(YRequest request, YSystem system,
-					YScene sceneCurrent, YBaseDomain domainContext) {
-				return false;
-			}
-
-			@Override
-			protected void onCycle(double dbElapseTime_s,
-					YDomain domainContext, YWriteBundle bundle, YSystem system,
-					YScene sceneCurrent, YMatrix matrix4pv,
-					YMatrix matrix4Projection, YMatrix matrix4View) {
-				// 背景跟着摄像机移动，使得玩家觉得背景水平方向没有移动
-				YCamera camera = sceneCurrent.getCurrentCamera();
-				mover.setX(camera.getX());
-
-				YTextureProgram.YAdapter adapter = (YTextureProgram.YAdapter) domainContext
-						.getParametersAdapter();
-				adapter.paramMatrixPV(matrix4pv).paramMover(mover)
-						.paramSkeleton(skeleton).paramTexture(texture);
-			}
-		};
-
-		YDomainView view = new YDomainView(
-				YTextureProgram.getInstance(getResources()));
-		return new YDomain("water", logic, view);
 	}
 
 	// @formatter:on
