@@ -26,6 +26,7 @@ import ygame.extension.third_party.kankan.wheel.widget.WheelView;
 import ygame.extension.third_party.kankan.wheel.widget.adapters.AbstractWheelAdapter;
 import ygame.extension.tiled.YBaseParsePlugin;
 import ygame.extension.tiled.YDestructibleTerrainParsePlugin;
+import ygame.extension.tiled.YGearParsePlugin;
 import ygame.extension.tiled.YStaticImageLayerParsePlugin;
 import ygame.extension.tiled.YStaticPolyLineTerrainParsePlugin;
 import ygame.extension.tiled.YTiledParser;
@@ -161,13 +162,12 @@ public class MainActivity extends Activity
 		mainScene = new YFBOScene(system, "野外");
 		mainScene.addClockerPlugin(world);
 
-		// _____________测试相关，放入测试箱子、测试吊桥、测试跷跷板
+		// _____________测试相关，放入测试箱子、测试吊桥
 		// YBox2dTestUtils.addTestBoxes(world, mainScene, getResources());
 		YBox2dTestUtils.addTestBridge(new Vec2(92, 4.5f), new Vec2(108, 4.5f),
 				1, world, mainScene, getResources());
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
 				new Vec2(-127, 8));
-		YBox2dTestUtils.addTestSeeSaw(new Vec2(47.5f, 4.5f),  world, mainScene, getResources());
 
 		// 测试伤害显示
 		NumBitmap.setRes(getResources());
@@ -188,8 +188,9 @@ public class MainActivity extends Activity
 						"box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[] { world,
 						MainActivity.this }, "dynamic"))
-				 .append(new YDestructibleTerrainParsePlugin("destroy",
-				 "destroyable_img", "destroyable_body", world))
+				.append(new YDestructibleTerrainParsePlugin("destroy",
+						 "destroyable_img", "destroyable_body", world))
+				.append(new YGearParsePlugin(getResources(), world, "gear"))
 				.parse();
 		// new YTiledParser(mainScene, "city.json", this)
 		// .append(new YStaticImageLayerParsePlugin("map","background",
