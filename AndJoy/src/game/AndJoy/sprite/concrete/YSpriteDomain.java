@@ -12,6 +12,7 @@ import ygame.extension.tiled.YBaseParsePlugin.YIDomainBuilder;
 import ygame.extension.tiled.YDomainBuildInfo;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
+import ygame.transformable.YIMoverGetter;
 
 public class YSpriteDomain extends YDomain
 {
@@ -21,6 +22,8 @@ public class YSpriteDomain extends YDomain
 	static final int TO_WAIT = 3;
 	static final int TO_JUMP = 4;
 
+	private YSpriteLogic spriteLogic;
+
 	protected YSpriteDomain(String KEY, World world, MainActivity activity,
 			float initX, float initY, float initZ,
 			float skeletonSideLen)
@@ -29,6 +32,7 @@ public class YSpriteDomain extends YDomain
 				initZ, skeletonSideLen), new YDomainView(
 				YTileProgram.getInstance(activity
 						.getResources())));
+		this.spriteLogic = (YSpriteLogic) logic;
 	}
 
 	public void damage(Orientation attackFrom)
@@ -84,6 +88,11 @@ public class YSpriteDomain extends YDomain
 					(MainActivity) extraParams[1], info.x,
 					info.y, info.z, info.width);
 		}
+	}
+
+	public YIMoverGetter getMoverGetter()
+	{
+		return spriteLogic.getMoverGetter();
 	}
 
 }

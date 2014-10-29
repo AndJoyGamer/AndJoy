@@ -11,7 +11,6 @@ import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;
 
 import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -35,6 +34,7 @@ import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
+import ygame.transformable.YIMoverGetter;
 import android.util.Log;
 import android.widget.ProgressBar;
 
@@ -57,7 +57,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 	private int hp = 200;
 	private boolean stateMachineLock = false;
 	private YSystem system;
-
+	
 	protected YSpriteLogic(World world, MainActivity activity, float initX,
 			float initY, float initZ, float skeletonSideLen)
 	{
@@ -716,6 +716,11 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		// TODO Auto-generated method stub
 		return new float[]
 		{ mover.getX(), mover.getY() };
+	}
+	
+	YIMoverGetter getMoverGetter()
+	{
+		return mover;
 	}
 
 }

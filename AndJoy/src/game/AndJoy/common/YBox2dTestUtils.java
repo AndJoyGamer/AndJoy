@@ -289,14 +289,14 @@ public final class YBox2dTestUtils
 
 		BodyDef bdBase = new BodyDef();
 		bdBase.type = BodyType.STATIC;
-		bdBase.position.set(new Vec2(initX, initY - 0.5f));
+		bdBase.position.set(new Vec2(initX, initY));
 		Body bodyBase = world.createBody(bdBase);
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(0.05f, 0.5f);
 		bodyBase.createFixture(shape, 0);
 
 		RevoluteJointDef jd = new RevoluteJointDef();
-		jd.initialize(bodyBase, body, new Vec2(initX, initY));
+		jd.initialize(bodyBase, body, new Vec2(initX, initY + 0.5f));
 		jd.lowerAngle = -8.0f * MathUtils.PI / 180.0f;
 		jd.upperAngle = 8.0f * MathUtils.PI / 180.0f;
 		jd.enableLimit = true;
