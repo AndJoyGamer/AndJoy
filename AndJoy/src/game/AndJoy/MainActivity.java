@@ -1,6 +1,5 @@
 package game.AndJoy;
 
-import game.AndJoy.DamageDisp.NumBitmap;
 import game.AndJoy.common.AndjoyApp;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
@@ -177,8 +176,8 @@ public class MainActivity extends Activity
 		YProgressBarDomain monster2Hp = new YProgressBarDomain(
 				Constants.MONSTER2_HP, getResources(), 1f, 0.1f);
 		// _____________新建测试障碍
-		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs", this,
-				world);
+//		ObstacleDomain obstacleDomain = new ObstacleDomain("test_Obs", this,
+//				world);
 
 		// _____________解析Tiled生成的静态地图
 		new YTiledParser(mainScene, "2mi.json", this)
@@ -199,8 +198,7 @@ public class MainActivity extends Activity
 		// .parse();
 
 		// _____________向场景添加上述新建的实体
-		mainScene.addDomains(monster1Hp, monster2Hp, obstacleDomain,
-				getBkgDomain());
+		mainScene.addDomains(monster1Hp, monster2Hp, getBkgDomain());
 		// _____________特别地，场景处理实体（处理场景切换的特效）
 		mainScene.addDomains(new YSceneDomain("sd", getResources()));
 		mainScene.getCurrentCamera().setZ(10);

@@ -35,8 +35,9 @@ import ygame.transformable.YMover;
 
 public class ObstacleLogic extends YADomainLogic {
 
-	private YMover mover = (YMover) new YMover().setX(68).setY(-3).setZ(0.2f);
-	private YSkeleton skeleton = new YSquare(1.5f, false, true);
+	final static float SIDE_LEN = 1.5f;
+	private YMover mover;
+	private YSkeleton skeleton;
 	private MainActivity activity;
 	private YTileSheet tileSheet;
 	private World world;
@@ -45,9 +46,11 @@ public class ObstacleLogic extends YADomainLogic {
 	
 	private float fFrames = 0;
 
-	protected ObstacleLogic(MainActivity activity, World world) {
+	protected ObstacleLogic(MainActivity activity, World world, float x, float y, float z) {
 		this.activity = activity;
 		this.world = world;
+		mover = (YMover) new YMover().setX(x).setY(y).setZ(z);
+		skeleton = new YSquare(SIDE_LEN, false, true);
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class ObstacleLogic extends YADomainLogic {
 		this.body = world.createBody(bodyDef);
 		body.setDomain(domainContext);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(0.5f, 2.5f,
+		shape.setAsBox(SIDE_LEN/10, SIDE_LEN/2,
 				new Vec2(0, 0), 0);
 		def.shape = shape;
 		body.createFixture(def).setOnContactListener(new fireLsn());
