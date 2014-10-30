@@ -2,6 +2,8 @@ package game.AndJoy.monster.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
+import game.AndJoy.DamageDisp.DamageDomain;
+import game.AndJoy.DamageDisp.IDamageDisplayer;
 import game.AndJoy.common.Constants;
 import game.AndJoy.monster.YAMonsterDomainLogic;
 import game.AndJoy.monster.YIMonsterStateClocker;
@@ -33,7 +35,8 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 import ygame.transformable.YIMoverGetter;
 
-class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> {
+class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
+		IDamageDisplayer {
 	private int iDamageCounts;
 	private float fFrames;
 	private boolean ifOnLand = false;
@@ -371,6 +374,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> {
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
 			// TODO Auto-generated method stub
 			iDamageCounts = 0;
+			onHurt((int) (Math.random()*1000));
 		}
 	}
 
@@ -552,5 +556,19 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> {
 		}
 	}
 
+	@Override
+	public float[] getCurrentXY() {
+		return new float[] { mover.getX(), mover.getY() };
+	}
+
+	@Override
+	public YScene getScene() {
+		return system.getCurrentScene();
+	}
+
+	@Override
+	public void onHurt(int value) {
+		new DamageDomain(this, value);
+	}
 
 }
