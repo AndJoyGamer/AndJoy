@@ -170,7 +170,7 @@ public class MainActivity extends Activity
 				new Vec2(-127, 8));
 
 		// 测试伤害显示
-		NumBitmap.setRes(getResources());
+//		NumBitmap.setRes(getResources());
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1, 0.1f);
@@ -188,8 +188,8 @@ public class MainActivity extends Activity
 						"box2d_bodies"))
 				.append(new YBaseParsePlugin(new Object[] { world,
 						MainActivity.this }, "dynamic"))
-				.append(new YDestructibleTerrainParsePlugin("destroy",
-						 "destroyable_img", "destroyable_body", world))
+//				.append(new YDestructibleTerrainParsePlugin("destroy",
+//						 "destroyable_img", "destroyable_body", world))
 				.append(new YGearParsePlugin(getResources(), world, "gear"))
 				.parse();
 		// new YTiledParser(mainScene, "city.json", this)

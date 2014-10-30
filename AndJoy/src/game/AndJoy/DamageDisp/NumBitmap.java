@@ -1,6 +1,7 @@
 package game.AndJoy.DamageDisp;
 
 import game.AndJoy.R;
+import game.AndJoy.common.AndjoyApp;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -11,7 +12,6 @@ import android.util.Log;
 
 public class NumBitmap {
 
-	private static Resources res;
 
 	/**
 	 * 通过value组合一个信的伤害bitmap
@@ -21,6 +21,7 @@ public class NumBitmap {
 	 * @return
 	 */
 	public static Bitmap getDmgBtmByValues(int value) {
+		Resources res = AndjoyApp.getResource();
 		if (res != null) {
 			Bitmap btm_res = BitmapFactory.decodeResource(res,
 					R.drawable.numbers);
@@ -64,16 +65,4 @@ public class NumBitmap {
 		return btm_num;
 	}
 
-	public static Resources getRes() {
-		return res;
-	}
-
-	/**
-	 * 切记在使用NumBitmap前传入Resources
-	 * 
-	 * @param res
-	 */
-	public static void setRes(Resources res) {
-		NumBitmap.res = res;
-	}
 }

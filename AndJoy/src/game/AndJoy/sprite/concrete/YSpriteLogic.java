@@ -38,7 +38,7 @@ import ygame.transformable.YIMoverGetter;
 import android.util.Log;
 import android.widget.ProgressBar;
 
-class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
+class YSpriteLogic extends YASpriteDomainLogic 
 {
 	private float fFrames;
 	// 受伤状态维持的周期计数
@@ -525,7 +525,7 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		{
 			super.onClock(fElapseTime_s, domainLogicContext,
 					system, sceneCurrent);
-			Log.d("伤害显示", "进入了受伤onclock");
+//			Log.d("伤害显示", "进入了受伤onclock");
 
 			hp--;
 			if (hp <= 0)
@@ -535,16 +535,16 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 			}
 			if (iDamageCounts == 0)
 			{
-				YScene scene = system.getCurrentScene();
-				DamageDomain damageDomain = new DamageDomain(
-						(YSpriteLogic) domainLogicContext,
-						activity);
-				float[] pos = new float[]
-				{ mover.getX(), mover.getY() };
-
-				damageDomain.sendRequest(new DamageReq(pos,
-						(int) (Math.random() * 1000)));
-				scene.addDomains(damageDomain);
+//				YScene scene = system.getCurrentScene();
+//				DamageDomain damageDomain = new DamageDomain(
+//						(YSpriteLogic) domainLogicContext,
+//						activity);
+//				float[] pos = new float[]
+//				{ mover.getX(), mover.getY() };
+//
+//				damageDomain.sendRequest(new DamageReq(pos,
+//						(int) (Math.random() * 1000)));
+//				scene.addDomains(damageDomain);
 			}
 			if (iDamageCounts++ > 15)
 			{
@@ -710,13 +710,13 @@ class YSpriteLogic extends YASpriteDomainLogic implements IDamageDisplayer
 		}
 	}
 
-	@Override
-	public float[] getCurrentXY()
-	{
-		// TODO Auto-generated method stub
-		return new float[]
-		{ mover.getX(), mover.getY() };
-	}
+//	@Override
+//	public float[] getCurrentXY()
+//	{
+//		// TODO Auto-generated method stub
+//		return new float[]
+//		{ mover.getX(), mover.getY() };
+//	}
 	
 	YIMoverGetter getMoverGetter()
 	{

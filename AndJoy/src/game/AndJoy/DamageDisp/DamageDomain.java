@@ -1,6 +1,7 @@
 package game.AndJoy.DamageDisp;
 
 import game.AndJoy.MainActivity;
+import game.AndJoy.common.AndjoyApp;
 import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
@@ -21,10 +22,10 @@ public class DamageDomain extends YDomain {
 	 * @param KEY
 	 * @param activity
 	 */
-	public DamageDomain(IDamageDisplayer damageDisplayer, MainActivity activity) {
+	public DamageDomain(IDamageDisplayer damageDisplayer) {
 		super("damage_" + (int) (Math.random() * 10000), new DamageLogic(
 				damageDisplayer), new YDomainView(
-				YTextureProgram.getInstance(activity.getResources())));
+				YTextureProgram.getInstance(AndjoyApp.getResource())));
 	}
 
 	// public static DamageDomain getDomain(){

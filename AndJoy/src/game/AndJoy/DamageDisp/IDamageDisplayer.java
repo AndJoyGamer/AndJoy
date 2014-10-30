@@ -1,6 +1,7 @@
 package game.AndJoy.DamageDisp;
 
 import ygame.domain.YDomain;
+import ygame.framework.core.YScene;
 
 public interface IDamageDisplayer {
 
@@ -10,5 +11,9 @@ public interface IDamageDisplayer {
 	 * @return
 	 */
 	public float[] getCurrentXY();
+
+	public YScene getScene();
+
+	public void onHurt(int value);
 
 }

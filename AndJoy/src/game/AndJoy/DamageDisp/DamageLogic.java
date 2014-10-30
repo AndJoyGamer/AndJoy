@@ -36,6 +36,7 @@ public class DamageLogic extends YADomainLogic {
 	private boolean isHurt = false;
 	private int hurtNum = 0;
 	private int hurtCount = 0;
+	private float Yoffset = 0;
 	private YTexture texture = new YTexture(Bitmap.createBitmap(1, 1,
 			Config.ARGB_8888));
 
@@ -57,19 +58,20 @@ public class DamageLogic extends YADomainLogic {
 		adapter.paramMatrixPV(matrix4pv).paramMover(mover)
 				.paramSkeleton(skeleton).paramTexture(texture);
 		Log.d("DamageLogic", "oncycle");
-		float timeStep = 0.005f;
-		if (isHurt && hurtCount < 20) {
+		float timeStep = 0.05f;
+		if (isHurt && hurtCount < 40) {
+			Yoffset += dbElapseTime_s * 0.1f / timeStep;
 			mover.setX((float) (damageDisplayer.getCurrentXY()[0]))
-					.setY((float) (damageDisplayer.getCurrentXY()[1] + timeStep
-							* hurtCount * 0.2f / dbElapseTime_s)).setZ(2f);
+					.setY((float) (damageDisplayer.getCurrentXY()[1] + Yoffset))
+					.setZ(2f);
 			hurtCount++;
 			// mover.setX((44 - 128) * 5).setY(0);
-		} else if (hurtCount >= 20) {
+		} else if (hurtCount >= 40) {
 			isHurt = false;
 			hurtCount = 0;
 			// 无伤害状态下创建一个透明的小图片；不过一般情况下此句应该是多余的，因为domain会被remove掉，是否保留为待定
 			texture = new YTexture(Bitmap.createBitmap(1, 1, Config.ARGB_8888));
-			system.getCurrentScene().removeDomains(domainContext);
+			sceneCurrent.removeDomains(domainContext);
 		}
 		// else {
 		// YTileProgram.YAdapter adapter = (YAdapter) domainContext
