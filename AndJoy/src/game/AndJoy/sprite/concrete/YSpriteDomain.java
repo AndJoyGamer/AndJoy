@@ -26,7 +26,7 @@ public class YSpriteDomain extends YDomain implements IDamageDisplayer {
 	static final int TO_WAIT = 3;
 	static final int TO_JUMP = 4;
 
-	private YScene scene;
+	private YSystem system;
 
 	protected YSpriteDomain(String KEY, World world, MainActivity activity,
 			float initX, float initY, float initZ, float skeletonSideLen) {
@@ -37,9 +37,8 @@ public class YSpriteDomain extends YDomain implements IDamageDisplayer {
 
 	@Override
 	protected void onAttach(YSystem system) {
-		// TODO Auto-generated method stub
 		super.onAttach(system);
-		this.scene = system.getCurrentScene();
+		this.system = system;
 	}
 
 	public void damage(Orientation attackFrom) {
@@ -89,7 +88,6 @@ public class YSpriteDomain extends YDomain implements IDamageDisplayer {
 
 	@Override
 	public float[] getCurrentXY() {
-		// TODO Auto-generated method stub
 		YSpriteLogic logic = (YSpriteLogic) this.logic;
 		YIMoverGetter moverGetter = logic.getMoverGetter();
 		return new float[] { moverGetter.getX(), moverGetter.getY() };
@@ -97,7 +95,7 @@ public class YSpriteDomain extends YDomain implements IDamageDisplayer {
 
 	@Override
 	public YScene getScene() {
-		return this.scene;
+		return system.getCurrentScene();
 	}
 
 	@Override
