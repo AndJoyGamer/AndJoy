@@ -1,35 +1,22 @@
 package game.AndJoy.DamageDisp;
 
-import game.AndJoy.MainActivity;
 import game.AndJoy.common.AndjoyApp;
-import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.program.YTextureProgram;
-import ygame.extension.program.YTileProgram;
-import ygame.framework.core.YRequest;
-import ygame.framework.core.YScene;
-import ygame.framework.core.YSystem;
-import ygame.framework.domain.YBaseDomain;
-import ygame.framework.domain.YWriteBundle;
-import ygame.math.YMatrix;
-import ygame.texture.YTileSheet;
 
 public class DamageDomain extends YDomain {
 	/**
 	 * 伤害实体的key为随机生成
 	 * 
-	 * @param KEY
-	 * @param activity
+	 * @param damageDisplayer 实现伤害显示接口的实体
+	 * @param value 伤害数值
 	 */
-	public DamageDomain(IDamageDisplayer damageDisplayer) {
+	public DamageDomain(IDamageDisplayer damageDisplayer, int value) {
 		super("damage_" + (int) (Math.random() * 10000), new DamageLogic(
-				damageDisplayer), new YDomainView(
+				damageDisplayer, value), new YDomainView(
 				YTextureProgram.getInstance(AndjoyApp.getResource())));
+		damageDisplayer.getScene().addDomains(this);
 	}
-
-	// public static DamageDomain getDomain(){
-	// new DamageDomain("damage", logic, view)
-	// }
 
 }

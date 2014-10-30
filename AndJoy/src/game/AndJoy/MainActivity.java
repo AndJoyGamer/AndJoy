@@ -169,8 +169,6 @@ public class MainActivity extends Activity
 		YBox2dTestUtils.addOneTestBox(world, mainScene, getResources(),
 				new Vec2(-127, 8));
 
-		// 测试伤害显示
-//		NumBitmap.setRes(getResources());
 		// _____________新建怪物血条
 		YProgressBarDomain monster1Hp = new YProgressBarDomain(
 				Constants.MONSTER1_HP, getResources(), 1, 0.1f);

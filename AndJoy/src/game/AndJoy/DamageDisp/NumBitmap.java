@@ -12,15 +12,13 @@ import android.util.Log;
 
 public class NumBitmap {
 
-
 	/**
-	 * 通过value组合一个信的伤害bitmap
+	 * 通过value组合一个新的数值bitmap
 	 * 
-	 * @param value
-	 * @param btm_res
-	 * @return
+	 * @param value 数值
+	 * @return 数值对应的bitmap
 	 */
-	public static Bitmap getDmgBtmByValues(int value) {
+	public static Bitmap getNumBtmByValues(int value) {
 		Resources res = AndjoyApp.getResource();
 		if (res != null) {
 			Bitmap btm_res = BitmapFactory.decodeResource(res,
@@ -40,7 +38,7 @@ public class NumBitmap {
 			}
 			cv.save(Canvas.ALL_SAVE_FLAG);// 保存
 			cv.restore();// 存储
-//			newbtm = Bitmap.createScaledBitmap(newbtm, 10, 2, false);
+			// newbtm = Bitmap.createScaledBitmap(newbtm, 10, 2, false);
 			return newbtm;
 		} else {
 			Log.e("NumBitmap", "没有传入正确的Resources");
@@ -48,13 +46,6 @@ public class NumBitmap {
 		}
 	}
 
-	/**
-	 * 通过value组合一个信的伤害bitmap
-	 * 
-	 * @param value
-	 * @param btm_res
-	 * @return
-	 */
 	private static Bitmap getBitmapByNum(int num, Bitmap btm_res) {
 		int x, y, width, height;
 		x = num * btm_res.getWidth() / 10;

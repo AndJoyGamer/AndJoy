@@ -2,7 +2,6 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.DamageDisp.DamageDomain;
-import game.AndJoy.DamageDisp.DamageReq;
 import game.AndJoy.DamageDisp.IDamageDisplayer;
 
 import org.jbox2d.dynamics.World;
@@ -100,9 +99,7 @@ public class YSpriteDomain extends YDomain implements IDamageDisplayer {
 
 	@Override
 	public void onHurt(int value) {
-		DamageDomain damageDomain = new DamageDomain(this);
-		getScene().addDomains(damageDomain);
-		damageDomain.sendRequest(new DamageReq(value));
+		new DamageDomain(this, value);
 	}
 
 }
