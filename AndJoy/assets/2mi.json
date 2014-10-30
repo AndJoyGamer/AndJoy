@@ -559,8 +559,50 @@
                  "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
                  "visible":true,
                  "width":161,
-                 "x":11069.7424242424,
-                 "y":-254.121212121212
+                 "x":5173.74242424242,
+                 "y":-6.12121212121214
+                }, 
+                {
+                 "height":164,
+                 "name":"fire_2",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.obstacle.ObstacleDomain$YBuilder",
+                 "visible":true,
+                 "width":161,
+                 "x":12461.9242424242,
+                 "y":581.636363636364
+                }, 
+                {
+                 "height":164,
+                 "name":"fire_1",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.obstacle.ObstacleDomain$YBuilder",
+                 "visible":true,
+                 "width":161,
+                 "x":11967.9848484848,
+                 "y":342.242424242424
+                }, 
+                {
+                 "height":164,
+                 "name":"fire_3",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.obstacle.ObstacleDomain$YBuilder",
+                 "visible":true,
+                 "width":161,
+                 "x":12892.2272727273,
+                 "y":381.636363636364
                 }],
          "opacity":1,
          "properties":
