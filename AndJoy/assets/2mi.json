@@ -559,8 +559,8 @@
                  "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
                  "visible":true,
                  "width":161,
-                 "x":5173.74242424242,
-                 "y":-6.12121212121214
+                 "x":13931.3181818182,
+                 "y":-18.2424242424243
                 }, 
                 {
                  "height":164,
@@ -587,8 +587,8 @@
                  "type":"game.AndJoy.obstacle.ObstacleDomain$YBuilder",
                  "visible":true,
                  "width":161,
-                 "x":11967.9848484848,
-                 "y":342.242424242424
+                 "x":11964.9545454545,
+                 "y":369.515151515151
                 }, 
                 {
                  "height":164,
@@ -602,7 +602,7 @@
                  "visible":true,
                  "width":161,
                  "x":12892.2272727273,
-                 "y":381.636363636364
+                 "y":402.848484848485
                 }],
          "opacity":1,
          "properties":

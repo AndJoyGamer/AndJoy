@@ -100,11 +100,8 @@ public class ObstacleLogic extends YADomainLogic {
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther , Contact contact) {
-			// TODO Auto-generated method stub
-
-			System.out.println(domainOther.KEY);
 			// 如果与精灵发生碰撞，精灵受伤
-			if(domainOther.KEY.equals(Constants.SPRITE)){
+			if(domainOther.KEY.equals(Constants.SPRITE) && !fixtureOther.isSensor()){
 				if (fixtureOther.getBody()
 						.getPosition().x < fixture
 						.getBody()

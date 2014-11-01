@@ -110,13 +110,13 @@ class YSpriteLogic extends YASpriteDomainLogic
 		fixtureFoot.setOnContactListener(new FootContactLsn());
 
 		// 感应攻击雷达
-		CircleShape shapeRadar = new CircleShape();
-		shapeRadar.setRadius(fBodySideLen / 2);
+		PolygonShape shapeAtkRadar = new PolygonShape();
+		shapeAtkRadar.setAsBox(fBodySideLen/1.5f, fBodySideLen/3f);
 
 		def.isSensor = true;
 		def.friction = 0f;
 		def.density = 0f;
-		def.shape = shapeRadar;
+		def.shape = shapeAtkRadar;
 		Fixture fixtureRadar2 = body.createFixture(def);
 		fixtureRadar2.setOnContactListener(new RadarContactLsn());
 
@@ -206,6 +206,10 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 		// 跳到受伤
 		builder.newTransition().from(YSpriteState.JUMP)
+				.to(YSpriteState.DAMAGE)
+				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
+		// 攻击到受伤
+		builder.newTransition().from(YSpriteState.ATTACK1)
 				.to(YSpriteState.DAMAGE)
 				.on(new SpriteReq(YSpriteDomain.TO_DAMAGE));
 
@@ -376,7 +380,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 			if(bOnLand){
 				resetState();
 			}
-			if(stateMachineLock && iJumpClockCount>2){
+			if(stateMachineLock && iJumpClockCount>4){
 				stateMachineLock =false;
 			}
 			iRowIndex = 1;
@@ -569,6 +573,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 				StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine)
 		{
 			Log.d("伤害显示", "进入了受伤状态");
+			stateMachineLock = false;
 			iDamageCounts = 0;
 			// body.applyForce(vecAntiGrav, body.getPosition());
 			SpriteReq req = (SpriteReq) causedBy;

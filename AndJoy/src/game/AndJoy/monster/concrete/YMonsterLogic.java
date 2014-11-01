@@ -33,7 +33,6 @@ import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
-import ygame.transformable.YIMoverGetter;
 
 class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		IDamageDisplayer {
@@ -55,6 +54,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 	final DamageClocker damage = new DamageClocker();
 	final DeadClocker dead = new DeadClocker();
 	final private String keyHP;
+	private Body spriteBody;
 
 	protected YMonsterLogic(World world, String keyHP, MainActivity activity,
 			float fInitX_M, float fInitY_M, float fInitZ_M) {
@@ -72,15 +72,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		super.onAttach(system, domainContext);
 		this.system = system;
 	}
-
-	/**
-	 * 设计精灵实体的刚体结构：</br> 先在图纸上设计刚体结构，然后转为代码
-	 * <p>
-	 * <img src="./picExplain/body_structure.jpg" alt="精灵刚体结构" border="1" />
-	 * </p>
-	 * 
-	 * @see game.AndJoy.sprite.YASpriteDomainLogic#designBody(org.jbox2d.dynamics.Body)
-	 */
+	
 	@Override
 	protected void designBody(Body body) {
 		// 主体部分（Main）
@@ -95,7 +87,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		def.shape = shapeBody;
 		body.createFixture(def);
 
-		// XXX
 		// 足部感应器（foot）
 		PolygonShape shapeFoot = new PolygonShape();
 		shapeFoot.setAsBox(fBodySideLen / 6, fBodySideLen / 10, new Vec2(0,
@@ -107,26 +98,26 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		body.createFixture(def).setOnContactListener(new FootContactLsn());
 
 		// 感应行走雷达
-		CircleShape shapeRadar1 = new CircleShape();
-		shapeRadar1.setRadius(fBodySideLen * 3f);
+		CircleShape shapeWalkRadar = new CircleShape();
+		shapeWalkRadar.setRadius(fBodySideLen * 3f);
 
 		def.isSensor = true;
 		def.friction = 0f;
 		def.density = 0f;
-		def.shape = shapeRadar1;
+		def.shape = shapeWalkRadar;
 		Fixture fixtureRadar1 = body.createFixture(def);
-		fixtureRadar1.setOnContactListener(new Radar1ContactLsn());
+		fixtureRadar1.setOnContactListener(new WalkRadarContactLsn());
 
 		// 感应攻击雷达
-		CircleShape shapeRadar2 = new CircleShape();
-		shapeRadar2.setRadius(fBodySideLen / 2);
-
+		PolygonShape shapeAtkRadar = new PolygonShape();
+		shapeAtkRadar.setAsBox(fBodySideLen/1.5f, fBodySideLen/3f);
+		
 		def.isSensor = true;
 		def.friction = 0f;
 		def.density = 0f;
-		def.shape = shapeRadar2;
+		def.shape = shapeAtkRadar;
 		Fixture fixtureRadar2 = body.createFixture(def);
-		fixtureRadar2.setOnContactListener(new Radar2ContactLsn());
+		fixtureRadar2.setOnContactListener(new AtkRadarContactLsn());
 
 		vecAntiGrav.mulLocal(-body.getMass());
 	}
@@ -190,8 +181,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		builder.newTransition().from(walk).to(attack1)
 				.on(domainContext.TO_ATTACK1);
 		builder.onEntry(attack1).perform(new AttackEnterAction());
-		// 攻1到行走
-		// builder.newTransition().from(attack1).to(walk).on(domainContext.TO_WALK);
 
 		// 行走到受伤
 		builder.newTransition().from(walk).to(damage)
@@ -199,8 +188,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 		// 攻1到受伤
 		builder.newTransition().from(attack1).to(damage)
 				.on(domainContext.TO_DAMAGE);
-		// 受伤到行走
-		builder.newTransition().from(damage).to(walk).on(domainContext.TO_WALK);
 		builder.onEntry(damage).perform(new DamageEnterAction());
 
 		// 各种状态到死亡
@@ -211,6 +198,12 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 
 	@Override
 	protected void confirmOrientation() {
+		if(spriteBody != null){
+			if(spriteBody.getPosition().x < mover.getX())
+				bRight = false;
+			else
+				bRight = true;
+		}
 	}
 
 	private void resetState() {
@@ -250,8 +243,11 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 			int iFrame = (int) ((fFrames += fElapseTime_s * iFPS) % iFrameNum);
 			iRowIndex = iRowStartIndex;
 			iColumnIndex = iColStartIndex + iFrame;
-			if (!ifOnLand)
-				body.applyForce(vecAntiGrav, body.getPosition());
+			body.applyForce(vecAntiGrav, body.getPosition());
+			if (!ifOnLand) {
+				body.applyLinearImpulse(new Vec2(0, -body.getMass()),
+						body.getPosition());
+			}
 		}
 	}
 
@@ -270,10 +266,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 			bLockOrientation = false;
 			super.onClock(fElapseTime_s, domainLogicContext, system,
 					sceneCurrent);
-			if (!ifOnLand) {
-				body.applyLinearImpulse(new Vec2(0, -body.getMass()),
-						body.getPosition());
-			} else {
+			if (ifOnLand){
 				body.setLinearVelocity(vec2);
 			}
 		}
@@ -296,16 +289,14 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 			super.onClock(fElapseTime_s, domainLogicContext, system,
 					sceneCurrent);
 			Vec2 vec2 = bRight ? vecRight : vecLeft;
-			body.setLinearVelocity(vec2);
+			if (ifOnLand){
+				body.setLinearVelocity(vec2);
+			}
 		}
 	}
 
 	/*************************** 关于攻击1状态 **********************************/
 	private class Attack1Cloker implements YIMonsterStateClocker {
-		// private int[] i_arrFrameIndex =
-		// { 23, 24, 25, 26, 27, 28, 29, 19, 22, 58 };
-		// private int[] i_arrFrameIndex =
-		// { 17, 18, };
 		private int[] i_arrFrameIndex = { 23, 24, 25, 20, 21, 1, 2, 3, 4 };
 
 		@Override
@@ -317,8 +308,11 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 			iRowIndex = (i_arrFrameIndex[iFrame] - 1) / 22;
 			iColumnIndex = (i_arrFrameIndex[iFrame] - 1) % 22;
 			body.applyForce(vecAntiGrav, body.getPosition());
-
-			if (3 == iFrame) {
+			if (!ifOnLand) {
+				body.applyLinearImpulse(new Vec2(0, -body.getMass()),
+						body.getPosition());
+			}
+			if (3 == iFrame && ifInRadar2) {
 				YSpriteDomain sprite = (YSpriteDomain) system
 						.queryDomainByKey(Constants.SPRITE);
 				if (null != sprite)
@@ -372,7 +366,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 				YRequest causedBy,
 				YAMonsterDomainLogic<?> context,
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
-			// TODO Auto-generated method stub
 			iDamageCounts = 0;
 			onHurt((int) (Math.random()*1000));
 		}
@@ -395,7 +388,6 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 				system.getCurrentScene().removeDomains(domainContext.KEY);
 				world.destroyBody(body);
 			}
-			// world = null;
 		}
 	}
 
@@ -410,117 +402,49 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 				StateMachine<YIMonsterStateClocker, YRequest, YAMonsterDomainLogic<?>> stateMachine) {
 			fFrames = 0;
 			bLockOrientation = true;
-			// Vec2 v1 = body.getLinearVelocity();
-			// Vec2 v2 = new Vec2(!bRight ? vec2Right
-			// : vec2Left);
-			// body.applyLinearImpulse(
-			// v2.subLocal(v1)
-			// .mulLocal(body.getMass()),
-			// body.getPosition());
 		}
 	}
 
-	private class Radar1ContactLsn implements YIOnContactListener {
+	private class WalkRadarContactLsn implements YIOnContactListener {
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
-			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {// 与之碰撞的实体确实为精灵
-																					// if
-																					// (fixtureOther.m_userData
-																					// ==
-																					// "foot")
-				{
-					if (fixtureOther.getBody().getPosition().x < fixture
-							.getBody().getPosition().x)
-						bRight = false;
-					else
-						bRight = true;
-					domainContext.sendRequest(domainContext.TO_WALK);
-					ifInRadar1 = true;
-				}
+			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
+				spriteBody = fixtureOther.getBody();
+				domainContext.sendRequest(domainContext.TO_WALK);
+				ifInRadar1 = true;
 			}
-
 		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
-			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {// 与之碰撞的实体确实为精灵
-																					// if
-																					// (fixtureOther.m_userData
-																					// ==
-																					// "foot")
-				{
-					if (fixtureOther.getBody().getPosition().x < fixture
-							.getBody().getPosition().x)
-						bRight = false;
-					else
-						bRight = true;
-					domainContext.sendRequest(domainContext.TO_WAIT);
-					ifInRadar1 = false;
-				}
+			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
+				spriteBody = null;
+				domainContext.sendRequest(domainContext.TO_WAIT);
+				ifInRadar1 = false;
 			}
 		}
 	}
 
-	private class Radar2ContactLsn implements YIOnContactListener {
+	private class AtkRadarContactLsn implements YIOnContactListener {
 
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
-			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {// 与之碰撞的实体确实为精灵
-																					// YSpriteDomain
-																					// sprite
-																					// =
-																					// (YSpriteDomain)
-																					// domainOther;
-																					// if
-																					// (fixtureOther.m_userData
-																					// ==
-																					// "foot")
-				{
-					if (fixtureOther.getBody().getPosition().x < fixture
-							.getBody().getPosition().x)
-						bRight = false;
-					else
-						bRight = true;
-					domainContext.sendRequest(domainContext.TO_ATTACK1);
-					ifInRadar2 = true;
-
-					// YSpriteDomain sprite =
-					// (YSpriteDomain) system
-					// .queryDomainByKey(Constants.SPRITE);
-					// if (null != sprite)
-					// sprite.damage(bRight ?
-					// Orientation.RIGHT
-					// : Orientation.LEFT);
-					// domainSprite.sendRequest(domainSprite.TO_DAMAGE);
-					// sprite.damage(bRight ?
-					// Orientation.RIGHT :
-					// Orientation.LEFT);
-				}
+			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
+				domainContext.sendRequest(domainContext.TO_ATTACK1);
+				ifInRadar2 = true;
 			}
-
 		}
 
 		@Override
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
-			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {// 与之碰撞的实体确实为精灵
-																					// if
-																					// (fixtureOther.m_userData
-																					// ==
-																					// "foot")
-				{
-					if (fixtureOther.getBody().getPosition().x < fixture
-							.getBody().getPosition().x)
-						bRight = false;
-					else
-						bRight = true;
-					domainContext.sendRequest(domainContext.TO_WALK);
-					ifInRadar2 = false;
-				}
+			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
+				domainContext.sendRequest(domainContext.TO_WALK);
+				ifInRadar2 = false;
 			}
 		}
 	}
