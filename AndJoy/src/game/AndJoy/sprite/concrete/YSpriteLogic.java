@@ -111,7 +111,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 
 		// 感应攻击雷达
 		PolygonShape shapeAtkRadar = new PolygonShape();
-		shapeAtkRadar.setAsBox(fBodySideLen/1.5f, fBodySideLen/3f);
+		shapeAtkRadar.setAsBox(fBodySideLen/2f, fBodySideLen/3f);
 
 		def.isSensor = true;
 		def.friction = 0f;
@@ -688,6 +688,8 @@ class YSpriteLogic extends YASpriteDomainLogic
 	private class RadarContactLsn implements YIOnContactListener
 	{
 
+		private int iFixtureInRadar;
+
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
@@ -700,6 +702,7 @@ class YSpriteLogic extends YASpriteDomainLogic
 						.getPosition().x > fixture
 						.getBody().getPosition().x ? true
 						: false;
+				iFixtureInRadar++;
 				ifInRadar = true;
 				monsterKey = domainOther.KEY;
 			}
@@ -709,8 +712,10 @@ class YSpriteLogic extends YASpriteDomainLogic
 		public void endContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact)
 		{
-			ifInRadar = false;
-			monsterKey = null;
+			iFixtureInRadar--;
+			if(iFixtureInRadar == 0)
+				ifInRadar = false;
+				monsterKey = null;
 		}
 	}
 

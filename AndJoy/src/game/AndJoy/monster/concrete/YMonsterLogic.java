@@ -110,7 +110,7 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 
 		// 感应攻击雷达
 		PolygonShape shapeAtkRadar = new PolygonShape();
-		shapeAtkRadar.setAsBox(fBodySideLen/1.5f, fBodySideLen/3f);
+		shapeAtkRadar.setAsBox(fBodySideLen/2f, fBodySideLen/3f);
 		
 		def.isSensor = true;
 		def.friction = 0f;
@@ -407,12 +407,15 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 
 	private class WalkRadarContactLsn implements YIOnContactListener {
 
+		private int iFixtureInRadar;
+		
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
 			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
 				spriteBody = fixtureOther.getBody();
 				domainContext.sendRequest(domainContext.TO_WALK);
+				iFixtureInRadar++;
 				ifInRadar1 = true;
 			}
 		}
@@ -423,17 +426,22 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
 				spriteBody = null;
 				domainContext.sendRequest(domainContext.TO_WAIT);
-				ifInRadar1 = false;
+				iFixtureInRadar--;
+				if(iFixtureInRadar==0)
+					ifInRadar1 = false;
 			}
 		}
 	}
 
 	private class AtkRadarContactLsn implements YIOnContactListener {
 
+		private int iFixtureInRadar;
+
 		@Override
 		public void beginContact(Fixture fixture, Fixture fixtureOther,
 				YABaseDomain domainOther, Contact contact) {
 			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
+				iFixtureInRadar++;
 				domainContext.sendRequest(domainContext.TO_ATTACK1);
 				ifInRadar2 = true;
 			}
@@ -444,7 +452,9 @@ class YMonsterLogic extends YAMonsterDomainLogic<YMonsterDomain> implements
 				YABaseDomain domainOther, Contact contact) {
 			if (null != domainOther && domainOther.KEY.equals(Constants.SPRITE)) {
 				domainContext.sendRequest(domainContext.TO_WALK);
-				ifInRadar2 = false;
+				iFixtureInRadar--;
+				if(iFixtureInRadar==0)
+					ifInRadar2 = false;
 			}
 		}
 	}
