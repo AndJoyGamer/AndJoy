@@ -7,7 +7,7 @@ public class YDebrisTriangle extends YSkeleton
 	public YDebrisTriangle(float[] f_arrTexCoords, float[] f_arrPositions)
 	{
 		setTexCoords(f_arrTexCoords);
-		setPositions(f_arrPositions);
+		setPositions(f_arrPositions , true);
 		setIndices(new short[]
 		{ 0, 1, 2 });
 	}

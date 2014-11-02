@@ -61,7 +61,7 @@ public class TextureRect extends YSkeleton
 			}
 		}
 		// 创建顶点坐标数据缓冲
-		setPositions(vertices);
+		setPositions(vertices , true);
 		// 顶点纹理坐标数据的初始化================begin============================
 		float texCoor[] = generateTexCoor(cols, rows);
 		setTexCoords(texCoor);

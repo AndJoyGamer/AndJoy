@@ -4,7 +4,6 @@ import game.AndJoy.common.AndjoyApp;
 import game.AndJoy.common.Constants;
 import game.AndJoy.common.YBox2dTestUtils;
 import game.AndJoy.common.YSceneDomain;
-import game.AndJoy.obstacle.ObstacleDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain;
 
 import java.lang.ref.SoftReference;
@@ -24,7 +23,6 @@ import ygame.extension.program.YTextureProgram;
 import ygame.extension.third_party.kankan.wheel.widget.WheelView;
 import ygame.extension.third_party.kankan.wheel.widget.adapters.AbstractWheelAdapter;
 import ygame.extension.tiled.YBaseParsePlugin;
-import ygame.extension.tiled.YDestructibleTerrainParsePlugin;
 import ygame.extension.tiled.YGearParsePlugin;
 import ygame.extension.tiled.YStaticImageLayerParsePlugin;
 import ygame.extension.tiled.YStaticPolyLineTerrainParsePlugin;

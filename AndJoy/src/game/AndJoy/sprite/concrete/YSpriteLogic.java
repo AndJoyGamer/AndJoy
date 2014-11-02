@@ -2,8 +2,6 @@ package game.AndJoy.sprite.concrete;
 
 import game.AndJoy.MainActivity;
 import game.AndJoy.R;
-import game.AndJoy.DamageDisp.DamageDomain;
-import game.AndJoy.DamageDisp.IDamageDisplayer;
 import game.AndJoy.common.Constants;
 import game.AndJoy.monster.concrete.YMonsterDomain;
 import game.AndJoy.sprite.concrete.YSpriteDomain.SpriteReq;

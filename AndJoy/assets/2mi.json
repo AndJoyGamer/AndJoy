@@ -550,20 +550,6 @@
                 }, 
                 {
                  "height":164,
-                 "name":"sprite",
-                 "properties":
-                    {
-
-                    },
-                 "rotation":0,
-                 "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
-                 "visible":true,
-                 "width":161,
-                 "x":13931.3181818182,
-                 "y":-18.2424242424243
-                }, 
-                {
-                 "height":164,
                  "name":"fire_2",
                  "properties":
                     {
@@ -603,6 +589,20 @@
                  "width":161,
                  "x":12892.2272727273,
                  "y":402.848484848485
+                }, 
+                {
+                 "height":164,
+                 "name":"sprite",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"game.AndJoy.sprite.concrete.YSpriteDomain$YBuilder",
+                 "visible":true,
+                 "width":161,
+                 "x":11065.5,
+                 "y":-4
                 }],
          "opacity":1,
          "properties":
@@ -733,7 +733,7 @@
                  "y":255
                 }, 
                 {
-                 "height":63,
+                 "height":67,
                  "name":"chain5",
                  "properties":
                     {
@@ -742,9 +742,9 @@
                  "rotation":0,
                  "type":"dynamic_body",
                  "visible":true,
-                 "width":10,
-                 "x":3769,
-                 "y":512.5
+                 "width":84,
+                 "x":3734,
+                 "y":478.5
                 }, 
                 {
                  "height":63,
@@ -890,6 +890,57 @@
                  "width":0,
                  "x":13568,
                  "y":256
+                }, 
+                {
+                 "height":64,
+                 "name":"dA",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"dynamic_body",
+                 "visible":true,
+                 "width":192,
+                 "x":10560,
+                 "y":273
+                }, 
+                {
+                 "height":64,
+                 "name":"dB",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"dynamic_body",
+                 "visible":true,
+                 "width":192,
+                 "x":10560,
+                 "y":448
+                }, 
+                {
+                 "height":0,
+                 "name":"dA:dB",
+                 "polyline":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":192
+                        }],
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"distance_joint",
+                 "visible":true,
+                 "width":0,
+                 "x":10656,
+                 "y":296
                 }],
          "opacity":1,
          "type":"objectgroup",
